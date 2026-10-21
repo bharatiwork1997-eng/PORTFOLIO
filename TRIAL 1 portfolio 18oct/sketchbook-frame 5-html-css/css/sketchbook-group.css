@@ -1,0 +1,361 @@
+body {
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: #262626;
+	font-family: 'Geist Pixel';
+	line-height: normal;
+	letter-spacing: 0px;
+	background-color: #000;
+	padding: 118px 24px;
+	overflow: auto;
+}
+
+.col {
+	container: col / inline-size;
+	position: relative;
+	margin-left: 1px;
+	width: 100%;
+	max-width: 1161px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	background: url(../assets/col.png) center / cover no-repeat;
+	padding: 97px 89px 69px 76px;
+}
+
+.img1 {
+	position: absolute; z-index: 11; top: 177px; left: 856px; 
+	rotate: -14deg;
+	transform-origin: 50% 50%;
+	width: 103px;
+}
+
+.img2 {
+	position: absolute; z-index: 12; top: 461px; right: 80px; 
+	width: 120px;
+}
+
+.img3 {
+	position: absolute; z-index: 11; top: 324px; right: 48px; 
+	width: 122px;
+}
+
+.img4 {
+	position: absolute; z-index: 12; top: 239px; left: 613px; 
+	width: 155px;
+}
+
+.img5 {
+	position: absolute; z-index: 13; top: 190px; left: 723px; 
+	rotate: 29deg;
+	transform-origin: 50% 50%;
+	width: 128px;
+}
+
+._7cea1 {
+	position: absolute; z-index: 11; top: 428px; right: 87px; 
+	width: 144px;
+}
+
+.img6 {
+	position: absolute; z-index: 12; top: 521px; left: 641px; 
+	width: 77px;
+}
+
+.img7 {
+	position: absolute; z-index: 13; top: 509px; left: 658px; 
+	width: 228px;
+}
+
+.img8 {
+	position: absolute; z-index: 13; top: 261px; left: 798px; 
+	width: 99px;
+}
+
+.rating {
+	position: absolute; z-index: 14; top: 381px; left: 822px; 
+	width: 126px; height: 101px;
+}
+
+.col-top {
+	container: col-top / inline-size;
+	position: relative;
+	margin-left: 39px; margin-right: 29px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 13px;
+	padding: 46px 1px 0 1px;
+}
+
+.img9 {
+	position: absolute; top: -27px; left: 807px; 
+	width: 136px;
+}
+
+.row-top {
+	margin-left: 1px;
+	width: 100%;
+	max-width: 650px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	font-size: 26px;
+	padding-bottom: 23px;
+}
+
+.text-a {
+	margin-top: -34px;
+	text-align: left;
+}
+
+.text1 {
+	margin-left: -3px;
+}
+
+.row-bottom1 {
+	margin-bottom: -16px;
+	width: 100%;
+	max-width: 745px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	font-size: 14.97px;
+	padding-bottom: 13px;
+}
+
+.text-b {
+	margin-top: -31px;
+	text-align: left;
+}
+
+.text2 {
+	margin-left: -2px;
+}
+
+.row {
+	container: row / inline-size;
+	margin-left: 37px; margin-right: 29px;
+	display: flex;
+	align-items: flex-start;
+	gap: 165px;
+}
+
+.text-input1 {
+	margin-left: -1px; margin-top: -1px;
+	width: 100%; height: 505px;
+	flex-grow: 1;
+}
+
+.row-right {
+	position: relative;
+	margin: 41px -1px -1px 0;
+	width: 100%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-end;
+	gap: 13px;
+	flex-grow: 1;
+	padding: 103px 10px 9px 10px;
+}
+
+.text-input2 {
+	position: absolute; top: 0; left: 0; right: 0; 
+	height: 502px;
+}
+
+.text-input3 {
+	position: absolute; z-index: 2; top: -14px; right: 267px; 
+	rotate: -23deg;
+	transform-origin: 50% 50%;
+	width: 100px;
+}
+
+.img10 {
+	position: absolute; z-index: 3; top: 35px; right: 210px; 
+	rotate: -24deg;
+	transform-origin: 50% 50%;
+	width: 73px;
+}
+
+.img11 {
+	position: absolute; z-index: 4; top: 54px; right: -9px; 
+	rotate: -18deg;
+	transform-origin: 50% 50%;
+	width: 92px;
+}
+
+.img12 {
+	position: absolute; z-index: 5; top: 207px; right: 221px; 
+	width: 142px;
+}
+
+._7cea2 {
+	position: absolute; z-index: 6; top: 297px; right: 191px; 
+	width: 152px;
+}
+
+.img13 {
+	position: absolute; z-index: 7; top: 331px; right: -22px; 
+	width: 122px;
+}
+
+.img14 {
+	position: absolute; z-index: 8; top: 62px; right: 99px; 
+	width: 73px;
+}
+
+.img15 {
+	position: absolute; z-index: 9; top: 80px; right: 264px; 
+	width: 104px;
+}
+
+.row-left {
+	position: relative; z-index: 1;
+	width: 140px; height: 384px;
+	flex-shrink: 0;
+}
+
+.img16 {
+	position: absolute; top: -8px; left: 41px; 
+	width: 103px;
+}
+
+.img17 {
+	position: absolute; top: 174px; left: -32px; 
+	width: 144px;
+	max-width: none;
+}
+
+.noun-pixeldocument {
+	position: absolute; top: 372px; left: 130px; 
+	width: 14px;
+}
+
+.noun-download {
+	position: relative; z-index: 10;
+	margin-top: 372px;
+	width: 14px;
+	flex-shrink: 0;
+}
+
+.row-bottom2 {
+	margin-top: 16px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+.image {
+	transform-origin: 50% 50%;
+	margin: -5px 0;
+	width: 17px;
+	flex-shrink: 0;
+}
+
+.img18 {
+	rotate: -90deg;
+	margin-left: -3px;
+}
+
+.img19 {
+	rotate: 90deg;
+	margin-right: -3px;
+}
+
+
+
+/** breakpoints (margin / paddings) **/
+
+@media screen and (max-width: 576px) {
+	body {
+		padding-inline: var(--margin-sm);
+	}
+	.col {
+		padding-inline: var(--margin-md);
+	}
+	.col-top {
+		margin-inline: 0;
+	}
+	.row {
+		margin-inline: 0;
+	}
+	.text-input1 {
+		margin-inline: 0;
+	}
+	.row-right {
+		padding-inline: 0;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.col {
+		padding-inline: var(--margin-sm);
+	}
+}
+
+
+
+/* container queries (flex rows) */
+
+@container col-top (width < 183px) {
+	.row-top {
+		flex-direction: column;
+		align-items: center;
+		gap: 13px;
+	}
+	.row-top > * {
+		margin-left: unset !important; margin-right: unset !important; margin-top: unset !important;
+		text-align: center;
+	}
+}
+
+@container col-top (width < 263px) {
+	.row-bottom1 {
+		flex-direction: column;
+		align-items: center;
+		gap: 13px;
+	}
+	.row-bottom1 > * {
+		margin-left: unset !important; margin-top: unset !important;
+		text-align: center;
+	}
+}
+
+@container col (width < 670px) {
+	.row {
+		margin-left: 0; margin-right: 0;
+		flex-direction: column;
+		align-items: center;
+		gap: 83px;
+	}
+	.col > * {
+		margin-left: 0; margin-right: 0;
+	}
+	.row > * {
+		margin-left: unset !important; margin-right: unset !important; margin-top: unset !important;
+	}
+	.row > .text-input1 {
+		width: 100%;
+	}
+	.row > .row-right {
+		width: 100%;
+	}
+}
+
+@container row (width < 184px) {
+	.row-right {
+		margin-left: 0; margin-right: 0;
+		flex-direction: column;
+		align-items: center;
+		gap: 26px;
+	}
+	.row-right > * {
+		margin-top: unset !important;
+	}
+	.row-right > .text-input2 {
+		width: 100%;
+	}
+}

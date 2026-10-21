@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link rel="stylesheet" href="css/reset.css" />
+	<link rel="stylesheet" href="css/fonts.css" />
+	<link rel="stylesheet" href="css/global.css" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=4" />
+
+</head>
+
+<body>
+	<div class="col">
+		<img src="assets/img1.png" class="img1" />
+		<img src="assets/img2.png" class="img2" />
+		<img src="assets/img3.png" class="img3" />
+		<img src="assets/img4.png" class="img4" />
+		<img src="assets/img5.png" class="img5" />
+		<img src="assets/_7cea1.png" class="_7cea1" />
+		<img src="assets/img6.png" class="img6" />
+		<img src="assets/img7.png" class="img7" />
+		<img src="assets/img8.png" class="img8" />
+		<object data="assets/rating.svg" class="rating" type="image/svg+xml"></object>
+		
+		<div class="col-top">
+			<img src="assets/img9.png" class="img9" />
+			
+			<div class="row-top">
+				<p class="text-a text1">Sketch</p>
+				<p class="text-a text-collage">Collage</p>
+			</div>
+			
+			<div class="row-bottom1">
+				<p class="text-b text2">Fun Break</p>
+				<p class="text-b">Tap the folder for stickers</p>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="sketch-wrapper">
+				<div class="text-input1 card-light"></div>
+				<div class="sketch-tools">
+					<button type="button" class="sketch-btn draw-btn active" data-tool="draw">Draw</button>
+					<button type="button" class="sketch-btn clear-btn" data-tool="clear-drawing">Clear sketch</button>
+				</div>
+			</div>
+			
+			<div class="collage-wrapper">
+				<div class="row-right">
+					<div class="text-input2 card-light"></div>
+					<img src="assets/text-input.png" class="text-input3" />
+					<img src="assets/img10.png" class="img10" />
+					<img src="assets/img11.png" class="img11" />
+					<img src="assets/img12.png" class="img12" />
+					<img src="assets/_7cea2.png" class="_7cea2" />
+					<img src="assets/img13.png" class="img13" />
+					<img src="assets/img14.png" class="img14" />
+					<img src="assets/img15.png" class="img15" />
+					
+					<div class="row-left">
+						<img src="assets/img16.png" class="img16" />
+						<img src="assets/img17.png" class="img17" />
+						<img src="assets/noun-pixeldocument.png" class="noun-pixeldocument" />
+					</div>
+					
+					<img src="assets/noun-download.png" class="noun-download" />
+				</div>
+
+				<div class="collage-tools">
+					<button type="button" class="sketch-btn collage-btn" data-tool="sticker">＋ Sticker</button>
+					<label class="collage-size-control" for="collage-sticker-size">
+						<span>Size</span>
+						<input id="collage-sticker-size" type="range" min="48" max="180" value="92">
+					</label>
+					<button type="button" class="sketch-btn collage-btn" data-tool="clear-collage">Clear collage</button>
+					<button type="button" class="sketch-btn collage-btn" data-tool="save">Save</button>
+					<button type="button" class="sketch-btn collage-btn" data-tool="download">Download</button>
+					<button type="button" class="sketch-btn collage-btn" data-tool="share">Share</button>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row-bottom2">
+			<img src="assets/img18.png" class="image img18" />
+			<img src="assets/img18.png" class="image img19" />
+		</div>
+	</div>
+
+	<script>
+		if (window.self === window.top) {
+			const sketchArea = document.querySelector(".text-input1");
+			if (sketchArea && !sketchArea.querySelector("canvas")) {
+				sketchArea.style.position = "relative";
+				const canvas = document.createElement("canvas");
+				canvas.style.position = "absolute";
+				canvas.style.inset = "0";
+				canvas.style.width = "100%";
+				canvas.style.height = "100%";
+				canvas.style.cursor = "crosshair";
+				sketchArea.append(canvas);
+				const ctx = canvas.getContext("2d");
+				let drawing = false;
+				const resize = () => {
+					const prev = canvas.width ? canvas.toDataURL() : "";
+					const r = window.devicePixelRatio || 1;
+					const w = sketchArea.clientWidth;
+					const h = sketchArea.clientHeight;
+					canvas.width = Math.max(1, Math.round(w * r));
+					canvas.height = Math.max(1, Math.round(h * r));
+					ctx.setTransform(r, 0, 0, r, 0, 0);
+					ctx.lineCap = "round";
+					ctx.lineJoin = "round";
+					ctx.strokeStyle = "#c7484b";
+					ctx.lineWidth = 4;
+					if (prev) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = prev; }
+				};
+				resize();
+				window.addEventListener("resize", resize);
+				canvas.addEventListener("pointerdown", (e) => {
+					drawing = true;
+					canvas.setPointerCapture(e.pointerId);
+					ctx.beginPath();
+					ctx.moveTo(e.offsetX, e.offsetY);
+				});
+				canvas.addEventListener("pointermove", (e) => {
+					if (!drawing) return;
+					ctx.lineTo(e.offsetX, e.offsetY);
+					ctx.stroke();
+				});
+				canvas.addEventListener("pointerup", () => { drawing = false; });
+				canvas.addEventListener("pointercancel", () => { drawing = false; });
+				const clearBtn = document.querySelector(".clear-btn");
+				if (clearBtn) clearBtn.addEventListener("click", () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+			}
+
+			const collageArea = document.querySelector(".text-input2");
+			if (collageArea && !collageArea.querySelector(".collage-layer")) {
+				const layer = document.createElement("div");
+				layer.style.position = "absolute";
+				layer.style.inset = "0";
+				layer.style.overflow = "hidden";
+				layer.className = "collage-layer";
+				collageArea.append(layer);
+				const stickerBank = ["img10.png", "img11.png", "img12.png", "_7cea2.png", "img13.png", "img14.png", "img15.png", "img16.png", "img17.png"]
+					.map((f) => `assets/${f}`);
+				let activeSticker = null;
+				const sizeInput = document.querySelector("#collage-sticker-size");
+				const addStickerStandalone = () => {
+					const src = stickerBank[Math.floor(Math.random() * stickerBank.length)];
+					const size = Number(sizeInput ? sizeInput.value : 92);
+					const img = document.createElement("img");
+					img.src = src;
+					img.style.position = "absolute";
+					img.style.left = `${Math.random() * Math.max(10, collageArea.clientWidth - size)}px`;
+					img.style.top = `${Math.random() * Math.max(10, collageArea.clientHeight - size)}px`;
+					img.style.width = `${size}px`;
+					img.style.cursor = "grab";
+					img.addEventListener("pointerdown", (e) => {
+						e.preventDefault();
+						activeSticker = img;
+						const startX = e.clientX;
+						const startY = e.clientY;
+						const initX = Number.parseFloat(img.style.left) || 0;
+						const initY = Number.parseFloat(img.style.top) || 0;
+						const onMove = (me) => {
+							img.style.left = `${initX + (me.clientX - startX)}px`;
+							img.style.top = `${initY + (me.clientY - startY)}px`;
+						};
+						const onUp = () => {
+							document.removeEventListener("pointermove", onMove);
+							document.removeEventListener("pointerup", onUp);
+						};
+						document.addEventListener("pointermove", onMove);
+						document.addEventListener("pointerup", onUp);
+					});
+					layer.append(img);
+					activeSticker = img;
+				};
+				const stickerBtn = document.querySelector(".collage-tools [data-tool='sticker']");
+				if (stickerBtn) stickerBtn.addEventListener("click", addStickerStandalone);
+				if (sizeInput) sizeInput.addEventListener("input", () => {
+					if (activeSticker) activeSticker.style.width = `${sizeInput.value}px`;
+				});
+				const clearCollageBtn = document.querySelector(".collage-tools [data-tool='clear-collage']");
+				if (clearCollageBtn) clearCollageBtn.addEventListener("click", () => layer.replaceChildren());
+				const folder = document.querySelector(".img17");
+				if (folder) folder.addEventListener("click", addStickerStandalone);
+			}
+		}
+	</script>
+</body>
+
+</html>

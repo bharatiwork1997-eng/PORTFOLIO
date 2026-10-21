@@ -1,0 +1,9 @@
+/* fonts definitions */
+
+@font-face {
+	font-family: 'Geist Pixel';
+	font-style: normal;
+	font-weight: 400;
+	src: url(../fonts/geist-pixel-regular-variable-font-elsh.ttf);
+}
+

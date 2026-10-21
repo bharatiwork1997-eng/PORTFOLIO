@@ -1,0 +1,42 @@
+body {
+	position: relative;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: #262626;
+	font-size: 174.85px;
+	font-family: 'Geist Pixel';
+	line-height: normal;
+	letter-spacing: 0px;
+	background-color: #000;
+	padding: 103px 24px 750px 24px;
+	overflow: auto;
+}
+
+.title-grab-a-seat {
+	margin-left: 1px;
+}
+
+.img1 {
+	position: absolute; z-index: 1; top: 103px; left: 564px; 
+	width: calc(100% - 564px);
+	max-width: 794px;
+}
+
+.img2 {
+	position: absolute; top: 532px; left: 1487px; 
+	rotate: -26deg;
+	transform-origin: 50% 50%;
+	width: 59px;
+}
+
+
+
+/** breakpoints (margin / paddings) **/
+
+@media screen and (max-width: 1280px) {
+	body {
+		padding-inline: var(--margin-sm);
+	}
+}

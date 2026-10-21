@@ -1,0 +1,15 @@
+body {
+	position: relative;
+	min-height: 100%;
+	background-color: #000;
+	overflow: auto;
+}
+
+.img {
+	position: absolute; top: 80px; left: 50%; 
+	translate: -50% 0;
+	rotate: 180deg;
+	transform-origin: 50% 50%;
+	width: calc(100% - 32px);
+	max-width: 1582px;
+}

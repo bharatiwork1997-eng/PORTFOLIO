@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#171713">
+	<title>Bharati Kamble | Visual Designer</title>
+	<link rel="stylesheet" href="portfolio.css?v=16">
+</head>
+<body>
+	<header class="site-header">
+		<a class="wordmark" href="#cover" aria-label="Bharati Kamble home">BHARATI KAMBLE</a>
+		<p class="site-role">Visual designer <i></i> UX / UI practitioner</p>
+		<div class="header-actions">
+			<button class="contact-link" type="button" data-open-resume>Resume <span aria-hidden="true">↗</span></button>
+			<button class="contact-link" type="button" data-open-contact>Say hello <span aria-hidden="true">↗</span></button>
+		</div>
+	</header>
+
+	<main>
+		<section class="cover-screen" id="cover" aria-label="Portfolio cover">
+			<div class="cover-art">
+				<iframe id="cover-frame" title="Handmade sketchbook cover" src="welcoming-screen-html-css/welcoming-screen.html?v=2" tabindex="-1"></iframe>
+				<button class="cover-hit" type="button" aria-label="Open the sketchbook"></button>
+			</div>
+			<p class="cover-note"><span>01 / 06</span> Open the sketchbook <span aria-hidden="true">↗</span></p>
+		</section>
+
+		<section class="portfolio-view" id="portfolio" hidden aria-label="Interactive portfolio sketchbook">
+			<div class="book-heading">
+				<p class="book-kicker">A little book of work <span aria-hidden="true">✳</span></p>
+			</div>
+			<div class="book-stage" id="book-stage" aria-label="Sketchbook pages">
+				<div class="book-scene" id="book-scene">
+					<div class="underlay-right" aria-hidden="true"><iframe title="Next sketchbook spread" tabindex="-1"></iframe></div>
+					<iframe class="current-spread" title="Portfolio spread"></iframe>
+				</div>
+			</div>
+			<div class="book-controls">
+				<button class="turn-button" id="previous-page" type="button" aria-label="Previous spread"><span>Previous</span></button>
+				<div class="page-position" aria-live="polite"><span id="page-count">01</span><i></i><span>06</span><span class="page-name" id="page-name">About me</span></div>
+				<button class="turn-button" id="next-page" type="button" aria-label="Next spread"><span>Next</span></button>
+			</div>
+		</section>
+	</main>
+
+	<div class="pencil-cursor" aria-hidden="true"><img src="welcoming-screen-html-css/assets/img2.png" alt=""></div>
+	<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+	<dialog class="story-dialog" id="story-dialog" aria-labelledby="story-title">
+		<div class="story-sheet">
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			<p class="dialog-kicker" id="story-kicker"></p>
+			<h1 id="story-title"></h1>
+			<p class="story-intro" id="story-intro"></p>
+			<div class="story-sections" id="story-sections"></div>
+			<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+		</div>
+	</dialog>
+
+	<dialog class="resume-dialog" id="resume-dialog" aria-labelledby="resume-title">
+		<div class="resume-sheet">
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			<p class="dialog-kicker">Folded paper, opened</p>
+			<h1 id="resume-title">Bharati Kamble</h1>
+			<p class="resume-summary">Senior graphic designer and visualizer with 5+ years in brand communication, now expanding into UX / UI design.</p>
+			<div class="resume-facts"><span>Focus</span><p>Visual design, brand communication, UX / UI</p><span>Currently</span><p>Looking for a UX / UI designer role</p></div>
+			<p class="resume-note">Add your finished résumé PDF and contact details here before publishing.</p>
+			<button class="story-back" type="button" id="print-resume">Print / save as PDF <span aria-hidden="true">↗</span></button>
+		</div>
+	</dialog>
+
+	<dialog class="contact-dialog" id="contact-dialog" aria-labelledby="contact-title">
+		<div class="contact-sheet">
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			<p class="dialog-kicker">A note is always welcome</p>
+			<h1 id="contact-title">Let’s make<br>something matter.</h1>
+			<a class="email-link" href="mailto:your.email@example.com">your.email@example.com <span aria-hidden="true">↗</span></a>
+			<p class="resume-note">Replace this placeholder with your preferred email before sharing the portfolio.</p>
+			<button class="story-back" type="button" data-close-dialog>Back to the book</button>
+		</div>
+	</dialog>
+
+	<script src="portfolio.js?v=25"></script>
+</body>
+</html>

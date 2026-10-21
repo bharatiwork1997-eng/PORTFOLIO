@@ -1,0 +1,155 @@
+body {
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: #262626;
+	font-family: 'Geist Pixel';
+	line-height: normal;
+	letter-spacing: 0px;
+	background-color: #000;
+	padding: 118px 24px;
+	overflow: auto;
+}
+
+.col {
+	container: col / inline-size;
+	position: relative;
+	margin-left: 1px;
+	width: 100%;
+	max-width: 1161px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	background: url(../assets/col.png) center / cover no-repeat;
+	padding: 116px 76px 69px 76px;
+}
+
+.text-input {
+	position: absolute;
+	transform-origin: 50% 50%;
+	height: 411px;
+	max-width: 359px;
+	background-color: #efeff0;
+	border: 2px solid #5b5b5b;
+}
+
+.text-input1 {
+	top: 225px; left: 129px; 
+	rotate: -2deg;
+	width: calc(100% - 129px);
+}
+
+.text-input2 {
+	top: 239px; left: 671px; 
+	rotate: 2deg;
+	width: calc(100% - 671px);
+}
+
+.img1 {
+	position: absolute; top: 614px; right: 94px; 
+	rotate: 14deg;
+	transform-origin: 50% 50%;
+	width: 161px;
+}
+
+.graphic {
+	position: absolute; top: 590px; left: 141px; 
+	width: 119px; height: 126px;
+}
+
+.row-top {
+	margin-left: 39px;
+	width: 100%;
+	max-width: 767px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	align-self: start;
+}
+
+.subtitle-clustr {
+	margin: -7px 0 -4px -1px;
+	font-size: 26.94px;
+	text-align: left;
+}
+
+.text-assessment-work {
+	margin: -7px -2px -3px 0;
+	font-size: 26px;
+	text-align: left;
+}
+
+.text-ux-ui-case-study {
+	margin: 0 38px;
+	font-size: 14.97px;
+}
+
+.row-bottom {
+	margin-right: 13px; margin-top: 592px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+.image {
+	transform-origin: 50% 50%;
+	margin: -5px 0;
+	width: 17px;
+	flex-shrink: 0;
+}
+
+.img2 {
+	rotate: -90deg;
+	margin-left: -3px;
+}
+
+.img3 {
+	rotate: 90deg;
+	margin-right: -3px;
+}
+
+
+
+/** breakpoints (margin / paddings) **/
+
+@media screen and (max-width: 1280px) {
+	body {
+		padding-inline: var(--margin-sm);
+	}
+	.col {
+		padding-inline: var(--margin-md);
+	}
+	.text-ux-ui-case-study {
+		margin-inline: 0;
+	}
+	.row-bottom {
+		margin-inline: 0;
+	}
+}
+
+@media screen and (max-width: 576px) {
+	.col {
+		padding-inline: var(--margin-sm);
+	}
+}
+
+
+
+/* container queries (flex rows) */
+
+@container col (width < 607px) {
+	.row-top {
+		margin-left: 0;
+		flex-direction: column;
+		align-items: center;
+		gap: 13px;
+	}
+	.col > * {
+		margin-left: 0; margin-right: 0;
+	}
+	.row-top > * {
+		margin-left: unset !important; margin-right: unset !important; margin-top: unset !important;
+		text-align: center;
+	}
+}
