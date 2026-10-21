@@ -60,13 +60,14 @@ button { color: inherit; }
 button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 [hidden] { display: none !important; }
 
-.site-header { position: absolute; z-index: 5; top: 0; left: 0; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 18px; padding: 22px clamp(40px, 8vw, 104px); color: rgba(246, 241, 229, .78); font-size: 11px; }
-.wordmark { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; white-space: nowrap; }
-.site-role { justify-self: center; margin: 0; color: var(--muted); white-space: nowrap; }
+.site-header { position: absolute; z-index: 5; top: 0; left: 0; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 20px; padding: 24px clamp(40px, 8vw, 104px); color: rgba(246, 241, 229, .78); font-size: 16px; }
+.wordmark { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-size: 16px; letter-spacing: 0.5px; text-decoration: none; white-space: nowrap; }
+.site-role { justify-self: center; margin: 0; color: var(--muted); font-size: 16px; letter-spacing: 0.3px; white-space: nowrap; }
 .site-role i { display: inline-block; width: 4px; height: 4px; margin: 0 8px 2px; border-radius: 50%; background: var(--accent); }
-.header-actions { display: flex; align-items: center; justify-self: end; gap: 18px; }
-.contact-link { border: 0; border-bottom: 1px solid var(--line); padding: 5px 0; background: transparent; cursor: none !important; }
-.contact-link span { color: var(--accent); }
+.header-actions { display: flex; align-items: center; justify-self: end; gap: 24px; font-size: 16px; }
+.contact-link { border: 0; border-bottom: 1px solid var(--line); padding: 5px 0; background: transparent; color: var(--ink); font-size: 16px; letter-spacing: 0.3px; cursor: none !important; transition: color 180ms ease, border-color 180ms ease; }
+.contact-link:hover { color: #ffffff; border-bottom-color: var(--accent); }
+.contact-link span { color: var(--accent); margin-left: 3px; font-size: 16px; }
 
 .cover-screen { position: relative; width: 100%; height: 100vh; height: 100svh; overflow: hidden; cursor: none !important; }
 .cover-screen, .cover-screen * { cursor: none !important; }
@@ -134,9 +135,12 @@ dialog::backdrop { background: rgba(10,10,8,.76); backdrop-filter: blur(5px); }
 .email-link { display: inline-block; margin-top: 35px; border-bottom: 1px solid #333; padding-bottom: 8px; color: #29261f; font-size: clamp(14px,2.2vw,20px); text-decoration: none; }
 
 @media (max-width: 700px) {
-	.site-header { display: flex; padding: 16px 18px; }
+	.site-header { display: flex; justify-content: space-between; padding: 16px 18px; font-size: 13px; }
+	.wordmark { font-size: 13px; }
 	.site-role { display: none; }
-	.header-actions { gap: 12px; }
+	.header-actions { gap: 14px; font-size: 13px; }
+	.contact-link { font-size: 13px; }
+	.contact-link span { font-size: 13px; }
 	.portfolio-view { padding: 67px 10px 14px; }
 	.book-stage { width: min(98vw, calc((100svh - 220px) * 1.422222)); min-width: 320px; }
 	.book-heading { padding: 0 5px; }
