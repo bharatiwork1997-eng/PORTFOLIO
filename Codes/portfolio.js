@@ -4,7 +4,7 @@ const spreads = [
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=6" },
-	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=2" }
+	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=3" }
 ];
 const spreadNavigationArtwork = [
 	".row-bottom",

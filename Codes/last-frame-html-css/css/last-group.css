@@ -62,11 +62,11 @@ body {
 	height: auto;
 	pointer-events: none;
 	transform-origin: 50% 50%;
-	transition: transform 250ms ease;
+	transition: transform 300ms ease;
 }
 
 .thankyou-stage:hover .shaving-deco {
-	transform: scale(1.08) rotate(-4deg);
+	transform: scale(1.02) rotate(-1deg);
 }
 
 .slider {
@@ -76,14 +76,14 @@ body {
 	right: -15px;
 	width: 135px;
 	height: 230px;
-	rotate: 29deg;
 	transform-origin: 35px 35px;
+	transform: rotate(29deg);
 	pointer-events: none;
-	transition: transform 250ms ease;
+	transition: transform 300ms ease;
 }
 
 .thankyou-stage:hover .slider {
-	transform: scale(1.08) rotate(34deg);
+	transform: scale(1.02) rotate(30.5deg);
 }
 
 .slider-img1 {
