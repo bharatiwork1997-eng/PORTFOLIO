@@ -62,6 +62,7 @@ const videoDialog = document.querySelector("#video-dialog");
 const lostVideo = document.querySelector("#lost-video");
 const toast = document.querySelector("#toast");
 const pencil = document.querySelector(".pencil-cursor");
+const arrowCursor = document.querySelector(".arrow-cursor");
 const pageName = document.querySelector("#page-name");
 const pageCount = document.querySelector("#page-count");
 const workspaceTools = document.querySelector("#workspace-tools");
@@ -110,6 +111,11 @@ function updateBookControls() {
 	document.querySelector("#previous-page").disabled = pageIndex === 0 || turnBusy;
 	document.querySelector("#next-page").disabled = pageIndex === spreads.length - 1 || turnBusy;
 	if (workspaceTools) workspaceTools.hidden = true;
+	if (pageIndex === 4 && cover.hidden) {
+		if (pencil) pencil.style.display = "none";
+	} else {
+		if (arrowCursor) arrowCursor.style.display = "none";
+	}
 }
 
 function prepareFrame(iframe, src) {
@@ -230,14 +236,27 @@ function handleFramePointer(iframe, event) {
 function movePencil(x, y) {
 	if (matchMedia("(hover: none)").matches) return;
 	document.body.classList.add("pencil-active");
-	pencil.style.left = `${x}px`;
-	pencil.style.top = `${y}px`;
-	pencil.style.display = "block";
+	if (pageIndex === 4 && cover.hidden) {
+		if (pencil) pencil.style.display = "none";
+		if (arrowCursor) {
+			arrowCursor.style.left = `${x}px`;
+			arrowCursor.style.top = `${y}px`;
+			arrowCursor.style.display = "block";
+		}
+	} else {
+		if (arrowCursor) arrowCursor.style.display = "none";
+		if (pencil) {
+			pencil.style.left = `${x}px`;
+			pencil.style.top = `${y}px`;
+			pencil.style.display = "block";
+		}
+	}
 }
 
 function hidePencil() {
 	document.body.classList.remove("pencil-active");
-	pencil.style.display = "none";
+	if (pencil) pencil.style.display = "none";
+	if (arrowCursor) arrowCursor.style.display = "none";
 }
 
 function setupCover() {
@@ -398,8 +417,9 @@ function finishGesture(event) {
 
 function openDialog(dialog) {
 	if (!dialog) return;
-	if (pencil && !dialog.contains(pencil)) {
-		dialog.appendChild(pencil);
+	const activeCursor = (pageIndex === 4 && cover.hidden) ? arrowCursor : pencil;
+	if (activeCursor && !dialog.contains(activeCursor)) {
+		dialog.appendChild(activeCursor);
 	}
 	if (!dialog.open) {
 		dialog.showModal();
@@ -409,6 +429,9 @@ function openDialog(dialog) {
 function handleDialogClose(dialog) {
 	if (pencil && dialog.contains(pencil)) {
 		document.body.appendChild(pencil);
+	}
+	if (arrowCursor && dialog.contains(arrowCursor)) {
+		document.body.appendChild(arrowCursor);
 	}
 }
 

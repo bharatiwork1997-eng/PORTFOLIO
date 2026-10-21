@@ -108,6 +108,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 
 .pencil-cursor { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 26px; height: 180px; pointer-events: none; transform-origin: 12.9px 3.3px; transform: translate(-12.9px, -3.3px) rotate(-26deg); }
 .pencil-cursor img { display: block; width: 100%; height: 100%; object-fit: fill; filter: drop-shadow(2px 6px 6px rgba(0, 0, 0, 0.25)); }
+.arrow-cursor { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 17px; height: 25px; pointer-events: none; transform-origin: 0 0; filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.45)); }
+.arrow-cursor img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
 *, *::before, *::after, html, body { cursor: none !important; }
 
 .toast { position: fixed; z-index: 25; right: 20px; bottom: 20px; padding: 10px 14px; border: 1px solid rgba(255,255,255,.2); background: #211f1b; color: white; font-size: 11px; opacity: 0; transform: translateY(8px); transition: opacity 180ms ease, transform 180ms ease; pointer-events: none; }
@@ -207,7 +209,7 @@ dialog::backdrop { background: rgba(10,10,8,.82); backdrop-filter: blur(8px); }
 	.story-intro, .resume-summary { font-size: 13px; }
 	.cover-note { bottom: 18px; font-size: 13px; }
 }
-@media (hover: none), (pointer: coarse) { .pencil-cursor { display: none; } }
+@media (hover: none), (pointer: coarse) { .pencil-cursor, .arrow-cursor { display: none !important; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 @media print {
 	body * { visibility: hidden !important; }
