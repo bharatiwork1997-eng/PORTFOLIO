@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=7" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=8" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=3" }
 ];
 const spreadNavigationArtwork = [
@@ -707,10 +707,13 @@ function addSticker() {
 	stickerSequence++;
 
 	const sizeSlider = doc?.querySelector("#collage-sticker-size") || stickerSize;
-	const size = Number(sizeSlider ? sizeSlider.value : 92);
+	const size = Number(sizeSlider ? sizeSlider.value : 160);
 
-	const x = Math.max(16, Math.min(layer.clientWidth - size - 16, (layer.clientWidth * 0.5) + (Math.random() * 50 - 25)));
-	const y = 18 + (Math.random() * 32);
+	const layerWidth = layer.clientWidth || 520;
+	const layerHeight = layer.clientHeight || 480;
+
+	const x = Math.max(16, Math.min(layerWidth - size - 16, (layerWidth * 0.5) - (size * 0.5) + (Math.random() * 50 - 25)));
+	const y = Math.max(18, Math.min(layerHeight - size - 18, (layerHeight * 0.22) + (Math.random() * 40 - 20)));
 
 	placeSticker(src, x, y, size, layer, true);
 	showToast("Sticker popped! Drag it to place on the sketchbook.");

@@ -44,7 +44,7 @@
 					<button type="button" class="sketch-btn collage-btn" data-tool="sticker">＋ Sticker</button>
 					<label class="collage-size-control" for="collage-sticker-size">
 						<span>Size</span>
-						<input id="collage-sticker-size" type="range" min="48" max="180" value="92">
+						<input id="collage-sticker-size" type="range" min="60" max="300" value="160">
 					</label>
 					<button type="button" class="sketch-btn collage-btn" data-tool="clear-collage">Clear collage</button>
 					<button type="button" class="sketch-btn collage-btn" data-tool="delete-sticker">Delete sticker</button>
@@ -216,13 +216,15 @@
 					}
 					const src = stickerBank[stickerIndex % stickerBank.length];
 					stickerIndex++;
-					const size = Number(sizeInput ? sizeInput.value : 92);
+					const size = Number(sizeInput ? sizeInput.value : 160);
 					const img = document.createElement("img");
 					img.src = src;
 					img.className = "collage-sticker popping";
 					img.style.position = "absolute";
-					img.style.left = `${Math.max(16, Math.min(collageArea.clientWidth - size - 16, (collageArea.clientWidth * 0.5) + (Math.random() * 50 - 25)))}px`;
-					img.style.top = `${18 + (Math.random() * 30)}px`;
+					const areaW = collageArea.clientWidth || 520;
+					const areaH = collageArea.clientHeight || 480;
+					img.style.left = `${Math.max(16, Math.min(areaW - size - 16, (areaW * 0.5) - (size * 0.5) + (Math.random() * 50 - 25)))}px`;
+					img.style.top = `${Math.max(18, Math.min(areaH - size - 18, (areaH * 0.22) + (Math.random() * 40 - 20)))}px`;
 					img.style.width = `${size}px`;
 					img.style.cursor = "grab";
 					img.style.zIndex = "40";
