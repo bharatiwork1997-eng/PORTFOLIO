@@ -7,25 +7,13 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=4" />
-
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=5" />
 </head>
 
 <body>
 	<div class="col">
-		<img src="assets/img1.png" class="img1" />
-		<img src="assets/img2.png" class="img2" />
-		<img src="assets/img3.png" class="img3" />
-		<img src="assets/img4.png" class="img4" />
-		<img src="assets/img5.png" class="img5" />
-		<img src="assets/_7cea1.png" class="_7cea1" />
-		<img src="assets/img6.png" class="img6" />
-		<img src="assets/img7.png" class="img7" />
-		<img src="assets/img8.png" class="img8" />
-		<object data="assets/rating.svg" class="rating" type="image/svg+xml"></object>
-		
 		<div class="col-top">
-			<img src="assets/img9.png" class="img9" />
+			<img src="assets/img9.png" class="img9 sticker-folder" id="sticker-folder" title="Tap to pop stickers!" alt="Pixelated yellow sticker folder" />
 			
 			<div class="row-top">
 				<p class="text-a text1">Sketch</p>
@@ -49,23 +37,7 @@
 			
 			<div class="collage-wrapper">
 				<div class="row-right">
-					<div class="text-input2 card-light"></div>
-					<img src="assets/text-input.png" class="text-input3" />
-					<img src="assets/img10.png" class="img10" />
-					<img src="assets/img11.png" class="img11" />
-					<img src="assets/img12.png" class="img12" />
-					<img src="assets/_7cea2.png" class="_7cea2" />
-					<img src="assets/img13.png" class="img13" />
-					<img src="assets/img14.png" class="img14" />
-					<img src="assets/img15.png" class="img15" />
-					
-					<div class="row-left">
-						<img src="assets/img16.png" class="img16" />
-						<img src="assets/img17.png" class="img17" />
-						<img src="assets/noun-pixeldocument.png" class="noun-pixeldocument" />
-					</div>
-					
-					<img src="assets/noun-download.png" class="noun-download" />
+					<div class="text-input2 card-light" id="collage-canvas-box"></div>
 				</div>
 
 				<div class="collage-tools">
@@ -143,32 +115,49 @@
 				layer.style.overflow = "hidden";
 				layer.className = "collage-layer";
 				collageArea.append(layer);
-				const stickerBank = ["img10.png", "img11.png", "img12.png", "_7cea2.png", "img13.png", "img14.png", "img15.png", "img16.png", "img17.png"]
-					.map((f) => `assets/${f}`);
+				const stickerBank = [
+					"img1.png", "img2.png", "img3.png", "img4.png", "img5.png",
+					"_7cea1.png", "_7cea2.png", "img6.png", "img7.png", "img8.png",
+					"img10.png", "img11.png", "img12.png", "img13.png", "img14.png",
+					"img15.png", "img16.png", "text-input.png", "rating.svg"
+				].map((f) => `assets/${f}`);
+				let stickerIndex = 0;
 				let activeSticker = null;
 				const sizeInput = document.querySelector("#collage-sticker-size");
 				const addStickerStandalone = () => {
-					const src = stickerBank[Math.floor(Math.random() * stickerBank.length)];
+					const folder = document.querySelector(".img9");
+					if (folder) {
+						folder.classList.remove("is-popping");
+						void folder.offsetWidth;
+						folder.classList.add("is-popping");
+					}
+					const src = stickerBank[stickerIndex % stickerBank.length];
+					stickerIndex++;
 					const size = Number(sizeInput ? sizeInput.value : 92);
 					const img = document.createElement("img");
 					img.src = src;
+					img.className = "collage-sticker popping";
 					img.style.position = "absolute";
-					img.style.left = `${Math.random() * Math.max(10, collageArea.clientWidth - size)}px`;
-					img.style.top = `${Math.random() * Math.max(10, collageArea.clientHeight - size)}px`;
+					img.style.left = `${Math.max(16, Math.min(collageArea.clientWidth - size - 16, (collageArea.clientWidth * 0.5) + (Math.random() * 50 - 25)))}px`;
+					img.style.top = `${18 + (Math.random() * 30)}px`;
 					img.style.width = `${size}px`;
 					img.style.cursor = "grab";
+					img.style.zIndex = "40";
 					img.addEventListener("pointerdown", (e) => {
 						e.preventDefault();
+						img.classList.remove("popping");
 						activeSticker = img;
+						img.style.cursor = "grabbing";
 						const startX = e.clientX;
 						const startY = e.clientY;
 						const initX = Number.parseFloat(img.style.left) || 0;
 						const initY = Number.parseFloat(img.style.top) || 0;
 						const onMove = (me) => {
-							img.style.left = `${initX + (me.clientX - startX)}px`;
-							img.style.top = `${initY + (me.clientY - startY)}px`;
+							img.style.left = `${Math.max(0, Math.min(collageArea.clientWidth - 30, initX + (me.clientX - startX)))}px`;
+							img.style.top = `${Math.max(0, Math.min(collageArea.clientHeight - 30, initY + (me.clientY - startY)))}px`;
 						};
 						const onUp = () => {
+							img.style.cursor = "grab";
 							document.removeEventListener("pointermove", onMove);
 							document.removeEventListener("pointerup", onUp);
 						};
@@ -185,7 +174,7 @@
 				});
 				const clearCollageBtn = document.querySelector(".collage-tools [data-tool='clear-collage']");
 				if (clearCollageBtn) clearCollageBtn.addEventListener("click", () => layer.replaceChildren());
-				const folder = document.querySelector(".img17");
+				const folder = document.querySelector(".img9");
 				if (folder) folder.addEventListener("click", addStickerStandalone);
 			}
 		}

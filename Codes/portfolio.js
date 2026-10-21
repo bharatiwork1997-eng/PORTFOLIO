@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=4" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=5" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html" }
 ];
 const spreadNavigationArtwork = [
@@ -128,14 +128,18 @@ function prepareFrame(iframe, src) {
 				body .collage-sticker:hover { filter:drop-shadow(3px 6px 4px rgba(0,0,0,.28)); }
 				body .img6 { animation:folio-cd-turn 13s linear infinite; }
 				body .interactive-card { cursor:pointer !important; transition:transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease; }
-				body button, body .sketch-btn, body .collage-btn, body .collage-size-control input { cursor:pointer !important; }
+				body button, body .sketch-btn, body .collage-btn, body .collage-size-control input, body .img9, body .sticker-folder { cursor:pointer !important; }
 				body .interactive-card:not(img):hover, body .interactive-card:not(img):focus-visible { transform:translateY(-5px) rotate(-.5deg); box-shadow:0 12px 24px rgba(30,24,18,.16); background-color:#fffdf6; }
 				body img.interactive-card:hover, body img.interactive-card:focus-visible { background:transparent; box-shadow:none; }
 				body .folio-canvas { position:absolute; z-index:8; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair !important; }
 				body .draw-area, body .collage-layer { cursor:auto !important; }
 				body .collage-layer { position:absolute; z-index:30; inset:0; overflow:hidden; pointer-events:none; }
 				body .collage-sticker { position:absolute; max-width:none; height:auto; cursor:grab !important; pointer-events:auto; touch-action:none; user-select:none; filter:drop-shadow(2px 4px 3px rgba(0,0,0,.22)); }
-				body .collage-sticker.is-selected { outline:1px dashed #cb5d5b; outline-offset:4px; }
+				body .collage-sticker.is-selected { outline:2px dashed #cb5d5b; outline-offset:4px; }
+				body .collage-sticker.popping { animation: sticker-pop-in 340ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+				body .img9.is-popping { animation: folder-tap 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+				@keyframes sticker-pop-in { 0% { transform: scale(0) translateY(-25px) rotate(-14deg); opacity: 0; } 70% { transform: scale(1.14) translateY(4px) rotate(4deg); opacity: 1; } 100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; } }
+				@keyframes folder-tap { 0% { transform: scale(1); } 35% { transform: scale(1.18, 0.84) rotate(-3deg); } 70% { transform: scale(0.92, 1.1) rotate(2deg); } 100% { transform: scale(1) rotate(0deg); } }
 				body .spread-arrow-hit-area { position:absolute; z-index:120; display:grid; width:88px; height:88px; padding:0; place-items:center; border:0; border-radius:50%; background:transparent; color:#262626; font:32px/1 'Geist Pixel'; cursor:pointer !important; }
 				body .spread-arrow-hit-area:hover { background:radial-gradient(circle, rgba(203,93,91,.12), transparent 68%); color:#b55351; }
 				body .spread-arrow-hit-area:focus-visible { outline:2px solid #cb5d5b; outline-offset:0; }
@@ -168,7 +172,7 @@ function prepareFrame(iframe, src) {
 				else if (pageIndex === 2 && target.closest(".text-top, .text-campaigns, .img6")) action = () => openStory("college");
 				else if (pageIndex === 3 && target.closest(".img2")) action = () => resumeDialog.showModal();
 				else if (pageIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
-				else if (pageIndex === 4 && target.closest(".img17, .noun-pixeldocument")) action = addSticker;
+				else if (pageIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder")) action = addSticker;
 				if (action) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
@@ -194,7 +198,7 @@ function prepareFrame(iframe, src) {
 
 function handleFramePointer(iframe, event) {
 	const rect = iframe.getBoundingClientRect();
-	if (event.target.closest(".spread-arrow-hit-area, button, .sketch-btn, .collage-btn, .collage-size-control, [role='button']")) {
+	if (event.target.closest(".spread-arrow-hit-area, button, .sketch-btn, .collage-btn, .collage-size-control, .img9, #sticker-folder, .sticker-folder, [role='button']")) {
 		hidePencil();
 		return;
 	}
@@ -460,13 +464,19 @@ function setupSketchbook(frameDocument) {
 	const layer = frameDocument.createElement("div");
 	layer.className = "collage-layer";
 	collageArea.append(layer);
-	stickerBank = ["img10.png", "img11.png", "img12.png", "_7cea2.png", "img13.png", "img14.png", "img15.png", "img16.png", "img17.png"]
-		.map((filename) => normalizeAssetUrl(`/sketchbook-frame 5-html-css/assets/${filename}`));
-	const folder = frameDocument.querySelector(".img17");
-	makeInteractive(folder, "Open the sticker folder", addSticker);
-	const folderGroup = frameDocument.querySelector(".row-left");
-	if (folderGroup) folderGroup.style.zIndex = "40";
-	if (folder) folder.style.zIndex = "41";
+	stickerBank = [
+		"img1.png", "img2.png", "img3.png", "img4.png", "img5.png",
+		"_7cea1.png", "_7cea2.png", "img6.png", "img7.png", "img8.png",
+		"img10.png", "img11.png", "img12.png", "img13.png", "img14.png",
+		"img15.png", "img16.png", "text-input.png", "rating.svg"
+	].map((filename) => normalizeAssetUrl(`/sketchbook-frame 5-html-css/assets/${filename}`));
+
+	const yellowFolder = frameDocument.querySelector("#sticker-folder, .img9");
+	if (yellowFolder) {
+		makeInteractive(yellowFolder, "Tap the folder to pop out a sticker", () => {
+			addSticker();
+		});
+	}
 
 	const stickerBtn = frameDocument.querySelector(".collage-tools [data-tool='sticker']");
 	if (stickerBtn) {
@@ -537,53 +547,105 @@ function normalizeAssetUrl(source) {
 	return encodeURI(rooted);
 }
 
+let stickerSequence = 0;
+
 function addSticker() {
 	const layer = activeFrameDocument?.querySelector(".collage-layer");
 	if (!layer) return;
-	const src = stickerBank[Math.floor(Math.random() * stickerBank.length)];
+
+	const folder = activeFrameDocument?.querySelector("#sticker-folder, .img9");
+	if (folder) {
+		folder.classList.remove("is-popping");
+		void folder.offsetWidth;
+		folder.classList.add("is-popping");
+	}
+
+	const src = stickerBank[stickerSequence % stickerBank.length];
+	stickerSequence++;
+
 	const sizeSlider = activeFrameDocument?.querySelector("#collage-sticker-size") || stickerSize;
 	const size = Number(sizeSlider ? sizeSlider.value : 92);
-	const x = Math.max(8, Math.random() * Math.max(8, layer.clientWidth - size));
-	const y = Math.max(8, Math.random() * Math.max(8, layer.clientHeight - size));
-	placeSticker(src, x, y, size, layer);
-	showToast("A new sticker is ready to move.");
+
+	const x = Math.max(16, Math.min(layer.clientWidth - size - 16, (layer.clientWidth * 0.5) + (Math.random() * 50 - 25)));
+	const y = 18 + (Math.random() * 32);
+
+	placeSticker(src, x, y, size, layer, true);
+	showToast("Sticker popped! Drag it to place on the sketchbook.");
 }
 
-function placeSticker(src, x, y, size, layer) {
+function placeSticker(src, x, y, size, layer, isPopping = false) {
 	const sticker = activeFrameDocument.createElement("img");
-	sticker.className = "collage-sticker";
+	sticker.className = `collage-sticker ${isPopping ? "popping" : ""}`;
 	sticker.src = src;
 	sticker.alt = "Movable collage sticker";
 	sticker.draggable = false;
 	sticker.style.left = `${x}px`;
 	sticker.style.top = `${y}px`;
 	sticker.style.width = `${size}px`;
+
+	let highestZ = 35;
+	activeFrameDocument.querySelectorAll(".collage-sticker").forEach((s) => {
+		const z = parseInt(s.style.zIndex || 30, 10);
+		if (z > highestZ) highestZ = z;
+	});
+	sticker.style.zIndex = String(highestZ + 1);
+
 	sticker.addEventListener("pointerdown", (event) => {
 		event.preventDefault();
+		sticker.classList.remove("popping");
 		selectSticker(sticker);
+
+		let maxZ = 35;
+		activeFrameDocument.querySelectorAll(".collage-sticker").forEach((s) => {
+			const z = parseInt(s.style.zIndex || 30, 10);
+			if (z > maxZ) maxZ = z;
+		});
+		sticker.style.zIndex = String(maxZ + 1);
+		sticker.style.cursor = "grabbing";
+
 		const startX = event.clientX;
 		const startY = event.clientY;
-		const initialX = Number.parseFloat(sticker.style.left);
-		const initialY = Number.parseFloat(sticker.style.top);
+		const initialX = Number.parseFloat(sticker.style.left) || 0;
+		const initialY = Number.parseFloat(sticker.style.top) || 0;
 		const scale = 1280 / bookStage.clientWidth;
 		const frameDocument = activeFrameDocument;
+
 		const move = (moveEvent) => {
-			sticker.style.left = `${Math.max(0, initialX + (moveEvent.clientX - startX) * scale)}px`;
-			sticker.style.top = `${Math.max(0, initialY + (moveEvent.clientY - startY) * scale)}px`;
+			const currentWidth = Number.parseFloat(sticker.style.width) || size;
+			const currentHeight = currentWidth * (sticker.naturalHeight / (sticker.naturalWidth || 1)) || currentWidth;
+			const newX = initialX + (moveEvent.clientX - startX) * scale;
+			const newY = initialY + (moveEvent.clientY - startY) * scale;
+
+			const boundedX = Math.max(0, Math.min(layer.clientWidth - (currentWidth * 0.3), newX));
+			const boundedY = Math.max(0, Math.min(layer.clientHeight - (currentHeight * 0.3), newY));
+
+			sticker.style.left = `${boundedX}px`;
+			sticker.style.top = `${boundedY}px`;
 		};
+
 		const finish = () => {
+			sticker.style.cursor = "grab";
 			frameDocument.removeEventListener("pointermove", move);
 			frameDocument.removeEventListener("pointerup", finish);
 			frameDocument.removeEventListener("pointercancel", finish);
 			persistStickers(layer);
 		};
+
 		frameDocument.addEventListener("pointermove", move);
 		frameDocument.addEventListener("pointerup", finish);
 		frameDocument.addEventListener("pointercancel", finish);
 	});
-	sticker.addEventListener("click", () => selectSticker(sticker));
+
+	sticker.addEventListener("click", (e) => {
+		e.stopPropagation();
+		selectSticker(sticker);
+	});
+
 	layer.append(sticker);
 	selectSticker(sticker);
+	if (isPopping) {
+		setTimeout(() => sticker.classList.remove("popping"), 400);
+	}
 	persistStickers(layer);
 }
 
