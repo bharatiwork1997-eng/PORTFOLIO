@@ -230,13 +230,22 @@ function prepareFrame(iframe, src) {
 function handleFramePointer(iframe, event) {
 	if (iframe !== activeFrame) return;
 	const rect = iframe.getBoundingClientRect();
-	movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
+	const iframeX = event.clientX;
+	const isSketch = (pageIndex === 4) && (
+		iframeX < 640 ||
+		Boolean(event.target && event.target.closest && event.target.closest(".sketch-wrapper, .text-input1, .sketch-tools, .text1, .text2, .draw-btn, .clear-btn, .folio-canvas"))
+	);
+	const pageX = rect.left + event.clientX * rect.width / 1280;
+	const pageY = rect.top + event.clientY * rect.height / 900;
+	movePencil(pageX, pageY, isSketch);
 }
 
-function movePencil(x, y) {
+function movePencil(x, y, isSketch = null) {
 	if (matchMedia("(hover: none)").matches) return;
 	document.body.classList.add("pencil-active");
-	if (pageIndex === 4 && cover.hidden) {
+	const onSketchSide = isSketch !== null ? isSketch : (x < window.innerWidth * 0.5);
+	const useArrow = (pageIndex === 4 && cover.hidden && !onSketchSide);
+	if (useArrow) {
 		if (pencil) pencil.style.display = "none";
 		if (arrowCursor) {
 			arrowCursor.style.left = `${x}px`;
@@ -624,7 +633,7 @@ function setupSketchbook(frameDocument) {
 		canvas.setPointerCapture(event.pointerId);
 		const iframe = frameDocument.defaultView?.frameElement || activeFrame;
 		const rect = iframe.getBoundingClientRect();
-		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
+		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900, true);
 		const pos = getPos(event);
 		lastX = pos.x;
 		lastY = pos.y;
@@ -633,7 +642,7 @@ function setupSketchbook(frameDocument) {
 	canvas.addEventListener("pointermove", (event) => {
 		const iframe = frameDocument.defaultView?.frameElement || activeFrame;
 		const rect = iframe.getBoundingClientRect();
-		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
+		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900, true);
 		if (!drawing) return;
 		const pos = getPos(event);
 		renderPencilSegment(context, lastX, lastY, pos.x, pos.y);
