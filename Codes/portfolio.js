@@ -4,7 +4,7 @@ const spreads = [
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=9" },
-	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=4" }
+	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=5" }
 ];
 const spreadNavigationArtwork = [
 	".row-bottom",
@@ -188,7 +188,19 @@ function prepareFrame(iframe, src) {
 			}, true);
 			frameDocument.addEventListener("click", (event) => {
 				const target = event.target;
-				if (frameIndex === 5 && target.closest(".title-thankyou, .slider, .shaving-deco, .thankyou-stage")) contactDialog.showModal();
+				if (frameIndex === 5) {
+					if (target.closest("[data-channel='email']")) {
+						event.preventDefault();
+						contactDialog.showModal();
+						return;
+					}
+					if (target.closest(".thankyou-link")) {
+						return;
+					}
+					if (target.closest(".title-thankyou, .slider, .shaving-deco, .thankyou-stage")) {
+						contactDialog.showModal();
+					}
+				}
 			});
 			activeFrameDocument = frameDocument;
 			setupSpreadInteractions(frameDocument, frameIndex);
