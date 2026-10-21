@@ -398,7 +398,7 @@ function setupSpreadInteractions(frameDocument) {
 
 function renderPencilDot(context, x, y) {
 	context.save();
-	context.fillStyle = "rgba(42, 44, 48, 0.75)";
+	context.fillStyle = "rgba(92, 96, 102, 0.65)";
 	context.beginPath();
 	context.arc(x, y, 1.8, 0, Math.PI * 2);
 	context.fill();
@@ -406,8 +406,8 @@ function renderPencilDot(context, x, y) {
 	for (let g = 0; g < 8; g++) {
 		const angle = Math.random() * Math.PI * 2;
 		const radius = Math.random() * 2.5;
-		const alpha = 0.2 + Math.random() * 0.45;
-		context.fillStyle = `rgba(58, 60, 64, ${alpha.toFixed(2)})`;
+		const alpha = 0.15 + Math.random() * 0.35;
+		context.fillStyle = `rgba(120, 124, 130, ${alpha.toFixed(2)})`;
 		context.fillRect(
 			x + Math.cos(angle) * radius - 0.6,
 			y + Math.sin(angle) * radius - 0.6,
@@ -424,11 +424,11 @@ function renderPencilSegment(context, x0, y0, x1, y1) {
 	const dist = Math.hypot(dx, dy);
 
 	context.save();
-	// Core line for continuous stroke body
+	// Core line for continuous stroke body in light graphite grey
 	context.lineCap = "round";
 	context.lineJoin = "round";
-	context.strokeStyle = "rgba(48, 50, 54, 0.55)";
-	context.lineWidth = 3.6;
+	context.strokeStyle = "rgba(108, 112, 118, 0.45)";
+	context.lineWidth = 3.4;
 	context.beginPath();
 	context.moveTo(x0, y0);
 	context.lineTo(x1, y1);
@@ -445,8 +445,8 @@ function renderPencilSegment(context, x0, y0, x1, y1) {
 		// Micro core jitter
 		const jx = (Math.random() - 0.5) * 1.5;
 		const jy = (Math.random() - 0.5) * 1.5;
-		const coreAlpha = 0.35 + Math.random() * 0.45;
-		context.fillStyle = `rgba(38, 40, 44, ${coreAlpha.toFixed(2)})`;
+		const coreAlpha = 0.28 + Math.random() * 0.32;
+		context.fillStyle = `rgba(92, 96, 102, ${coreAlpha.toFixed(2)})`;
 		context.fillRect(cx + jx - 1, cy + jy - 1, 2.2, 2.2);
 
 		// Peripheral tooth flecks
@@ -454,8 +454,8 @@ function renderPencilSegment(context, x0, y0, x1, y1) {
 		for (let g = 0; g < grainCount; g++) {
 			const angle = Math.random() * Math.PI * 2;
 			const radius = Math.random() * 2.5;
-			const grainAlpha = 0.18 + Math.random() * 0.42;
-			context.fillStyle = `rgba(58, 60, 64, ${grainAlpha.toFixed(2)})`;
+			const grainAlpha = 0.15 + Math.random() * 0.35;
+			context.fillStyle = `rgba(120, 124, 130, ${grainAlpha.toFixed(2)})`;
 			context.fillRect(
 				cx + Math.cos(angle) * radius - 0.6,
 				cy + Math.sin(angle) * radius - 0.6,
@@ -510,12 +510,16 @@ function setupSketchbook(frameDocument) {
 	canvas.addEventListener("pointerdown", (event) => {
 		drawing = true;
 		canvas.setPointerCapture(event.pointerId);
+		const rect = currentFrame.getBoundingClientRect();
+		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
 		const pos = getPos(event);
 		lastX = pos.x;
 		lastY = pos.y;
 		renderPencilDot(context, lastX, lastY);
 	});
 	canvas.addEventListener("pointermove", (event) => {
+		const rect = currentFrame.getBoundingClientRect();
+		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
 		if (!drawing) return;
 		const pos = getPos(event);
 		renderPencilSegment(context, lastX, lastY, pos.x, pos.y);
