@@ -87,7 +87,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .book-stage { position: relative; width: min(96vw, 1280px, calc((100svh - 160px) * 1.422222)); min-width: min(100%, 360px); margin: 0 auto; aspect-ratio: 1280 / 900; filter: drop-shadow(0 24px 34px rgba(0,0,0,.35)); }
 .book-scene { position: absolute; left: 0; top: 0; width: 1280px; height: 900px; transform: scale(var(--book-scale, 1)); transform-origin: top left; border-radius: 3px; }
 .book-scene iframe { display: block; border: 0; background: #161614; }
-.current-spread { position: absolute; inset: 0; z-index: 2; width: 1280px; height: 900px; opacity: 1; }
+.current-spread { position: absolute; inset: 0; z-index: 2; width: 1280px; height: 900px; opacity: 1; transition: opacity 180ms ease; }
 .underlay-right { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; overflow: hidden; opacity: 0; }
 .underlay-right iframe { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .book-scene.is-changing .current-spread { opacity: 0; }

@@ -248,24 +248,26 @@ function setupCover() {
 function openBook() {
 	if (openingBook || !portfolio.hidden) return;
 	openingBook = true;
+	wheelLocked = true;
 	cover.classList.add("is-opening");
-	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 760;
+	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 620;
 	setTimeout(async () => {
-	pageIndex = 0;
-	await prepareFrame(currentFrame, spreads[pageIndex].src);
-	cover.hidden = true;
-	cover.classList.remove("is-opening");
-	portfolio.hidden = false;
-	fitBookScene();
-	updateBookControls();
-	bookStage.scrollIntoView({ behavior: "smooth", block: "center" });
-	openingBook = false;
+		pageIndex = 0;
+		await prepareFrame(currentFrame, spreads[pageIndex].src);
+		cover.hidden = true;
+		cover.classList.remove("is-opening");
+		portfolio.hidden = false;
+		fitBookScene();
+		updateBookControls();
+		bookStage.scrollIntoView({ behavior: "smooth", block: "center" });
+		openingBook = false;
+		setTimeout(() => { wheelLocked = false; }, 350);
 	}, duration);
 }
 
 function returnHome() {
 	clearTimeout(wheelUnlockTimer);
-	wheelLocked = false;
+	wheelLocked = true;
 	openingBook = false;
 	cover.classList.remove("is-opening");
 	cover.hidden = false;
@@ -275,49 +277,58 @@ function returnHome() {
 	bookScene.classList.remove("is-changing");
 	updateBookControls();
 	window.scrollTo({ top: 0, behavior: "smooth" });
+	setTimeout(() => { wheelLocked = false; }, 350);
 }
 
 function handleWheelNavigation(event) {
-	if (Math.abs(event.deltaY) < 12) return;
-	if (storyDialog.open || resumeDialog.open || contactDialog.open) return;
-	if (wheelLocked) {
-		event.preventDefault();
-		clearTimeout(wheelUnlockTimer);
-		wheelUnlockTimer = setTimeout(() => { wheelLocked = false; }, 450);
-		return;
-	}
-	const direction = Math.sign(event.deltaY);
-	let navigated = false;
-	if (!cover.hidden) {
-		if (direction > 0) {
-			openBook();
-			navigated = true;
-		}
-	} else if (!portfolio.hidden && !turnBusy && pageIndex + direction >= 0 && pageIndex + direction < spreads.length) {
-		turnPage(direction);
-		navigated = true;
-	}
-	if (!navigated) return;
+	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open) return;
+
+	// Pick dominant delta (supports vertical wheel and horizontal swipe)
+	const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+	if (Math.abs(delta) < 12 && event.deltaMode === 0) return;
+
 	event.preventDefault();
+
+	// If currently turning or within cooldown lock, ignore trailing events WITHOUT extending cooldown
+	if (wheelLocked || turnBusy || openingBook) return;
+
+	const direction = delta > 0 ? 1 : -1;
+
+	// Lock immediately for this gesture and do NOT let trailing events extend this timer
 	wheelLocked = true;
 	clearTimeout(wheelUnlockTimer);
-	wheelUnlockTimer = setTimeout(() => { wheelLocked = false; }, 850);
+	wheelUnlockTimer = setTimeout(() => {
+		wheelLocked = false;
+	}, 400);
+
+	if (!cover.hidden) {
+		if (direction > 0) openBook();
+	} else if (!portfolio.hidden) {
+		if (pageIndex === 0 && direction < 0) {
+			returnHome();
+		} else if (pageIndex + direction >= 0 && pageIndex + direction < spreads.length) {
+			turnPage(direction);
+		}
+	}
 }
 
 async function turnPage(direction) {
 	const nextIndex = pageIndex + direction;
 	if (turnBusy || nextIndex < 0 || nextIndex >= spreads.length) return;
 	turnBusy = true;
-	updateBookControls();
 	const nextSpread = spreads[nextIndex];
-	await prepareFrame(nextFrame, nextSpread.src);
-	bookScene.classList.add("is-changing");
 	pageIndex = nextIndex;
 	updateBookControls();
+
+	bookScene.classList.add("is-changing");
+	await new Promise((resolve) => setTimeout(resolve, 80));
+
 	await prepareFrame(currentFrame, nextSpread.src);
 	bookScene.classList.remove("is-changing");
-	await new Promise((resolve) => setTimeout(resolve, 180));
+
+	await new Promise((resolve) => setTimeout(resolve, 140));
 	turnBusy = false;
+	wheelLocked = false;
 	updateBookControls();
 }
 
