@@ -3,8 +3,8 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=8" },
-	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=3" }
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=9" },
+	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=4" }
 ];
 const spreadNavigationArtwork = [
 	".row-bottom",
@@ -118,32 +118,28 @@ function prepareFrame(iframe, src) {
 			if (!frameDocument) { resolve(); return; }
 			const style = frameDocument.createElement("style");
 			style.textContent = `
+				html, body, *, *::before, *::after { cursor:none !important; }
 				html, body { width:1280px !important; height:900px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
 				body { padding:28px 24px !important; }
-				body, body * { cursor:none !important; }
 				body img, body object { transition:transform 220ms ease, filter 220ms ease; }
 				body img:not(.collage-sticker):hover { filter:drop-shadow(0 4px 5px rgba(34,25,17,.16)); }
 				body img:not(.collage-sticker):not(.img6):hover { transform:translateY(-3px) scale(1.025); }
 				body img:not(.collage-sticker):not(.img6):active { transform:scale(.975); }
 				body .collage-sticker:hover { filter:none !important; }
 				body .img6 { animation:folio-cd-turn 13s linear infinite; }
-				body .interactive-card { cursor:pointer !important; transition:transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease; }
-				body button, body .sketch-btn, body .collage-btn, body .collage-size-control input, body .img9, body .sticker-folder { cursor:pointer !important; }
+				body .interactive-card { transition:transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease; }
 				body .interactive-card:not(img):hover, body .interactive-card:not(img):focus-visible { transform:translateY(-5px) rotate(-.5deg); box-shadow:0 12px 24px rgba(30,24,18,.16); background-color:#fffdf6; }
 				body img.interactive-card:hover, body img.interactive-card:focus-visible { background:transparent; box-shadow:none; }
-				body .folio-canvas { position:absolute; z-index:8; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair !important; }
-				body .draw-area, body .collage-layer { cursor:auto !important; }
+				body .folio-canvas { position:absolute; z-index:8; inset:0; width:100%; height:100%; touch-action:none; }
 				body .collage-layer { position:absolute; z-index:30; inset:0; overflow:hidden; pointer-events:none; }
-				body .collage-sticker { position:absolute; max-width:none; height:auto; cursor:grab !important; pointer-events:auto; touch-action:none; user-select:none; filter:none !important; box-shadow:none !important; outline:none !important; }
+				body .collage-sticker { position:absolute; max-width:none; height:auto; pointer-events:auto; touch-action:none; user-select:none; filter:none !important; box-shadow:none !important; outline:none !important; }
 				body .collage-sticker.is-selected { outline:none !important; border:none !important; box-shadow:none !important; }
 				body .collage-sticker.popping { animation: sticker-pop-in 340ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 				body .img9.is-popping { animation: folder-tap 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-				@keyframes sticker-pop-in { 0% { transform: scale(0) translateY(-25px) rotate(-14deg); opacity: 0; } 70% { transform: scale(1.14) translateY(4px) rotate(4deg); opacity: 1; } 100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; } }
-				@keyframes folder-tap { 0% { transform: scale(1); } 35% { transform: scale(1.18, 0.84) rotate(-3deg); } 70% { transform: scale(0.92, 1.1) rotate(2deg); } 100% { transform: scale(1) rotate(0deg); } }
-				body .spread-arrow-hit-area { position:absolute; z-index:120; display:grid; width:88px; height:88px; padding:0; place-items:center; border:0; border-radius:50%; background:transparent; color:#262626; font:32px/1 'Geist Pixel'; cursor:pointer !important; }
+				body .spread-arrow-hit-area { position:absolute; z-index:120; display:grid; width:88px; height:88px; padding:0; place-items:center; border:0; border-radius:50%; background:transparent; color:#262626; font:32px/1 'Geist Pixel'; }
 				body .spread-arrow-hit-area:hover { background:radial-gradient(circle, rgba(203,93,91,.12), transparent 68%); color:#b55351; }
 				body .spread-arrow-hit-area:focus-visible { outline:2px solid #cb5d5b; outline-offset:0; }
-				body .sticker-folder-trigger { position:absolute; z-index:18; top:-8px; left:32px; width:120px; height:160px; border:0; background:transparent; cursor:pointer !important; }
+				body .sticker-folder-trigger { position:absolute; z-index:18; top:-8px; left:32px; width:120px; height:160px; border:0; background:transparent; }
 				@keyframes folio-cd-turn { to { transform:rotate(360deg); } }
 				@media (prefers-reduced-motion:reduce) { body img, body object { transition:none !important; } body .img6 { animation:none !important; } }
 			`;
@@ -208,14 +204,6 @@ function prepareFrame(iframe, src) {
 function handleFramePointer(iframe, event) {
 	if (iframe !== activeFrame) return;
 	const rect = iframe.getBoundingClientRect();
-	if (event.target.closest(".spread-arrow-hit-area, button, .sketch-btn, .collage-btn, .collage-size-control, .img9, #sticker-folder, .sticker-folder, [role='button']")) {
-		hidePencil();
-		return;
-	}
-	if (pageIndex === 4 && event.clientX > 640) {
-		hidePencil();
-		return;
-	}
 	movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
 }
 
@@ -239,8 +227,8 @@ function setupCover() {
 			if (!frameDocument || !frameDocument.body) return;
 			const style = frameDocument.createElement("style");
 			style.textContent = `
-				html, body { width:1920px !important; height:1080px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; cursor:none !important; }
-				body, body * { cursor:none !important; user-select:none !important; }
+				html, body, *, *::before, *::after { cursor:none !important; user-select:none !important; }
+				html, body { width:1920px !important; height:1080px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
 			`;
 			frameDocument.head.append(style);
 			frameDocument.documentElement.style.overflow = "hidden";
@@ -748,7 +736,6 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 			if (z > maxZ) maxZ = z;
 		});
 		sticker.style.zIndex = String(maxZ + 1);
-		sticker.style.cursor = "grabbing";
 
 		const startX = event.clientX;
 		const startY = event.clientY;
@@ -770,7 +757,6 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 		};
 
 		const finish = () => {
-			sticker.style.cursor = "grab";
 			frameDocument.removeEventListener("pointermove", move);
 			frameDocument.removeEventListener("pointerup", finish);
 			frameDocument.removeEventListener("pointercancel", finish);

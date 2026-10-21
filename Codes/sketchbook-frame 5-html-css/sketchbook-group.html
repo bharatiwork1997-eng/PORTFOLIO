@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=7" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=8" />
 </head>
 
 <body>
@@ -137,7 +137,6 @@
 				canvas.style.inset = "0";
 				canvas.style.width = "100%";
 				canvas.style.height = "100%";
-				canvas.style.cursor = "crosshair";
 				sketchArea.append(canvas);
 				const ctx = canvas.getContext("2d");
 				let drawing = false;
@@ -226,13 +225,11 @@
 					img.style.left = `${Math.max(16, Math.min(areaW - size - 16, (areaW * 0.5) - (size * 0.5) + (Math.random() * 50 - 25)))}px`;
 					img.style.top = `${Math.max(18, Math.min(areaH - size - 18, (areaH * 0.22) + (Math.random() * 40 - 20)))}px`;
 					img.style.width = `${size}px`;
-					img.style.cursor = "grab";
 					img.style.zIndex = "40";
 					img.addEventListener("pointerdown", (e) => {
 						e.preventDefault();
 						img.classList.remove("popping");
 						activeSticker = img;
-						img.style.cursor = "grabbing";
 						const startX = e.clientX;
 						const startY = e.clientY;
 						const initX = Number.parseFloat(img.style.left) || 0;
@@ -242,7 +239,6 @@
 							img.style.top = `${Math.max(0, Math.min(collageArea.clientHeight - 30, initY + (me.clientY - startY)))}px`;
 						};
 						const onUp = () => {
-							img.style.cursor = "grab";
 							document.removeEventListener("pointermove", onMove);
 							document.removeEventListener("pointerup", onUp);
 						};
