@@ -928,11 +928,14 @@ document.querySelectorAll("[data-tool]").forEach((button) => button.addEventList
 		case "share": shareCollage(); break;
 	}
 }));
-stickerSize.addEventListener("input", () => {
-	if (!activeSticker) return;
-	activeSticker.style.width = `${stickerSize.value}px`;
-	persistStickers(activeFrameDocument?.querySelector(".collage-layer"));
-});
+if (stickerSize) {
+	stickerSize.addEventListener("input", () => {
+		if (!activeSticker) return;
+		activeSticker.style.width = `${stickerSize.value}px`;
+		persistStickers(activeFrameDocument?.querySelector(".collage-layer"));
+	});
+}
+document.addEventListener("pointerenter", (event) => movePencil(event.clientX, event.clientY));
 document.addEventListener("pointermove", (event) => movePencil(event.clientX, event.clientY));
 document.addEventListener("pointerleave", hidePencil);
 document.addEventListener("keydown", (event) => {
