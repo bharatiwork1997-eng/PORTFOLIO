@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=5" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=6" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=2" }
 ];
 const spreadNavigationArtwork = [
@@ -122,10 +122,10 @@ function prepareFrame(iframe, src) {
 				body { padding:28px 24px !important; }
 				body, body * { cursor:none !important; }
 				body img, body object { transition:transform 220ms ease, filter 220ms ease; }
-				body img:hover { filter:drop-shadow(0 4px 5px rgba(34,25,17,.16)); }
+				body img:not(.collage-sticker):hover { filter:drop-shadow(0 4px 5px rgba(34,25,17,.16)); }
 				body img:not(.collage-sticker):not(.img6):hover { transform:translateY(-3px) scale(1.025); }
 				body img:not(.collage-sticker):not(.img6):active { transform:scale(.975); }
-				body .collage-sticker:hover { filter:drop-shadow(3px 6px 4px rgba(0,0,0,.28)); }
+				body .collage-sticker:hover { filter:none !important; }
 				body .img6 { animation:folio-cd-turn 13s linear infinite; }
 				body .interactive-card { cursor:pointer !important; transition:transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease; }
 				body button, body .sketch-btn, body .collage-btn, body .collage-size-control input, body .img9, body .sticker-folder { cursor:pointer !important; }
@@ -134,7 +134,7 @@ function prepareFrame(iframe, src) {
 				body .folio-canvas { position:absolute; z-index:8; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair !important; }
 				body .draw-area, body .collage-layer { cursor:auto !important; }
 				body .collage-layer { position:absolute; z-index:30; inset:0; overflow:hidden; pointer-events:none; }
-				body .collage-sticker { position:absolute; max-width:none; height:auto; cursor:grab !important; pointer-events:auto; touch-action:none; user-select:none; filter:drop-shadow(2px 4px 3px rgba(0,0,0,.22)); }
+				body .collage-sticker { position:absolute; max-width:none; height:auto; cursor:grab !important; pointer-events:auto; touch-action:none; user-select:none; filter:none !important; box-shadow:none !important; }
 				body .collage-sticker.is-selected { outline:2px dashed #cb5d5b; outline-offset:4px; }
 				body .collage-sticker.popping { animation: sticker-pop-in 340ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 				body .img9.is-popping { animation: folder-tap 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275); }
