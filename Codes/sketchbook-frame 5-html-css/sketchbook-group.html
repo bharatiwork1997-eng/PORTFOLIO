@@ -62,6 +62,73 @@
 
 	<script>
 		if (window.self === window.top) {
+			function renderPencilDot(context, x, y) {
+				context.save();
+				context.fillStyle = "rgba(188, 68, 70, 0.75)";
+				context.beginPath();
+				context.arc(x, y, 1.8, 0, Math.PI * 2);
+				context.fill();
+
+				for (let g = 0; g < 8; g++) {
+					const angle = Math.random() * Math.PI * 2;
+					const radius = Math.random() * 2.5;
+					const alpha = 0.2 + Math.random() * 0.45;
+					context.fillStyle = `rgba(199, 73, 77, ${alpha.toFixed(2)})`;
+					context.fillRect(
+						x + Math.cos(angle) * radius - 0.6,
+						y + Math.sin(angle) * radius - 0.6,
+						1.2,
+						1.2
+					);
+				}
+				context.restore();
+			}
+
+			function renderPencilSegment(context, x0, y0, x1, y1) {
+				const dx = x1 - x0;
+				const dy = y1 - y0;
+				const dist = Math.hypot(dx, dy);
+
+				context.save();
+				context.lineCap = "round";
+				context.lineJoin = "round";
+				context.strokeStyle = "rgba(199, 73, 77, 0.55)";
+				context.lineWidth = 3.6;
+				context.beginPath();
+				context.moveTo(x0, y0);
+				context.lineTo(x1, y1);
+				context.stroke();
+
+				const step = 1.0;
+				const steps = Math.min(100, Math.max(1, Math.ceil(dist / step)));
+				for (let i = 0; i <= steps; i++) {
+					const t = i / steps;
+					const cx = x0 + dx * t;
+					const cy = y0 + dy * t;
+
+					const jx = (Math.random() - 0.5) * 1.5;
+					const jy = (Math.random() - 0.5) * 1.5;
+					const coreAlpha = 0.35 + Math.random() * 0.45;
+					context.fillStyle = `rgba(186, 66, 68, ${coreAlpha.toFixed(2)})`;
+					context.fillRect(cx + jx - 1, cy + jy - 1, 2.2, 2.2);
+
+					const grainCount = 3 + Math.floor(Math.random() * 3);
+					for (let g = 0; g < grainCount; g++) {
+						const angle = Math.random() * Math.PI * 2;
+						const radius = Math.random() * 2.5;
+						const grainAlpha = 0.18 + Math.random() * 0.42;
+						context.fillStyle = `rgba(199, 73, 77, ${grainAlpha.toFixed(2)})`;
+						context.fillRect(
+							cx + Math.cos(angle) * radius - 0.6,
+							cy + Math.sin(angle) * radius - 0.6,
+							1.2,
+							1.2
+						);
+					}
+				}
+				context.restore();
+			}
+
 			const sketchArea = document.querySelector(".text-input1");
 			if (sketchArea && !sketchArea.querySelector("canvas")) {
 				sketchArea.style.position = "relative";
@@ -74,6 +141,8 @@
 				sketchArea.append(canvas);
 				const ctx = canvas.getContext("2d");
 				let drawing = false;
+				let lastX = 0;
+				let lastY = 0;
 				const resize = () => {
 					const prev = canvas.width ? canvas.toDataURL() : "";
 					const r = window.devicePixelRatio || 1;
@@ -82,29 +151,43 @@
 					canvas.width = Math.max(1, Math.round(w * r));
 					canvas.height = Math.max(1, Math.round(h * r));
 					ctx.setTransform(r, 0, 0, r, 0, 0);
-					ctx.lineCap = "round";
-					ctx.lineJoin = "round";
-					ctx.strokeStyle = "#c7484b";
-					ctx.lineWidth = 4;
 					if (prev) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = prev; }
 				};
 				resize();
 				window.addEventListener("resize", resize);
+
+				const getPos = (e) => {
+					if (typeof e.offsetX === "number" && !isNaN(e.offsetX)) {
+						return { x: e.offsetX, y: e.offsetY };
+					}
+					const rect = canvas.getBoundingClientRect();
+					return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+				};
+
 				canvas.addEventListener("pointerdown", (e) => {
 					drawing = true;
 					canvas.setPointerCapture(e.pointerId);
-					ctx.beginPath();
-					ctx.moveTo(e.offsetX, e.offsetY);
+					const pos = getPos(e);
+					lastX = pos.x;
+					lastY = pos.y;
+					renderPencilDot(ctx, lastX, lastY);
 				});
 				canvas.addEventListener("pointermove", (e) => {
 					if (!drawing) return;
-					ctx.lineTo(e.offsetX, e.offsetY);
-					ctx.stroke();
+					const pos = getPos(e);
+					renderPencilSegment(ctx, lastX, lastY, pos.x, pos.y);
+					lastX = pos.x;
+					lastY = pos.y;
 				});
 				canvas.addEventListener("pointerup", () => { drawing = false; });
 				canvas.addEventListener("pointercancel", () => { drawing = false; });
 				const clearBtn = document.querySelector(".clear-btn");
-				if (clearBtn) clearBtn.addEventListener("click", () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+				if (clearBtn) clearBtn.addEventListener("click", () => {
+					ctx.save();
+					ctx.setTransform(1, 0, 0, 1, 0, 0);
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.restore();
+				});
 			}
 
 			const collageArea = document.querySelector(".text-input2");

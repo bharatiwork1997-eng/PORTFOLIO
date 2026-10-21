@@ -396,6 +396,77 @@ function setupSpreadInteractions(frameDocument) {
 	if (pageIndex === 4) setupSketchbook(frameDocument);
 }
 
+function renderPencilDot(context, x, y) {
+	context.save();
+	context.fillStyle = "rgba(188, 68, 70, 0.75)";
+	context.beginPath();
+	context.arc(x, y, 1.8, 0, Math.PI * 2);
+	context.fill();
+
+	for (let g = 0; g < 8; g++) {
+		const angle = Math.random() * Math.PI * 2;
+		const radius = Math.random() * 2.5;
+		const alpha = 0.2 + Math.random() * 0.45;
+		context.fillStyle = `rgba(199, 73, 77, ${alpha.toFixed(2)})`;
+		context.fillRect(
+			x + Math.cos(angle) * radius - 0.6,
+			y + Math.sin(angle) * radius - 0.6,
+			1.2,
+			1.2
+		);
+	}
+	context.restore();
+}
+
+function renderPencilSegment(context, x0, y0, x1, y1) {
+	const dx = x1 - x0;
+	const dy = y1 - y0;
+	const dist = Math.hypot(dx, dy);
+
+	context.save();
+	// Core line for continuous stroke body
+	context.lineCap = "round";
+	context.lineJoin = "round";
+	context.strokeStyle = "rgba(199, 73, 77, 0.55)";
+	context.lineWidth = 3.6;
+	context.beginPath();
+	context.moveTo(x0, y0);
+	context.lineTo(x1, y1);
+	context.stroke();
+
+	// Granular paper-tooth particles and graphite friction
+	const step = 1.0;
+	const steps = Math.min(100, Math.max(1, Math.ceil(dist / step)));
+	for (let i = 0; i <= steps; i++) {
+		const t = i / steps;
+		const cx = x0 + dx * t;
+		const cy = y0 + dy * t;
+
+		// Micro core jitter
+		const jx = (Math.random() - 0.5) * 1.5;
+		const jy = (Math.random() - 0.5) * 1.5;
+		const coreAlpha = 0.35 + Math.random() * 0.45;
+		context.fillStyle = `rgba(186, 66, 68, ${coreAlpha.toFixed(2)})`;
+		context.fillRect(cx + jx - 1, cy + jy - 1, 2.2, 2.2);
+
+		// Peripheral tooth flecks
+		const grainCount = 3 + Math.floor(Math.random() * 3);
+		for (let g = 0; g < grainCount; g++) {
+			const angle = Math.random() * Math.PI * 2;
+			const radius = Math.random() * 2.5;
+			const grainAlpha = 0.18 + Math.random() * 0.42;
+			context.fillStyle = `rgba(199, 73, 77, ${grainAlpha.toFixed(2)})`;
+			context.fillRect(
+				cx + Math.cos(angle) * radius - 0.6,
+				cy + Math.sin(angle) * radius - 0.6,
+				1.2,
+				1.2
+			);
+		}
+	}
+	context.restore();
+}
+
 function setupSketchbook(frameDocument) {
 	const sketchArea = frameDocument.querySelector(".text-input1");
 	const collageArea = frameDocument.querySelector(".text-input2");
@@ -407,6 +478,8 @@ function setupSketchbook(frameDocument) {
 	sketchArea.append(canvas);
 	const context = canvas.getContext("2d");
 	let drawing = false;
+	let lastX = 0;
+	let lastY = 0;
 	const resizeCanvas = () => {
 		const previous = canvas.width ? canvas.toDataURL() : "";
 		const ratio = window.devicePixelRatio || 1;
@@ -417,10 +490,6 @@ function setupSketchbook(frameDocument) {
 		canvas.style.width = `${width}px`;
 		canvas.style.height = `${height}px`;
 		context.setTransform(ratio, 0, 0, ratio, 0, 0);
-		context.lineCap = "round";
-		context.lineJoin = "round";
-		context.strokeStyle = "#c7484b";
-		context.lineWidth = 4;
 		if (previous) { const image = new Image(); image.onload = () => context.drawImage(image, 0, 0, width, height); image.src = previous; }
 	};
 	resizeCanvas();
@@ -429,18 +498,36 @@ function setupSketchbook(frameDocument) {
 		const saved = localStorage.getItem("bharati-sketch");
 		if (saved) { const image = new Image(); image.onload = () => context.drawImage(image, 0, 0, sketchArea.clientWidth, sketchArea.clientHeight); image.src = saved; }
 	} catch (error) { console.warn("Saved sketch could not be restored", error); }
+
+	const getPos = (event) => {
+		if (typeof event.offsetX === "number" && !isNaN(event.offsetX)) {
+			return { x: event.offsetX, y: event.offsetY };
+		}
+		const rect = canvas.getBoundingClientRect();
+		return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+	};
+
 	canvas.addEventListener("pointerdown", (event) => {
 		drawing = true;
 		canvas.setPointerCapture(event.pointerId);
-		context.beginPath();
-		context.moveTo(event.offsetX, event.offsetY);
+		const pos = getPos(event);
+		lastX = pos.x;
+		lastY = pos.y;
+		renderPencilDot(context, lastX, lastY);
 	});
 	canvas.addEventListener("pointermove", (event) => {
 		if (!drawing) return;
-		context.lineTo(event.offsetX, event.offsetY);
-		context.stroke();
+		const pos = getPos(event);
+		renderPencilSegment(context, lastX, lastY, pos.x, pos.y);
+		lastX = pos.x;
+		lastY = pos.y;
 	});
-	canvas.addEventListener("pointerup", () => { drawing = false; persistSketch(canvas); });
+	canvas.addEventListener("pointerup", () => {
+		if (drawing) {
+			drawing = false;
+			persistSketch(canvas);
+		}
+	});
 	canvas.addEventListener("pointercancel", () => { drawing = false; });
 
 	const drawButton = frameDocument.querySelector(".draw-btn, [data-tool='draw']");
@@ -457,7 +544,10 @@ function setupSketchbook(frameDocument) {
 	if (clearButton) {
 		clearButton.addEventListener("click", (event) => {
 			event.stopPropagation();
+			context.save();
+			context.setTransform(1, 0, 0, 1, 0, 0);
 			context.clearRect(0, 0, canvas.width, canvas.height);
+			context.restore();
 			localStorage.removeItem("bharati-sketch");
 			showToast("Sketch cleared.");
 		});
@@ -728,7 +818,11 @@ function persistWorkspace() {
 function clearSketch() {
 	const canvas = activeFrameDocument?.querySelector(".folio-canvas");
 	if (!canvas) return;
-	canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+	const context = canvas.getContext("2d");
+	context.save();
+	context.setTransform(1, 0, 0, 1, 0, 0);
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.restore();
 	localStorage.removeItem("bharati-sketch");
 	showToast("Sketch cleared.");
 }
