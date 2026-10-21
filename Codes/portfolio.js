@@ -166,13 +166,13 @@ function prepareFrame(iframe, src) {
 			frameDocument.addEventListener("click", (event) => {
 				const target = event.target;
 				let action = null;
-				if (pageIndex === 1 && target.closest(".text-input1")) action = () => openStory("clustr");
-				else if (pageIndex === 1 && target.closest(".text-input2")) action = () => openStory("assessment");
-				else if (pageIndex === 2 && target.closest(".text-input, .text1, .text2")) action = () => openStory("agency");
-				else if (pageIndex === 2 && target.closest(".text-top, .text-campaigns, .img6")) action = () => openStory("college");
-				else if (pageIndex === 3 && target.closest(".img2")) action = () => resumeDialog.showModal();
-				else if (pageIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
-				else if (pageIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder")) action = addSticker;
+				if (frameIndex === 1 && target.closest(".text-input1")) action = () => openStory("clustr");
+				else if (frameIndex === 1 && target.closest(".text-input2")) action = () => openStory("assessment");
+				else if (frameIndex === 2 && target.closest(".text-input, .text1, .text2")) action = () => openStory("agency");
+				else if (frameIndex === 2 && target.closest(".text-top, .text-campaigns, .img6")) action = () => openStory("college");
+				else if (frameIndex === 3 && target.closest(".img2")) action = () => resumeDialog.showModal();
+				else if (frameIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
+				else if (frameIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder")) action = addSticker;
 				if (action) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
@@ -181,12 +181,10 @@ function prepareFrame(iframe, src) {
 			}, true);
 			frameDocument.addEventListener("click", (event) => {
 				const target = event.target;
-				if (pageIndex === 5 && target.closest(".title-thankyou, .slider, .shaving-deco, .thankyou-stage")) contactDialog.showModal();
+				if (frameIndex === 5 && target.closest(".title-thankyou, .slider, .shaving-deco, .thankyou-stage")) contactDialog.showModal();
 			});
-			if (iframe === activeFrame) {
-				activeFrameDocument = frameDocument;
-				setupSpreadInteractions(frameDocument);
-			}
+			activeFrameDocument = frameDocument;
+			setupSpreadInteractions(frameDocument, frameIndex);
 		} catch (error) {
 			console.error("Could not prepare portfolio spread", error);
 		}
@@ -394,12 +392,12 @@ function makeInteractive(element, label, action) {
 	});
 }
 
-function setupSpreadInteractions(frameDocument) {
-	if (pageIndex === 1) {
+function setupSpreadInteractions(frameDocument, index = pageIndex) {
+	if (index === 1) {
 		makeInteractive(frameDocument.querySelector(".text-input1"), "Open the CLUSTR volunteering app case study", () => openStory("clustr"));
 		makeInteractive(frameDocument.querySelector(".text-input2"), "Open assessment work", () => openStory("assessment"));
 	}
-	if (pageIndex === 2) {
+	if (index === 2) {
 		makeInteractive(frameDocument.querySelector(".text-input"), "Open agency work", () => openStory("agency"));
 		makeInteractive(frameDocument.querySelector(".text1"), "Open agency work", () => openStory("agency"));
 		makeInteractive(frameDocument.querySelector(".text2"), "Open beauty brand work", () => openStory("agency"));
@@ -407,12 +405,12 @@ function setupSpreadInteractions(frameDocument) {
 		makeInteractive(frameDocument.querySelector(".text-campaigns"), "Open college campaign work", () => openStory("college"));
 		makeInteractive(frameDocument.querySelector(".img6"), "Open college campaign work", () => openStory("college"));
 	}
-	if (pageIndex === 3) {
+	if (index === 3) {
 		makeInteractive(frameDocument.querySelector(".img2"), "Open résumé", () => resumeDialog.showModal());
 		makeInteractive(frameDocument.querySelector(".text-input"), "Open personal work", () => openStory("personal"));
 		makeInteractive(frameDocument.querySelector(".img3"), "Open personal work", () => openStory("personal"));
 	}
-	if (pageIndex === 4) setupSketchbook(frameDocument);
+	if (index === 4) setupSketchbook(frameDocument);
 }
 
 function renderPencilDot(context, x, y) {
@@ -490,6 +488,7 @@ function setupSketchbook(frameDocument) {
 	const sketchArea = frameDocument.querySelector(".text-input1");
 	const collageArea = frameDocument.querySelector(".text-input2");
 	if (!sketchArea || !collageArea) return;
+	if (sketchArea.querySelector("canvas")) return;
 	sketchArea.classList.add("draw-area");
 	const canvas = frameDocument.createElement("canvas");
 	canvas.className = "folio-canvas";
@@ -529,7 +528,8 @@ function setupSketchbook(frameDocument) {
 	canvas.addEventListener("pointerdown", (event) => {
 		drawing = true;
 		canvas.setPointerCapture(event.pointerId);
-		const rect = activeFrame.getBoundingClientRect();
+		const iframe = frameDocument.defaultView?.frameElement || activeFrame;
+		const rect = iframe.getBoundingClientRect();
 		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
 		const pos = getPos(event);
 		lastX = pos.x;
@@ -537,7 +537,8 @@ function setupSketchbook(frameDocument) {
 		renderPencilDot(context, lastX, lastY);
 	});
 	canvas.addEventListener("pointermove", (event) => {
-		const rect = activeFrame.getBoundingClientRect();
+		const iframe = frameDocument.defaultView?.frameElement || activeFrame;
+		const rect = iframe.getBoundingClientRect();
 		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
 		if (!drawing) return;
 		const pos = getPos(event);
@@ -665,10 +666,11 @@ function normalizeAssetUrl(source) {
 let stickerSequence = 0;
 
 function addSticker() {
-	const layer = activeFrameDocument?.querySelector(".collage-layer");
+	const doc = activeFrameDocument || activeFrame?.contentDocument;
+	const layer = doc?.querySelector(".collage-layer");
 	if (!layer) return;
 
-	const folder = activeFrameDocument?.querySelector("#sticker-folder, .img9");
+	const folder = doc?.querySelector("#sticker-folder, .img9");
 	if (folder) {
 		folder.classList.remove("is-popping");
 		void folder.offsetWidth;
@@ -678,7 +680,7 @@ function addSticker() {
 	const src = stickerBank[stickerSequence % stickerBank.length];
 	stickerSequence++;
 
-	const sizeSlider = activeFrameDocument?.querySelector("#collage-sticker-size") || stickerSize;
+	const sizeSlider = doc?.querySelector("#collage-sticker-size") || stickerSize;
 	const size = Number(sizeSlider ? sizeSlider.value : 92);
 
 	const x = Math.max(16, Math.min(layer.clientWidth - size - 16, (layer.clientWidth * 0.5) + (Math.random() * 50 - 25)));
@@ -689,7 +691,8 @@ function addSticker() {
 }
 
 function placeSticker(src, x, y, size, layer, isPopping = false) {
-	const sticker = activeFrameDocument.createElement("img");
+	const frameDocument = layer.ownerDocument || activeFrameDocument || activeFrame?.contentDocument;
+	const sticker = frameDocument.createElement("img");
 	sticker.className = `collage-sticker ${isPopping ? "popping" : ""}`;
 	sticker.src = src;
 	sticker.alt = "Movable collage sticker";
@@ -699,7 +702,7 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 	sticker.style.width = `${size}px`;
 
 	let highestZ = 35;
-	activeFrameDocument.querySelectorAll(".collage-sticker").forEach((s) => {
+	frameDocument.querySelectorAll(".collage-sticker").forEach((s) => {
 		const z = parseInt(s.style.zIndex || 30, 10);
 		if (z > highestZ) highestZ = z;
 	});
@@ -711,7 +714,7 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 		selectSticker(sticker);
 
 		let maxZ = 35;
-		activeFrameDocument.querySelectorAll(".collage-sticker").forEach((s) => {
+		frameDocument.querySelectorAll(".collage-sticker").forEach((s) => {
 			const z = parseInt(s.style.zIndex || 30, 10);
 			if (z > maxZ) maxZ = z;
 		});
@@ -723,7 +726,6 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 		const initialX = Number.parseFloat(sticker.style.left) || 0;
 		const initialY = Number.parseFloat(sticker.style.top) || 0;
 		const scale = 1280 / bookStage.clientWidth;
-		const frameDocument = activeFrameDocument;
 
 		const move = (moveEvent) => {
 			const currentWidth = Number.parseFloat(sticker.style.width) || size;
@@ -765,12 +767,13 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 }
 
 function selectSticker(sticker) {
-	activeFrameDocument?.querySelectorAll(".collage-sticker").forEach((item) => item.classList.toggle("is-selected", item === sticker));
+	const frameDocument = sticker?.ownerDocument || activeFrameDocument || activeFrame?.contentDocument;
+	frameDocument?.querySelectorAll(".collage-sticker").forEach((item) => item.classList.toggle("is-selected", item === sticker));
 	activeSticker = sticker;
 	if (activeSticker) {
 		const val = String(Math.round(activeSticker.getBoundingClientRect().width * 1280 / bookStage.clientWidth));
 		if (stickerSize) stickerSize.value = val;
-		const frameSlider = activeFrameDocument?.querySelector("#collage-sticker-size");
+		const frameSlider = frameDocument?.querySelector("#collage-sticker-size");
 		if (frameSlider) frameSlider.value = val;
 	}
 }
@@ -783,7 +786,8 @@ function persistStickers(layer) {
 }
 
 function exportCollage() {
-	const board = activeFrameDocument?.querySelector(".text-input2");
+	const doc = activeFrameDocument || activeFrame?.contentDocument;
+	const board = doc?.querySelector(".text-input2");
 	if (!board) return Promise.reject(new Error("Collage board is unavailable"));
 	const ratio = 2;
 	const canvas = document.createElement("canvas");
@@ -831,15 +835,17 @@ async function shareCollage() {
 }
 
 function persistWorkspace() {
-	const canvas = activeFrameDocument?.querySelector(".folio-canvas");
-	const layer = activeFrameDocument?.querySelector(".collage-layer");
+	const doc = activeFrameDocument || activeFrame?.contentDocument;
+	const canvas = doc?.querySelector(".folio-canvas");
+	const layer = doc?.querySelector(".collage-layer");
 	if (canvas) persistSketch(canvas);
 	if (layer) persistStickers(layer);
 	showToast("Your sketch and collage are saved on this device.");
 }
 
 function clearSketch() {
-	const canvas = activeFrameDocument?.querySelector(".folio-canvas");
+	const doc = activeFrameDocument || activeFrame?.contentDocument;
+	const canvas = doc?.querySelector(".folio-canvas");
 	if (!canvas) return;
 	const context = canvas.getContext("2d");
 	context.save();
@@ -851,7 +857,8 @@ function clearSketch() {
 }
 
 function clearCollage() {
-	const layer = activeFrameDocument?.querySelector(".collage-layer");
+	const doc = activeFrameDocument || activeFrame?.contentDocument;
+	const layer = doc?.querySelector(".collage-layer");
 	if (!layer) return;
 	layer.replaceChildren();
 	activeSticker = null;
@@ -860,7 +867,8 @@ function clearCollage() {
 }
 
 function deleteSticker() {
-	const layer = activeFrameDocument?.querySelector(".collage-layer");
+	const doc = activeFrameDocument || activeFrame?.contentDocument;
+	const layer = doc?.querySelector(".collage-layer");
 	if (!layer) return;
 	const stickers = [...layer.querySelectorAll(".collage-sticker")];
 	if (!stickers.length) {
