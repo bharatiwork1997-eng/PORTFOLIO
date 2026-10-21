@@ -47,7 +47,7 @@
 						<input id="collage-sticker-size" type="range" min="48" max="180" value="92">
 					</label>
 					<button type="button" class="sketch-btn collage-btn" data-tool="clear-collage">Clear collage</button>
-					<button type="button" class="sketch-btn collage-btn" data-tool="save">Save</button>
+					<button type="button" class="sketch-btn collage-btn" data-tool="delete-sticker">Delete sticker</button>
 					<button type="button" class="sketch-btn collage-btn" data-tool="download">Download</button>
 					<button type="button" class="sketch-btn collage-btn" data-tool="share">Share</button>
 				</div>
@@ -256,7 +256,20 @@
 					if (activeSticker) activeSticker.style.width = `${sizeInput.value}px`;
 				});
 				const clearCollageBtn = document.querySelector(".collage-tools [data-tool='clear-collage']");
-				if (clearCollageBtn) clearCollageBtn.addEventListener("click", () => layer.replaceChildren());
+				if (clearCollageBtn) clearCollageBtn.addEventListener("click", () => {
+					layer.replaceChildren();
+					activeSticker = null;
+				});
+				const deleteBtn = document.querySelector(".collage-tools [data-tool='delete-sticker']");
+				if (deleteBtn) deleteBtn.addEventListener("click", () => {
+					if (activeSticker && activeSticker.isConnected) {
+						activeSticker.remove();
+						activeSticker = layer.lastElementChild || null;
+					} else if (layer.lastElementChild) {
+						layer.lastElementChild.remove();
+						activeSticker = layer.lastElementChild || null;
+					}
+				});
 				const folder = document.querySelector(".img9");
 				if (folder) folder.addEventListener("click", addStickerStandalone);
 			}

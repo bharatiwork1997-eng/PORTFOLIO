@@ -135,6 +135,11 @@ body::-webkit-scrollbar {
 	box-shadow: none !important;
 }
 
+.collage-sticker.is-selected {
+	outline: 2px dashed #cb5d5b;
+	outline-offset: 4px;
+}
+
 .collage-sticker:hover {
 	filter: none !important;
 	box-shadow: none !important;

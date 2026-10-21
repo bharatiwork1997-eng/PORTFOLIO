@@ -601,11 +601,11 @@ function setupSketchbook(frameDocument) {
 		});
 	}
 
-	const saveBtn = frameDocument.querySelector(".collage-tools [data-tool='save']");
-	if (saveBtn) {
-		saveBtn.addEventListener("click", (event) => {
+	const deleteBtn = frameDocument.querySelector(".collage-tools [data-tool='delete-sticker'], .collage-tools [data-tool='delete']");
+	if (deleteBtn) {
+		deleteBtn.addEventListener("click", (event) => {
 			event.stopPropagation();
-			persistWorkspace();
+			deleteSticker();
 		});
 	}
 
@@ -840,6 +840,28 @@ function clearCollage() {
 	showToast("Collage cleared.");
 }
 
+function deleteSticker() {
+	const layer = activeFrameDocument?.querySelector(".collage-layer");
+	if (!layer) return;
+	const stickers = [...layer.querySelectorAll(".collage-sticker")];
+	if (!stickers.length) {
+		showToast("No stickers to delete.");
+		return;
+	}
+	let target = activeSticker;
+	if (!target || !target.isConnected || !layer.contains(target)) {
+		target = stickers[stickers.length - 1];
+	}
+	target.remove();
+	activeSticker = null;
+	const remaining = [...layer.querySelectorAll(".collage-sticker")];
+	if (remaining.length > 0) {
+		selectSticker(remaining[remaining.length - 1]);
+	}
+	persistStickers(layer);
+	showToast("Sticker deleted.");
+}
+
 document.querySelector(".cover-hit").addEventListener("click", openBook);
 document.querySelector(".wordmark").addEventListener("click", (event) => {
 	event.preventDefault();
@@ -858,7 +880,8 @@ document.querySelectorAll("[data-tool]").forEach((button) => button.addEventList
 		case "clear-drawing": clearSketch(); break;
 		case "sticker": addSticker(); break;
 		case "clear-collage": clearCollage(); break;
-		case "save": persistWorkspace(); break;
+		case "delete-sticker": deleteSticker(); break;
+		case "delete": deleteSticker(); break;
 		case "download": downloadCollage(); break;
 		case "share": shareCollage(); break;
 	}
@@ -872,6 +895,10 @@ document.addEventListener("pointermove", (event) => movePencil(event.clientX, ev
 document.addEventListener("pointerleave", hidePencil);
 document.addEventListener("keydown", (event) => {
 	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open) {
+		if (pageIndex === 4 && activeSticker && (event.key === "Delete" || event.key === "Backspace")) {
+			deleteSticker();
+			return;
+		}
 		if (event.key === "ArrowRight") turnPage(1);
 		if (event.key === "ArrowLeft") turnPage(-1);
 	}
