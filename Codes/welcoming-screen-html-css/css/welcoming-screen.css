@@ -2,6 +2,13 @@ html, body {
 	overflow: hidden !important;
 	scrollbar-width: none !important;
 	-ms-overflow-style: none !important;
+	cursor: none !important;
+	user-select: none !important;
+}
+
+body * {
+	cursor: none !important;
+	user-select: none !important;
 }
 
 ::-webkit-scrollbar {

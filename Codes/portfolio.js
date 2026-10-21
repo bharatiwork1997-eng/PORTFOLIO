@@ -222,9 +222,16 @@ function hidePencil() {
 }
 
 function setupCover() {
-	coverFrame.onload = () => {
+	const initCover = () => {
 		try {
 			const frameDocument = coverFrame.contentDocument;
+			if (!frameDocument || !frameDocument.body) return;
+			const style = frameDocument.createElement("style");
+			style.textContent = `
+				html, body { width:1920px !important; height:1080px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; cursor:none !important; }
+				body, body * { cursor:none !important; user-select:none !important; }
+			`;
+			frameDocument.head.append(style);
 			frameDocument.documentElement.style.overflow = "hidden";
 			frameDocument.documentElement.style.scrollbarWidth = "none";
 			frameDocument.body.style.width = "1920px";
@@ -238,10 +245,18 @@ function setupCover() {
 				const rect = coverFrame.getBoundingClientRect();
 				movePencil(rect.left + event.clientX * rect.width / 1920, rect.top + event.clientY * rect.height / 1080);
 			});
+			frameDocument.addEventListener("click", () => {
+				openBook();
+			});
 		} catch (error) {
 			console.error("Could not prepare the portfolio cover", error);
 		}
 	};
+
+	if (coverFrame.contentDocument?.readyState === "complete" && coverFrame.contentDocument.body) {
+		initCover();
+	}
+	coverFrame.addEventListener("load", initCover);
 }
 
 function openBook() {
