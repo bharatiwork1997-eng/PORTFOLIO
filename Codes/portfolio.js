@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=6" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=9" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=10" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=6" }
 ];
 const spreadNavigationArtwork = [
@@ -838,8 +838,13 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 			const newX = initialX + (moveEvent.clientX - startX) * scale;
 			const newY = initialY + (moveEvent.clientY - startY) * scale;
 
-			const boundedX = Math.max(0, Math.min(layer.clientWidth - (currentWidth * 0.3), newX));
-			const boundedY = Math.max(0, Math.min(layer.clientHeight - (currentHeight * 0.3), newY));
+			const minX = -currentWidth * 0.75;
+			const maxX = layer.clientWidth - (currentWidth * 0.25);
+			const minY = -currentHeight * 0.75;
+			const maxY = layer.clientHeight - (currentHeight * 0.25);
+
+			const boundedX = Math.max(minX, Math.min(maxX, newX));
+			const boundedY = Math.max(minY, Math.min(maxY, newY));
 
 			sticker.style.left = `${boundedX}px`;
 			sticker.style.top = `${boundedY}px`;

@@ -235,8 +235,14 @@
 						const initX = Number.parseFloat(img.style.left) || 0;
 						const initY = Number.parseFloat(img.style.top) || 0;
 						const onMove = (me) => {
-							img.style.left = `${Math.max(0, Math.min(collageArea.clientWidth - 30, initX + (me.clientX - startX)))}px`;
-							img.style.top = `${Math.max(0, Math.min(collageArea.clientHeight - 30, initY + (me.clientY - startY)))}px`;
+							const currentWidth = Number.parseFloat(img.style.width) || size;
+							const currentHeight = currentWidth * (img.naturalHeight / (img.naturalWidth || 1)) || currentWidth;
+							const minX = -currentWidth * 0.75;
+							const maxX = collageArea.clientWidth - (currentWidth * 0.25);
+							const minY = -currentHeight * 0.75;
+							const maxY = collageArea.clientHeight - (currentHeight * 0.25);
+							img.style.left = `${Math.max(minX, Math.min(maxX, initX + (me.clientX - startX)))}px`;
+							img.style.top = `${Math.max(minY, Math.min(maxY, initY + (me.clientY - startY)))}px`;
 						};
 						const onUp = () => {
 							document.removeEventListener("pointermove", onMove);
