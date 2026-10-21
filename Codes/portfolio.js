@@ -1,7 +1,7 @@
 const spreads = [
 	{ title: "About me", src: "sketchbook-frame 1-html-css/sketchbook-group.html?v=3" },
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
-	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=5" },
+	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=6" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=9" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=5" }
@@ -177,6 +177,11 @@ function prepareFrame(iframe, src) {
 				let action = null;
 				if (frameIndex === 1 && target.closest(".text-input1")) action = () => openStory("clustr");
 				else if (frameIndex === 1 && target.closest(".text-input2")) action = () => openStory("assessment");
+				else if (frameIndex === 2 && target.closest(".rating")) action = () => {
+					if (typeof frameDocument.defaultView?.dartFish === "function") {
+						frameDocument.defaultView.dartFish();
+					}
+				};
 				else if (frameIndex === 2 && target.closest(".img6")) action = () => openLostVideo();
 				else if (frameIndex === 2 && target.closest(".text-input, .text1, .text2")) action = () => openStory("agency");
 				else if (frameIndex === 2 && target.closest(".text-top, .text-campaigns")) action = () => openStory("college");
@@ -462,6 +467,14 @@ function setupSpreadInteractions(frameDocument, index = pageIndex) {
 		makeInteractive(frameDocument.querySelector(".text-top"), "Open college campaign work", () => openStory("college"));
 		makeInteractive(frameDocument.querySelector(".text-campaigns"), "Open college campaign work", () => openStory("college"));
 		makeInteractive(frameDocument.querySelector(".img6"), "Play LOST campaign video", () => openLostVideo());
+		const fish = frameDocument.querySelector(".rating");
+		if (fish) {
+			makeInteractive(fish, "Tap to make the goldfish swim!", () => {
+				if (typeof frameDocument.defaultView?.dartFish === "function") {
+					frameDocument.defaultView.dartFish();
+				}
+			});
+		}
 	}
 	if (index === 3) {
 		makeInteractive(frameDocument.querySelector(".img2"), "Open résumé", () => openDialog(resumeDialog));

@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=5" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=6" />
 
 </head>
 
@@ -17,7 +17,7 @@
 		<div class="text-input"></div>
 		<img src="assets/img2.png" class="img2" />
 		<img src="assets/img3.png" class="img3" />
-		<object data="assets/rating.svg" class="rating" type="image/svg+xml"></object>
+		<img src="assets/rating.svg" class="rating" alt="Goldfish sticker" role="button" tabindex="0" title="Swim!" />
 		<img src="assets/img4.png" class="img4" />
 		<img src="assets/img5.png" class="img5" />
 		
@@ -41,6 +41,52 @@
 				window.parent.openLostVideo();
 			}
 		});
+
+		const fish = document.querySelector(".rating");
+		function spawnBubbles(element) {
+			const rect = element.getBoundingClientRect();
+			const parent = element.closest(".row") || document.body;
+			const parentRect = parent.getBoundingClientRect();
+			const originX = (rect.right - parentRect.left) - 16;
+			const originY = (rect.top - parentRect.top) + rect.height * 0.65;
+
+			for (let i = 0; i < 3; i++) {
+				setTimeout(() => {
+					const bubble = document.createElement("span");
+					bubble.className = "fish-bubble";
+					const size = 7 + Math.random() * 8;
+					bubble.style.width = `${size}px`;
+					bubble.style.height = `${size}px`;
+					bubble.style.left = `${originX + (Math.random() * 10 - 5)}px`;
+					bubble.style.top = `${originY + (Math.random() * 8 - 4)}px`;
+					parent.appendChild(bubble);
+					setTimeout(() => bubble.remove(), 1200);
+				}, i * 140);
+			}
+		}
+		window.spawnBubbles = spawnBubbles;
+
+		function dartFish() {
+			if (!fish) return;
+			fish.classList.remove("darting");
+			void fish.offsetWidth;
+			fish.classList.add("darting");
+			spawnBubbles(fish);
+		}
+		window.dartFish = dartFish;
+
+		if (fish) {
+			fish.addEventListener("click", (e) => {
+				e.stopPropagation();
+				dartFish();
+			});
+			fish.addEventListener("keydown", (e) => {
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					dartFish();
+				}
+			});
+		}
 	</script>
 </body>
 

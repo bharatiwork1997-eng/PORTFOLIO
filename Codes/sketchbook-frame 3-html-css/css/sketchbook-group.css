@@ -72,11 +72,106 @@ body {
 }
 
 .rating {
-	position: absolute; z-index: 1; top: 181px; left: 50%; 
+	position: absolute;
+	z-index: 10;
+	top: 181px;
+	left: 50%; 
 	translate: -50% 0;
 	margin-left: 191px;
-	width: 126px; height: 101px;
+	width: 126px;
+	height: 101px;
+	pointer-events: auto;
+	cursor: none !important;
+	transform-origin: 75% 60%;
+	transition: filter 300ms ease;
+	animation: fish-swim-ambient 4.5s ease-in-out infinite alternate;
+	user-select: none;
+	-webkit-user-drag: none;
+}
+
+.rating:hover {
+	animation: fish-swim-active 700ms ease-in-out infinite alternate;
+	filter: drop-shadow(0 8px 18px rgba(246, 136, 72, 0.55)) drop-shadow(0 2px 5px rgba(0, 0, 0, 0.25));
+}
+
+.rating:active {
+	transform: scale(0.96) rotate(-2deg);
+}
+
+.rating.darting {
+	animation: fish-dart 600ms cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+}
+
+@keyframes fish-swim-ambient {
+	0% {
+		transform: translateY(0px) rotate(0deg);
+	}
+	50% {
+		transform: translateY(-4px) rotate(-2deg);
+	}
+	100% {
+		transform: translateY(2px) rotate(1.5deg);
+	}
+}
+
+@keyframes fish-swim-active {
+	0% {
+		transform: scale(1.08) translateY(-3px) rotate(-3.5deg);
+	}
+	50% {
+		transform: scale(1.1) translateY(1px) rotate(4deg);
+	}
+	100% {
+		transform: scale(1.08) translateY(-4px) rotate(-2deg);
+	}
+}
+
+@keyframes fish-dart {
+	0% {
+		transform: scale(1) translate(0, 0) rotate(0deg);
+	}
+	25% {
+		transform: scale(1.18) translate(14px, -8px) rotate(-7deg);
+	}
+	50% {
+		transform: scale(1.12) translate(18px, -4px) rotate(5deg);
+	}
+	75% {
+		transform: scale(1.06) translate(6px, -1px) rotate(-2deg);
+	}
+	100% {
+		transform: scale(1) translate(0, 0) rotate(0deg);
+	}
+}
+
+.fish-bubble {
+	position: absolute;
+	border-radius: 50%;
+	background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.95), rgba(246, 136, 72, 0.25) 55%, rgba(206, 35, 61, 0.45) 100%);
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	box-shadow: inset -1px -1px 2px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(246, 136, 72, 0.35);
 	pointer-events: none;
+	z-index: 15;
+	animation: bubble-float 1.2s ease-out forwards;
+}
+
+@keyframes bubble-float {
+	0% {
+		opacity: 0;
+		transform: scale(0.3) translate(0, 0);
+	}
+	20% {
+		opacity: 0.95;
+		transform: scale(1) translate(2px, -14px);
+	}
+	60% {
+		opacity: 0.85;
+		transform: scale(1.08) translate(-5px, -40px);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(0.65) translate(6px, -70px);
+	}
 }
 
 .img4 {
