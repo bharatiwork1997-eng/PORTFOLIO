@@ -35,9 +35,10 @@ body {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 42px;
+	gap: 70px;
 	position: relative;
 	width: 100%;
+	padding-top: 20px;
 }
 
 .thankyou-stage {
@@ -118,24 +119,25 @@ body {
 	align-items: center;
 	justify-content: center;
 	gap: 28px;
-	margin-top: 16px;
+	margin-top: 50px;
 	z-index: 10;
 }
 
 .thankyou-link {
 	display: inline-flex;
 	align-items: center;
-	gap: 9px;
-	padding: 9px 18px;
+	gap: 12px;
+	padding: 14px 30px;
 	color: #999388;
 	font-family: 'Geist Pixel', monospace;
-	font-size: 17px;
+	font-size: 22px;
 	line-height: 1;
-	letter-spacing: 1px;
+	letter-spacing: 1.2px;
 	text-decoration: none;
-	border: 1px solid rgba(241, 235, 221, 0.16);
-	border-radius: 4px;
-	background: rgba(18, 18, 16, 0.7);
+	border: 1.5px solid rgba(241, 235, 221, 0.22);
+	border-radius: 6px;
+	background: rgba(22, 22, 20, 0.85);
+	backdrop-filter: blur(4px);
 	transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease, transform 180ms ease, box-shadow 200ms ease;
 	user-select: none;
 }
@@ -146,33 +148,38 @@ body {
 
 .thankyou-link .link-arrow {
 	color: #f18b85;
-	font-size: 16px;
+	font-size: 20px;
 	transition: transform 200ms ease, color 200ms ease;
 }
 
 .thankyou-link:hover {
 	color: #ffffff;
 	border-color: #f18b85;
-	background: rgba(241, 139, 133, 0.12);
-	transform: translateY(-2px);
-	box-shadow: 0 4px 12px rgba(241, 139, 133, 0.15);
+	background: rgba(241, 139, 133, 0.16);
+	transform: translateY(-3px);
+	box-shadow: 0 6px 18px rgba(241, 139, 133, 0.22);
 }
 
 .thankyou-link:hover .link-arrow {
-	transform: translate(2px, -2px);
+	transform: translate(3px, -3px);
 	color: #ffffff;
 }
 
+.thankyou-link:active {
+	transform: translateY(-1px);
+}
+
 .link-separator {
-	color: rgba(241, 235, 221, 0.22);
+	color: rgba(241, 235, 221, 0.25);
 	font-family: 'Geist Pixel', monospace;
-	font-size: 16px;
+	font-size: 22px;
 	user-select: none;
 }
 
 @media screen and (max-width: 900px) {
 	.thankyou-wrapper {
-		gap: 24px;
+		gap: 32px;
+		padding-top: 0;
 	}
 	.title-thankyou {
 		font-size: clamp(48px, 10vw, 90px);
@@ -197,12 +204,17 @@ body {
 		width: 95px;
 	}
 	.thankyou-links {
-		gap: 12px;
+		gap: 14px;
+		margin-top: 24px;
 		flex-wrap: wrap;
 	}
 	.thankyou-link {
-		font-size: 14px;
-		padding: 7px 12px;
+		font-size: 16px;
+		padding: 10px 18px;
+		border-radius: 5px;
+	}
+	.thankyou-link .link-arrow {
+		font-size: 15px;
 	}
 	.link-separator {
 		display: none;
