@@ -227,11 +227,13 @@ function setupCover() {
 		try {
 			const frameDocument = coverFrame.contentDocument;
 			frameDocument.documentElement.style.overflow = "hidden";
+			frameDocument.documentElement.style.scrollbarWidth = "none";
 			frameDocument.body.style.width = "1920px";
 			frameDocument.body.style.height = "1080px";
 			frameDocument.body.style.minHeight = "0";
 			frameDocument.body.style.padding = "103px 24px 0";
 			frameDocument.body.style.overflow = "hidden";
+			frameDocument.body.style.scrollbarWidth = "none";
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("pointermove", (event) => {
 				const rect = coverFrame.getBoundingClientRect();
