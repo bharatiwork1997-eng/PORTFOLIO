@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=4" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=5" />
 
 </head>
 
@@ -29,11 +29,19 @@
 		<div class="col">
 			<p class="text-a text-top">College Works</p>
 			<p class="text-b text-campaigns">Campaigns</p>
-			<img src="assets/img6.png" class="img6" />
+			<img src="assets/img6.png" class="img6" alt="Play LOST Video" role="button" tabindex="0" />
 		</div>
 		
 		<img src="assets/img.png" class="img7" />
 	</div>
+
+	<script>
+		document.querySelector(".img6")?.addEventListener("click", () => {
+			if (window.parent && window.parent !== window && typeof window.parent.openLostVideo === "function") {
+				window.parent.openLostVideo();
+			}
+		});
+	</script>
 </body>
 
 </html>

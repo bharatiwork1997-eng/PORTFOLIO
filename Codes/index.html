@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#171713">
 	<title>Bharati Kamble | Visual Designer</title>
-	<link rel="stylesheet" href="portfolio.css?v=26">
+	<link rel="stylesheet" href="portfolio.css?v=27">
 </head>
 <body>
 	<header class="site-header">
@@ -81,6 +81,23 @@
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=43"></script>
+	<dialog class="video-dialog" id="video-dialog" aria-labelledby="video-title">
+		<div class="video-sheet">
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			<p class="dialog-kicker">Campaigns · College Works</p>
+			<h1 id="video-title">LOST</h1>
+			<p class="video-intro">Campaign film and creative direction for LOST.</p>
+			<div class="video-player-wrap">
+				<video id="lost-video" controls playsinline preload="metadata">
+					<source src="assets/LOST%20Video.mp4" type="video/mp4">
+					<source src="assets/lost-video.mp4" type="video/mp4">
+					Your browser does not support the video tag.
+				</video>
+			</div>
+			<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+		</div>
+	</dialog>
+
+	<script src="portfolio.js?v=44"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 const spreads = [
 	{ title: "About me", src: "sketchbook-frame 1-html-css/sketchbook-group.html?v=3" },
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
-	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
+	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=5" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=9" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=5" }
@@ -58,6 +58,8 @@ const bookStage = document.querySelector("#book-stage");
 const storyDialog = document.querySelector("#story-dialog");
 const resumeDialog = document.querySelector("#resume-dialog");
 const contactDialog = document.querySelector("#contact-dialog");
+const videoDialog = document.querySelector("#video-dialog");
+const lostVideo = document.querySelector("#lost-video");
 const toast = document.querySelector("#toast");
 const pencil = document.querySelector(".pencil-cursor");
 const pageName = document.querySelector("#page-name");
@@ -175,9 +177,10 @@ function prepareFrame(iframe, src) {
 				let action = null;
 				if (frameIndex === 1 && target.closest(".text-input1")) action = () => openStory("clustr");
 				else if (frameIndex === 1 && target.closest(".text-input2")) action = () => openStory("assessment");
+				else if (frameIndex === 2 && target.closest(".img6")) action = () => openLostVideo();
 				else if (frameIndex === 2 && target.closest(".text-input, .text1, .text2")) action = () => openStory("agency");
-				else if (frameIndex === 2 && target.closest(".text-top, .text-campaigns, .img6")) action = () => openStory("college");
-				else if (frameIndex === 3 && target.closest(".img2")) action = () => resumeDialog.showModal();
+				else if (frameIndex === 2 && target.closest(".text-top, .text-campaigns")) action = () => openStory("college");
+				else if (frameIndex === 3 && target.closest(".img2")) action = () => openDialog(resumeDialog);
 				else if (frameIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
 				else if (frameIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder")) action = addSticker;
 				if (action) {
@@ -191,14 +194,14 @@ function prepareFrame(iframe, src) {
 				if (frameIndex === 5) {
 					if (target.closest("[data-channel='email']")) {
 						event.preventDefault();
-						contactDialog.showModal();
+						openDialog(contactDialog);
 						return;
 					}
 					if (target.closest(".thankyou-link")) {
 						return;
 					}
 					if (target.closest(".title-thankyou, .slider, .shaving-deco, .thankyou-stage")) {
-						contactDialog.showModal();
+						openDialog(contactDialog);
 					}
 				}
 			});
@@ -307,7 +310,7 @@ function returnHome() {
 }
 
 function handleWheelNavigation(event) {
-	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open) return;
+	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open || videoDialog?.open) return;
 
 	// Pick dominant delta (supports vertical wheel and horizontal swipe)
 	const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
@@ -388,6 +391,35 @@ function finishGesture(event) {
 	else if (backward || tapBackward) turnPage(-1);
 }
 
+function openDialog(dialog) {
+	if (!dialog) return;
+	if (pencil && !dialog.contains(pencil)) {
+		dialog.appendChild(pencil);
+	}
+	if (!dialog.open) {
+		dialog.showModal();
+	}
+}
+
+function handleDialogClose(dialog) {
+	if (pencil && dialog.contains(pencil)) {
+		document.body.appendChild(pencil);
+	}
+}
+
+function openLostVideo() {
+	if (!videoDialog) return;
+	openDialog(videoDialog);
+	if (lostVideo) {
+		lostVideo.currentTime = 0;
+		const playPromise = lostVideo.play();
+		if (playPromise !== undefined) {
+			playPromise.catch(() => {});
+		}
+	}
+}
+window.openLostVideo = openLostVideo;
+
 function openStory(key) {
 	const story = stories[key];
 	if (!story) return;
@@ -403,7 +435,7 @@ function openStory(key) {
 		section.append(title, paragraph);
 		return section;
 	}));
-	storyDialog.showModal();
+	openDialog(storyDialog);
 }
 
 function makeInteractive(element, label, action) {
@@ -429,10 +461,10 @@ function setupSpreadInteractions(frameDocument, index = pageIndex) {
 		makeInteractive(frameDocument.querySelector(".text2"), "Open beauty brand work", () => openStory("agency"));
 		makeInteractive(frameDocument.querySelector(".text-top"), "Open college campaign work", () => openStory("college"));
 		makeInteractive(frameDocument.querySelector(".text-campaigns"), "Open college campaign work", () => openStory("college"));
-		makeInteractive(frameDocument.querySelector(".img6"), "Open college campaign work", () => openStory("college"));
+		makeInteractive(frameDocument.querySelector(".img6"), "Play LOST campaign video", () => openLostVideo());
 	}
 	if (index === 3) {
-		makeInteractive(frameDocument.querySelector(".img2"), "Open résumé", () => resumeDialog.showModal());
+		makeInteractive(frameDocument.querySelector(".img2"), "Open résumé", () => openDialog(resumeDialog));
 		makeInteractive(frameDocument.querySelector(".text-input"), "Open personal work", () => openStory("personal"));
 		makeInteractive(frameDocument.querySelector(".img3"), "Open personal work", () => openStory("personal"));
 	}
@@ -924,9 +956,24 @@ document.querySelector(".wordmark").addEventListener("click", (event) => {
 window.addEventListener("wheel", handleWheelNavigation, { passive: false });
 document.querySelector("#previous-page").addEventListener("click", () => turnPage(-1));
 document.querySelector("#next-page").addEventListener("click", () => turnPage(1));
-document.querySelectorAll("[data-open-contact]").forEach((button) => button.addEventListener("click", () => contactDialog.showModal()));
-document.querySelectorAll("[data-open-resume]").forEach((button) => button.addEventListener("click", () => resumeDialog.showModal()));
+document.querySelectorAll("[data-open-contact]").forEach((button) => button.addEventListener("click", () => openDialog(contactDialog)));
+document.querySelectorAll("[data-open-resume]").forEach((button) => button.addEventListener("click", () => openDialog(resumeDialog)));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog").close()));
+[storyDialog, resumeDialog, contactDialog, videoDialog].forEach((dialog) => {
+	if (!dialog) return;
+	dialog.addEventListener("click", (event) => {
+		const sheet = dialog.querySelector(".story-sheet, .resume-sheet, .contact-sheet, .video-sheet");
+		if (sheet && !sheet.contains(event.target)) {
+			dialog.close();
+		}
+	});
+	dialog.addEventListener("close", () => {
+		if (dialog === videoDialog && lostVideo) {
+			lostVideo.pause();
+		}
+		handleDialogClose(dialog);
+	});
+});
 document.querySelector("#print-resume").addEventListener("click", () => window.print());
 document.querySelectorAll("[data-tool]").forEach((button) => button.addEventListener("click", () => {
 	switch (button.dataset.tool) {
@@ -951,7 +998,7 @@ document.addEventListener("pointerenter", (event) => movePencil(event.clientX, e
 document.addEventListener("pointermove", (event) => movePencil(event.clientX, event.clientY));
 document.addEventListener("pointerleave", hidePencil);
 document.addEventListener("keydown", (event) => {
-	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open) {
+	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open && !videoDialog?.open) {
 		const isDeleteKey = event.key === "Delete" || event.key === "Backspace" || event.key === "Del" || event.code === "Delete" || event.code === "Backspace" || event.code === "NumpadDecimal" || event.keyCode === 46 || event.keyCode === 8;
 		if (pageIndex === 4 && isDeleteKey) {
 			if (event.target.tagName === "INPUT" && event.target.type !== "range") return;

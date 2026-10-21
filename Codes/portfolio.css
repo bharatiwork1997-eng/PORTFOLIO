@@ -115,12 +115,33 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 
 dialog { max-width: min(820px, calc(100vw - 28px)); max-height: min(88svh, 900px); border: 0; padding: 0; color: #211f1b; background: transparent; overflow: visible; }
 dialog::backdrop { background: rgba(10,10,8,.76); backdrop-filter: blur(5px); }
-.story-sheet, .resume-sheet, .contact-sheet { position: relative; min-height: 480px; padding: clamp(30px,6vw,70px); background: var(--paper); box-shadow: 0 28px 80px rgba(0,0,0,.44); }
-.story-sheet::before, .resume-sheet::before, .contact-sheet::before { position: absolute; inset: 12px; border: 1px solid rgba(48,44,38,.16); content: ""; pointer-events: none; }
+.story-sheet, .resume-sheet, .contact-sheet, .video-sheet { position: relative; min-height: 480px; padding: clamp(30px,6vw,70px); background: var(--paper); box-shadow: 0 28px 80px rgba(0,0,0,.44); }
+.story-sheet::before, .resume-sheet::before, .contact-sheet::before, .video-sheet::before { position: absolute; inset: 12px; border: 1px solid rgba(48,44,38,.16); content: ""; pointer-events: none; }
 .dialog-close { position: absolute; z-index: 2; top: 20px; right: 24px; width: 34px; height: 34px; border: 1px solid rgba(0,0,0,.22); border-radius: 50%; color: #211f1b; font: 24px/1 var(--pixel); cursor: none !important; }
 .dialog-kicker { margin: 0 0 12px; color: #9b514f; font-size: 10px; text-transform: uppercase; }
-.story-sheet h1, .resume-sheet h1, .contact-sheet h1 { max-width: 650px; margin: 0; font-size: clamp(30px,6vw,66px); line-height: 1.04; font-weight: 400; }
-.story-intro, .resume-summary { max-width: 580px; margin: 18px 0 32px; color: #504b43; font: 16px/1.6 var(--pixel); }
+.story-sheet h1, .resume-sheet h1, .contact-sheet h1, .video-sheet h1 { max-width: 650px; margin: 0; font-size: clamp(30px,6vw,66px); line-height: 1.04; font-weight: 400; }
+.story-intro, .resume-summary, .video-intro { max-width: 580px; margin: 18px 0 32px; color: #504b43; font: 16px/1.6 var(--pixel); }
+.video-dialog { max-width: min(940px, calc(100vw - 28px)); max-height: min(92svh, 920px); }
+.video-sheet { min-height: auto; padding: clamp(24px, 4vw, 44px); }
+.video-intro { margin: 10px 0 20px; }
+.video-player-wrap {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	background: #000;
+	border: 1px solid rgba(30, 27, 22, 0.28);
+	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+	border-radius: 4px;
+	overflow: hidden;
+}
+.video-player-wrap video {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	background: #000;
+	outline: none;
+}
 .story-sections { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; border-top: 1px solid rgba(30,27,22,.2); padding-top: 20px; }
 .story-sections section { min-height: 105px; }
 .story-sections h2 { margin: 0 0 8px; font-size: 11px; font-weight: 600; }

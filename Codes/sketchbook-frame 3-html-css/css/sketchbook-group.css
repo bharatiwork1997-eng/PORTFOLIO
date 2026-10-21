@@ -1,3 +1,7 @@
+*, *::before, *::after, html, body {
+	cursor: none !important;
+}
+
 body {
 	container: body / inline-size;
 	min-height: 100%;
@@ -72,6 +76,7 @@ body {
 	translate: -50% 0;
 	margin-left: 191px;
 	width: 126px; height: 101px;
+	pointer-events: none;
 }
 
 .img4 {
@@ -128,6 +133,20 @@ body {
 	max-width: 294px;
 	flex-shrink: 0;
 	align-self: end;
+	position: relative;
+	z-index: 2;
+	cursor: none !important;
+	transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 300ms ease;
+	transform-origin: 50% 50%;
+}
+
+.img6:hover {
+	transform: scale(1.035) rotate(6deg);
+	filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.3));
+}
+
+.img6:active {
+	transform: scale(0.97) rotate(2deg);
 }
 
 .img7 {
