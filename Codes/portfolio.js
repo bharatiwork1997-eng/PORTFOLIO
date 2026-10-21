@@ -51,8 +51,8 @@ const stories = {
 const cover = document.querySelector("#cover");
 const portfolio = document.querySelector("#portfolio");
 const coverFrame = document.querySelector("#cover-frame");
-const currentFrame = document.querySelector(".current-spread");
-const nextFrame = document.querySelector(".underlay-right iframe");
+let activeFrame = document.querySelector("#frame-a");
+let standbyFrame = document.querySelector("#frame-b");
 const bookScene = document.querySelector("#book-scene");
 const bookStage = document.querySelector("#book-stage");
 const storyDialog = document.querySelector("#story-dialog");
@@ -118,7 +118,7 @@ function prepareFrame(iframe, src) {
 			if (!frameDocument) { resolve(); return; }
 			const style = frameDocument.createElement("style");
 			style.textContent = `
-				html, body { width:1280px !important; height:900px !important; min-height:0 !important; overflow:hidden !important; }
+				html, body { width:1280px !important; height:900px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
 				body { padding:28px 24px !important; }
 				body, body * { cursor:none !important; }
 				body img, body object { transition:transform 220ms ease, filter 220ms ease; }
@@ -183,7 +183,7 @@ function prepareFrame(iframe, src) {
 				const target = event.target;
 				if (pageIndex === 5 && target.closest(".title-thankyou, .slider, .shaving-deco, .thankyou-stage")) contactDialog.showModal();
 			});
-			if (iframe === currentFrame) {
+			if (iframe === activeFrame) {
 				activeFrameDocument = frameDocument;
 				setupSpreadInteractions(frameDocument);
 			}
@@ -197,6 +197,7 @@ function prepareFrame(iframe, src) {
 }
 
 function handleFramePointer(iframe, event) {
+	if (iframe !== activeFrame) return;
 	const rect = iframe.getBoundingClientRect();
 	if (event.target.closest(".spread-arrow-hit-area, button, .sketch-btn, .collage-btn, .collage-size-control, .img9, #sticker-folder, .sticker-folder, [role='button']")) {
 		hidePencil();
@@ -253,7 +254,9 @@ function openBook() {
 	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 620;
 	setTimeout(async () => {
 		pageIndex = 0;
-		await prepareFrame(currentFrame, spreads[pageIndex].src);
+		activeFrame.classList.add("is-active");
+		standbyFrame.classList.remove("is-active");
+		await prepareFrame(activeFrame, spreads[pageIndex].src);
 		cover.hidden = true;
 		cover.classList.remove("is-opening");
 		portfolio.hidden = false;
@@ -274,7 +277,6 @@ function returnHome() {
 	portfolio.hidden = true;
 	pageIndex = 0;
 	gesture = null;
-	bookScene.classList.remove("is-changing");
 	updateBookControls();
 	window.scrollTo({ top: 0, behavior: "smooth" });
 	setTimeout(() => { wheelLocked = false; }, 350);
@@ -320,13 +322,19 @@ async function turnPage(direction) {
 	pageIndex = nextIndex;
 	updateBookControls();
 
-	bookScene.classList.add("is-changing");
-	await new Promise((resolve) => setTimeout(resolve, 80));
+	// Load next spread into standby frame behind active frame (no white/grey flash!)
+	await prepareFrame(standbyFrame, nextSpread.src);
 
-	await prepareFrame(currentFrame, nextSpread.src);
-	bookScene.classList.remove("is-changing");
+	// Swap frames: standby becomes active on top, previous active fades out
+	standbyFrame.classList.add("is-active");
+	activeFrame.classList.remove("is-active");
 
-	await new Promise((resolve) => setTimeout(resolve, 140));
+	const previousActive = activeFrame;
+	activeFrame = standbyFrame;
+	standbyFrame = previousActive;
+	activeFrameDocument = activeFrame.contentDocument;
+
+	await new Promise((resolve) => setTimeout(resolve, 240));
 	turnBusy = false;
 	wheelLocked = false;
 	updateBookControls();
@@ -521,7 +529,7 @@ function setupSketchbook(frameDocument) {
 	canvas.addEventListener("pointerdown", (event) => {
 		drawing = true;
 		canvas.setPointerCapture(event.pointerId);
-		const rect = currentFrame.getBoundingClientRect();
+		const rect = activeFrame.getBoundingClientRect();
 		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
 		const pos = getPos(event);
 		lastX = pos.x;
@@ -529,7 +537,7 @@ function setupSketchbook(frameDocument) {
 		renderPencilDot(context, lastX, lastY);
 	});
 	canvas.addEventListener("pointermove", (event) => {
-		const rect = currentFrame.getBoundingClientRect();
+		const rect = activeFrame.getBoundingClientRect();
 		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900);
 		if (!drawing) return;
 		const pos = getPos(event);

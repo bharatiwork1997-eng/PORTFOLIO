@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#171713">
 	<title>Bharati Kamble | Visual Designer</title>
-	<link rel="stylesheet" href="portfolio.css?v=20">
+	<link rel="stylesheet" href="portfolio.css?v=21">
 </head>
 <body>
 	<header class="site-header">
@@ -32,8 +32,8 @@
 			</div>
 			<div class="book-stage" id="book-stage" aria-label="Sketchbook pages">
 				<div class="book-scene" id="book-scene">
-					<div class="underlay-right" aria-hidden="true"><iframe title="Next sketchbook spread" tabindex="-1"></iframe></div>
-					<iframe class="current-spread" title="Portfolio spread"></iframe>
+					<iframe class="spread-frame is-active" id="frame-a" title="Portfolio spread" allowtransparency="true"></iframe>
+					<iframe class="spread-frame" id="frame-b" title="Portfolio spread" allowtransparency="true"></iframe>
 				</div>
 			</div>
 			<div class="book-controls">
@@ -81,6 +81,6 @@
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=35"></script>
+	<script src="portfolio.js?v=36"></script>
 </body>
 </html>
