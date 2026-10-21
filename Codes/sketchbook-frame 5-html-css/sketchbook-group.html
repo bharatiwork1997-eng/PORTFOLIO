@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=6" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=7" />
 </head>
 
 <body>
@@ -272,6 +272,20 @@
 				});
 				const folder = document.querySelector(".img9");
 				if (folder) folder.addEventListener("click", addStickerStandalone);
+				window.addEventListener("keydown", (e) => {
+					const isDeleteKey = e.key === "Delete" || e.key === "Backspace" || e.key === "Del" || e.code === "Delete" || e.code === "Backspace" || e.code === "NumpadDecimal";
+					if (isDeleteKey) {
+						if (e.target.tagName === "INPUT" && e.target.type !== "range") return;
+						e.preventDefault();
+						if (activeSticker && activeSticker.isConnected) {
+							activeSticker.remove();
+							activeSticker = layer.lastElementChild || null;
+						} else if (layer.lastElementChild) {
+							layer.lastElementChild.remove();
+							activeSticker = layer.lastElementChild || null;
+						}
+					}
+				});
 			}
 		}
 	</script>

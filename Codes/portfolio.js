@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=4" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=6" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=7" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=3" }
 ];
 const spreadNavigationArtwork = [
@@ -134,8 +134,8 @@ function prepareFrame(iframe, src) {
 				body .folio-canvas { position:absolute; z-index:8; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair !important; }
 				body .draw-area, body .collage-layer { cursor:auto !important; }
 				body .collage-layer { position:absolute; z-index:30; inset:0; overflow:hidden; pointer-events:none; }
-				body .collage-sticker { position:absolute; max-width:none; height:auto; cursor:grab !important; pointer-events:auto; touch-action:none; user-select:none; filter:none !important; box-shadow:none !important; }
-				body .collage-sticker.is-selected { outline:2px dashed #cb5d5b; outline-offset:4px; }
+				body .collage-sticker { position:absolute; max-width:none; height:auto; cursor:grab !important; pointer-events:auto; touch-action:none; user-select:none; filter:none !important; box-shadow:none !important; outline:none !important; }
+				body .collage-sticker.is-selected { outline:none !important; border:none !important; box-shadow:none !important; }
 				body .collage-sticker.popping { animation: sticker-pop-in 340ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 				body .img9.is-popping { animation: folder-tap 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 				@keyframes sticker-pop-in { 0% { transform: scale(0) translateY(-25px) rotate(-14deg); opacity: 0; } 70% { transform: scale(1.14) translateY(4px) rotate(4deg); opacity: 1; } 100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; } }
@@ -163,6 +163,17 @@ function prepareFrame(iframe, src) {
 			frameDocument.addEventListener("pointerup", (event) => finishGesture(event));
 			frameDocument.addEventListener("pointercancel", cancelGesture);
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
+			frameDocument.addEventListener("keydown", (event) => {
+				const isDeleteKey = event.key === "Delete" || event.key === "Backspace" || event.key === "Del" || event.code === "Delete" || event.code === "Backspace" || event.code === "NumpadDecimal" || event.keyCode === 46 || event.keyCode === 8;
+				if (frameIndex === 4 && isDeleteKey) {
+					if (event.target.tagName === "INPUT" && event.target.type !== "range") return;
+					event.preventDefault();
+					deleteSticker();
+					return;
+				}
+				if (event.key === "ArrowRight") turnPage(1);
+				if (event.key === "ArrowLeft") turnPage(-1);
+			});
 			frameDocument.addEventListener("click", (event) => {
 				const target = event.target;
 				let action = null;
@@ -940,7 +951,10 @@ document.addEventListener("pointermove", (event) => movePencil(event.clientX, ev
 document.addEventListener("pointerleave", hidePencil);
 document.addEventListener("keydown", (event) => {
 	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open) {
-		if (pageIndex === 4 && activeSticker && (event.key === "Delete" || event.key === "Backspace")) {
+		const isDeleteKey = event.key === "Delete" || event.key === "Backspace" || event.key === "Del" || event.code === "Delete" || event.code === "Backspace" || event.code === "NumpadDecimal" || event.keyCode === 46 || event.keyCode === 8;
+		if (pageIndex === 4 && isDeleteKey) {
+			if (event.target.tagName === "INPUT" && event.target.type !== "range") return;
+			event.preventDefault();
 			deleteSticker();
 			return;
 		}
