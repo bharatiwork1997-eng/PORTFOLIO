@@ -207,11 +207,6 @@ function prepareFrame(iframe, src) {
 			frameDocument.addEventListener("click", (event) => {
 				const target = event.target;
 				if (frameIndex === 5) {
-					if (target.closest("[data-channel='email']")) {
-						event.preventDefault();
-						openDialog(contactDialog);
-						return;
-					}
 					if (target.closest(".thankyou-link")) {
 						return;
 					}
