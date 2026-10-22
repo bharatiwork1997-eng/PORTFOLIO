@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none">
+  <defs>
+    <!-- Soft shadow cast by the turned flap onto the paper below -->
+    <filter id="crease-shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="-2" dy="-2" stdDeviation="2.5" flood-color="#14120e" flood-opacity="0.22" />
+    </filter>
+    
+    <!-- Cutout shadow beneath the fold (where the paper lifted) -->
+    <linearGradient id="cutout-shadow" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0a0a08" stop-opacity="0.35" />
+      <stop offset="70%" stop-color="#0a0a08" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#0a0a08" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Gentle paper roll gradient for the folded flap -->
+    <linearGradient id="soft-flap" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dedad1" />
+      <stop offset="35%" stop-color="#ede9e1" />
+      <stop offset="75%" stop-color="#f8f6f2" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+
+    <!-- Subtle highlight on the folded edge/crease -->
+    <linearGradient id="crease-highlight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.18)" />
+      <stop offset="25%" stop-color="rgba(255,255,255,0.7)" />
+      <stop offset="75%" stop-color="rgba(255,255,255,0.85)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0.14)" />
+    </linearGradient>
+  </defs>
+
+  <!-- Dark ambient drop where corner was lifted away from background -->
+  <polygon points="0,60 60,0 60,60" fill="url(#cutout-shadow)" />
+
+  <!-- The softly turned-over paper flap -->
+  <!-- Curves softly toward the interior (6, 6) rather than a rigid sharp edge -->
+  <path d="M 0,60 Q 8,16 6,6 Q 16,8 60,0 Q 24,24 0,60 Z" 
+        fill="url(#soft-flap)" 
+        filter="url(#crease-shadow)" />
+
+  <!-- Soft diagonal crease fold line -->
+  <path d="M 0,60 Q 24,24 60,0" 
+        stroke="url(#crease-highlight)" 
+        stroke-width="1" 
+        fill="none" />
+</svg>

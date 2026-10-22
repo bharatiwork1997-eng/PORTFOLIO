@@ -7,14 +7,24 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=6" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=8" />
 
 </head>
 
 <body>
 	<div class="row">
 		<img src="assets/img.png" class="img1" />
-		<div class="text-input"></div>
+		<div class="text-input" role="button" tabindex="0" title="Explore Agency Work &amp; Beauty Brands">
+			<div class="cover-card-artwork-wrap">
+				<img class="cover-card-artwork" src="assets/agency-cover.jpg?v=1" alt="Agency Work - Beauty Brands" loading="eager">
+				<div class="cover-card-glare"></div>
+				<div class="cover-card-footer-pill">
+					<span class="pill-pulse" aria-hidden="true"></span>
+					<span class="pill-text">TAP TO EXPLORE</span>
+					<span class="pill-arrow" aria-hidden="true">↗</span>
+				</div>
+			</div>
+		</div>
 		<img src="assets/img2.png" class="img2" />
 		<img src="assets/img3.png" class="img3" />
 		<img src="assets/rating.svg" class="rating" alt="Goldfish sticker" role="button" tabindex="0" title="Swim!" />
@@ -35,10 +45,69 @@
 		<img src="assets/img.png" class="img7" />
 	</div>
 
+	<dialog class="video-dialog" id="video-dialog" aria-labelledby="video-title">
+		<div class="video-sheet">
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			<p class="dialog-kicker">VISUAL STORYTELLING · CONCEPT & MOTION</p>
+			<h1 id="video-title">LOST</h1>
+			<p class="video-intro">An animated narrative on screen dependency, contrasting digital isolation with the tactile presence of the physical world.</p>
+			<div class="video-player-wrap">
+				<video id="lost-video" controls playsinline preload="metadata">
+					<source src="assets/LOST%20Video.mp4" type="video/mp4">
+					<source src="assets/LOST-Video.mp4" type="video/mp4">
+					Your browser does not support the video tag.
+				</video>
+			</div>
+			<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			<div class="sheet-corner-fold" aria-hidden="true"></div>
+		</div>
+	</dialog>
+
 	<script>
-		document.querySelector(".img6")?.addEventListener("click", () => {
+		const localVideoDialog = document.querySelector("#video-dialog");
+		const localLostVideo = document.querySelector("#lost-video");
+
+		function openVideo() {
 			if (window.parent && window.parent !== window && typeof window.parent.openLostVideo === "function") {
 				window.parent.openLostVideo();
+				return;
+			}
+			if (localVideoDialog) {
+				localVideoDialog.showModal();
+				if (localLostVideo) {
+					localLostVideo.currentTime = 0;
+					localLostVideo.play().catch(() => {});
+				}
+			}
+		}
+
+		function openAgency() {
+			if (window.parent && window.parent !== window && typeof window.parent.openAgencyDialog === "function") {
+				window.parent.openAgencyDialog();
+				return;
+			}
+			if (window.parent && typeof window.parent.openStory === "function") {
+				window.parent.openStory("agency");
+				return;
+			}
+			window.location.href = "../detailed-page-html-css/agency-page.html";
+		}
+
+		document.querySelector(".text-input")?.addEventListener("click", openAgency);
+		document.querySelector(".col-left")?.addEventListener("click", openAgency);
+
+		document.querySelector(".img6")?.addEventListener("click", openVideo);
+		document.querySelectorAll("[data-close-dialog]").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				if (localLostVideo) localLostVideo.pause();
+				localVideoDialog?.close();
+			});
+		});
+		localVideoDialog?.addEventListener("click", (e) => {
+			const sheet = localVideoDialog.querySelector(".video-sheet");
+			if (sheet && !sheet.contains(e.target)) {
+				if (localLostVideo) localLostVideo.pause();
+				localVideoDialog.close();
 			}
 		});
 

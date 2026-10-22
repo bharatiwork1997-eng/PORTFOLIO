@@ -1,8 +1,8 @@
 const spreads = [
 	{ title: "About me", src: "sketchbook-frame 1-html-css/sketchbook-group.html?v=3" },
-	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=6" },
-	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=6" },
-	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html" },
+	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=20" },
+	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=8" },
+	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=2" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=10" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=6" }
 ];
@@ -60,6 +60,10 @@ const resumeDialog = document.querySelector("#resume-dialog");
 const contactDialog = document.querySelector("#contact-dialog");
 const videoDialog = document.querySelector("#video-dialog");
 const lostVideo = document.querySelector("#lost-video");
+const assessmentDialog = document.querySelector("#assessment-dialog");
+const assessmentVideo = document.querySelector("#assessment-video");
+const agencyDialog = document.querySelector("#agency-dialog");
+const clustrDialog = document.querySelector("#clustr-dialog");
 const toast = document.querySelector("#toast");
 const pencil = document.querySelector(".pencil-cursor");
 const arrowCursor = document.querySelector(".arrow-cursor");
@@ -181,15 +185,15 @@ function prepareFrame(iframe, src) {
 			frameDocument.addEventListener("click", (event) => {
 				const target = event.target;
 				let action = null;
-				if (frameIndex === 1 && target.closest(".text-input1")) action = () => openStory("clustr");
-				else if (frameIndex === 1 && target.closest(".text-input2")) action = () => openStory("assessment");
+				if (frameIndex === 1 && target.closest(".text-input1, .graphic, .case-study-heading, .subtitle-clustr, .text-ux-ui-case-study")) action = () => openClustrDialog();
+				else if (frameIndex === 1 && target.closest(".text-input2")) action = () => openAssessmentDialog();
 				else if (frameIndex === 2 && target.closest(".rating")) action = () => {
 					if (typeof frameDocument.defaultView?.dartFish === "function") {
 						frameDocument.defaultView.dartFish();
 					}
 				};
 				else if (frameIndex === 2 && target.closest(".img6")) action = () => openLostVideo();
-				else if (frameIndex === 2 && target.closest(".text-input, .text1, .text2")) action = () => openStory("agency");
+				else if (frameIndex === 2 && target.closest(".text-input, .text1, .text2, .col-left")) action = () => openAgencyDialog();
 				else if (frameIndex === 2 && target.closest(".text-top, .text-campaigns")) action = () => openStory("college");
 				else if (frameIndex === 3 && target.closest(".img2")) action = () => openDialog(resumeDialog);
 				else if (frameIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
@@ -343,7 +347,7 @@ function returnHome() {
 }
 
 function handleWheelNavigation(event) {
-	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open || videoDialog?.open) return;
+	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open || videoDialog?.open || assessmentDialog?.open) return;
 
 	// Pick dominant delta (supports vertical wheel and horizontal swipe)
 	const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
@@ -457,7 +461,374 @@ function openLostVideo() {
 }
 window.openLostVideo = openLostVideo;
 
+let assessmentScrollInitialized = false;
+
+function initAssessmentScrollViewer() {
+	const viewport = document.querySelector("#assessment-scroll-viewport");
+	if (!viewport) return;
+
+	const progressBar = document.querySelector("#pdf-progress-bar");
+	const percentText = document.querySelector("#pdf-percent-text");
+	const topBtn = document.querySelector("#pdf-scroll-top-btn");
+
+	function updateProgress() {
+		const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+		if (maxScroll <= 0) {
+			if (progressBar) progressBar.style.width = "0%";
+			if (percentText) percentText.textContent = "0%";
+			return;
+		}
+		const pct = Math.min(100, Math.max(0, Math.round((viewport.scrollTop / maxScroll) * 100)));
+		if (progressBar) progressBar.style.width = `${pct}%`;
+		if (percentText) percentText.textContent = `${pct}%`;
+	}
+
+	if (!assessmentScrollInitialized) {
+		assessmentScrollInitialized = true;
+
+		viewport.addEventListener("scroll", updateProgress, { passive: true });
+
+		if (topBtn) {
+			topBtn.addEventListener("click", () => {
+				viewport.scrollTo({ top: 0, behavior: "smooth" });
+			});
+		}
+
+		// Mouse grab-and-drag interaction
+		let isDown = false;
+		let startY = 0;
+		let initialScroll = 0;
+
+		viewport.addEventListener("mousedown", (e) => {
+			isDown = true;
+			viewport.classList.add("is-dragging");
+			startY = e.pageY;
+			initialScroll = viewport.scrollTop;
+		});
+
+		window.addEventListener("mouseup", () => {
+			if (isDown) {
+				isDown = false;
+				viewport.classList.remove("is-dragging");
+			}
+		});
+
+		window.addEventListener("mousemove", (e) => {
+			if (!isDown) return;
+			e.preventDefault();
+			const walk = (e.pageY - startY) * 1.5;
+			viewport.scrollTop = initialScroll - walk;
+		});
+
+		// Embedded Reel controls
+		const reelVideo = document.querySelector("#assessment-reel-video");
+		const reelPlayBtn = document.querySelector("#reel-play-btn");
+		const reelSoundBtn = document.querySelector("#reel-sound-btn");
+		const reelIconPlay = document.querySelector("#reel-icon-play");
+		const reelIconPause = document.querySelector("#reel-icon-pause");
+		const reelIconMuted = document.querySelector("#reel-icon-muted");
+		const reelIconSound = document.querySelector("#reel-icon-sound");
+		const embeddedPlayer = document.querySelector("#embedded-reel-player");
+
+		function toggleReelPlay(e) {
+			if (e) e.stopPropagation();
+			if (!reelVideo) return;
+			if (reelVideo.paused) {
+				reelVideo.play().catch(() => {});
+				if (reelIconPlay) reelIconPlay.style.display = "none";
+				if (reelIconPause) reelIconPause.style.display = "inline";
+			} else {
+				reelVideo.pause();
+				if (reelIconPlay) reelIconPlay.style.display = "inline";
+				if (reelIconPause) reelIconPause.style.display = "none";
+			}
+		}
+
+		function toggleReelSound(e) {
+			if (e) e.stopPropagation();
+			if (!reelVideo) return;
+			reelVideo.muted = !reelVideo.muted;
+			if (reelIconMuted) reelIconMuted.style.display = reelVideo.muted ? "inline" : "none";
+			if (reelIconSound) reelIconSound.style.display = reelVideo.muted ? "none" : "inline";
+		}
+
+		if (reelPlayBtn) reelPlayBtn.addEventListener("click", toggleReelPlay);
+		if (embeddedPlayer) embeddedPlayer.addEventListener("click", toggleReelPlay);
+		if (reelSoundBtn) reelSoundBtn.addEventListener("click", toggleReelSound);
+
+		// Tab switching
+		document.querySelectorAll("#assessment-dialog .assessment-tab[data-tab]").forEach((tabBtn) => {
+			tabBtn.addEventListener("click", () => {
+				const tab = tabBtn.dataset.tab;
+				document.querySelectorAll("#assessment-dialog .assessment-tab[data-tab]").forEach((b) => {
+					b.classList.toggle("is-active", b === tabBtn);
+					b.setAttribute("aria-selected", b === tabBtn ? "true" : "false");
+				});
+				document.querySelectorAll("#assessment-dialog .assessment-panel").forEach((panel) => {
+					panel.classList.toggle("is-active", panel.id === `panel-${tab}`);
+				});
+				if (tab !== "video" && assessmentVideo) {
+					assessmentVideo.pause();
+				}
+				if (tab === "video" && reelVideo) {
+					reelVideo.pause();
+				}
+				if (tab === "slides") {
+					setTimeout(updateProgress, 50);
+					if (reelVideo && reelVideo.paused) {
+						reelVideo.play().catch(() => {});
+					}
+				}
+			});
+		});
+	}
+
+	viewport.scrollTop = 0;
+	updateProgress();
+}
+
+function openAssessmentDialog() {
+	if (!assessmentDialog) return;
+	openDialog(assessmentDialog);
+	initAssessmentScrollViewer();
+}
+window.openAssessmentDialog = openAssessmentDialog;
+
+let agencyScrollInitialized = false;
+
+function initAgencyScrollViewer() {
+	const viewport = document.querySelector("#agency-scroll-viewport");
+	if (!viewport) return;
+
+	const progressBar = document.querySelector("#agency-progress-bar");
+	const percentText = document.querySelector("#agency-percent-text");
+	const topBtn = document.querySelector("#agency-scroll-top-btn");
+
+	function updateProgress() {
+		const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+		if (maxScroll <= 0) {
+			if (progressBar) progressBar.style.width = "0%";
+			if (percentText) percentText.textContent = "0%";
+			return;
+		}
+		const pct = Math.min(100, Math.max(0, Math.round((viewport.scrollTop / maxScroll) * 100)));
+		if (progressBar) progressBar.style.width = `${pct}%`;
+		if (percentText) percentText.textContent = `${pct}%`;
+	}
+
+	if (!agencyScrollInitialized) {
+		agencyScrollInitialized = true;
+
+		viewport.addEventListener("scroll", updateProgress, { passive: true });
+
+		if (topBtn) {
+			topBtn.addEventListener("click", () => {
+				viewport.scrollTo({ top: 0, behavior: "smooth" });
+			});
+		}
+
+		// Mouse grab-and-drag interaction
+		let isDown = false;
+		let startY = 0;
+		let initialScroll = 0;
+
+		viewport.addEventListener("mousedown", (e) => {
+			isDown = true;
+			viewport.classList.add("is-dragging");
+			startY = e.pageY;
+			initialScroll = viewport.scrollTop;
+		});
+
+		window.addEventListener("mouseup", () => {
+			if (isDown) {
+				isDown = false;
+				viewport.classList.remove("is-dragging");
+			}
+		});
+
+		window.addEventListener("mousemove", (e) => {
+			if (!isDown) return;
+			e.preventDefault();
+			const walk = (e.pageY - startY) * 1.5;
+			viewport.scrollTop = initialScroll - walk;
+		});
+
+		// Tab switching
+		document.querySelectorAll("#agency-dialog .assessment-tab[data-agency-tab]").forEach((tabBtn) => {
+			tabBtn.addEventListener("click", () => {
+				const tab = tabBtn.dataset.agencyTab;
+				document.querySelectorAll("#agency-dialog .assessment-tab[data-agency-tab]").forEach((b) => {
+					b.classList.toggle("is-active", b === tabBtn);
+					b.setAttribute("aria-selected", b === tabBtn ? "true" : "false");
+				});
+				document.querySelectorAll("#agency-dialog .assessment-panel").forEach((panel) => {
+					panel.classList.toggle("is-active", panel.id === `agency-panel-${tab}`);
+				});
+				if (tab === "campaigns") {
+					setTimeout(updateProgress, 50);
+				}
+			});
+		});
+	}
+
+	viewport.scrollTop = 0;
+	updateProgress();
+}
+
+function openAgencyDialog() {
+	if (!agencyDialog) return;
+	openDialog(agencyDialog);
+	initAgencyScrollViewer();
+}
+window.openAgencyDialog = openAgencyDialog;
+
+function openClustrDialog() {
+	if (!clustrDialog) return;
+	const iframe = clustrDialog.querySelector("#clustr-frame");
+	if (iframe && (!iframe.src || iframe.src === "about:blank" || iframe.src.endsWith("about:blank"))) {
+		iframe.src = iframe.dataset.src || "clustr/index.html";
+	}
+	openDialog(clustrDialog);
+	if (iframe && !iframe.dataset.pencilHooked) {
+		iframe.dataset.pencilHooked = "true";
+		iframe.addEventListener("pointerenter", () => {
+			if (pencil) pencil.style.display = "none";
+		});
+		iframe.addEventListener("mouseenter", () => {
+			if (pencil) pencil.style.display = "none";
+		});
+	}
+}
+window.openClustrDialog = openClustrDialog;
+
+function closeClustrDialog() {
+	if (clustrDialog && clustrDialog.open) {
+		clustrDialog.close();
+	}
+}
+window.closeClustrDialog = closeClustrDialog;
+
+/* ===== FULLSCREEN SUPPORT FOR DECK & CAMPAIGN VIEWERS ===== */
+function toggleDialogFullscreen(dialog) {
+	if (!dialog) return;
+	const isFS = dialog.classList.contains("is-fullscreen");
+	if (!isFS) {
+		dialog.classList.add("is-fullscreen");
+		if (dialog.requestFullscreen) {
+			dialog.requestFullscreen().catch(() => {});
+		} else if (dialog.webkitRequestFullscreen) {
+			dialog.webkitRequestFullscreen();
+		}
+	} else {
+		dialog.classList.remove("is-fullscreen");
+		if (document.fullscreenElement) {
+			document.exitFullscreen().catch(() => {});
+		} else if (document.webkitFullscreenElement) {
+			document.webkitExitFullscreen();
+		}
+	}
+	updateDialogFullscreenUI(dialog);
+}
+
+function updateDialogFullscreenUI(dialog) {
+	if (!dialog) return;
+	const isFS = dialog.classList.contains("is-fullscreen") || document.fullscreenElement === dialog;
+	if (isFS) {
+		dialog.classList.add("is-fullscreen");
+	} else {
+		dialog.classList.remove("is-fullscreen");
+	}
+
+	dialog.querySelectorAll(".fullscreen-toggle-btn").forEach((btn) => {
+		btn.classList.toggle("is-active", isFS);
+		btn.setAttribute("title", isFS ? "Exit Full Screen (Esc / F)" : "Toggle full screen (F)");
+		const label = btn.querySelector(".action-btn-label");
+		if (label) label.textContent = isFS ? "Exit Full Screen" : "Full Screen";
+		const expandIcon = btn.querySelector(".fs-icon-expand");
+		const compressIcon = btn.querySelector(".fs-icon-compress");
+		if (expandIcon) expandIcon.style.display = isFS ? "none" : "block";
+		if (compressIcon) compressIcon.style.display = isFS ? "block" : "none";
+	});
+
+	dialog.querySelectorAll(".pdf-fullscreen-btn").forEach((btn) => {
+		btn.classList.toggle("is-active", isFS);
+		btn.setAttribute("title", isFS ? "Exit full screen view (Esc / F)" : "View full screen (F)");
+		const textSpan = btn.querySelector(".pdf-fs-text");
+		if (textSpan) {
+			textSpan.textContent = isFS ? "Exit Full Screen" : "Full Screen";
+		} else {
+			btn.textContent = isFS ? "Exit Full Screen" : "Full Screen";
+		}
+	});
+
+	setTimeout(() => {
+		if (dialog === agencyDialog) {
+			const vp = document.querySelector("#agency-scroll-viewport");
+			if (vp) vp.dispatchEvent(new Event("scroll"));
+		} else if (dialog === assessmentDialog) {
+			const vp = document.querySelector("#assessment-scroll-viewport");
+			if (vp) vp.dispatchEvent(new Event("scroll"));
+		}
+	}, 120);
+}
+
+// Wire up full screen toggle buttons
+[
+	{ dialog: clustrDialog, toggles: ["#clustr-fullscreen-toggle"] },
+	{ dialog: agencyDialog, toggles: ["#agency-fullscreen-toggle", "#agency-toolbar-fullscreen-btn"] },
+	{ dialog: assessmentDialog, toggles: ["#assessment-fullscreen-toggle", "#assessment-toolbar-fullscreen-btn"] }
+].forEach(({ dialog, toggles }) => {
+	if (!dialog) return;
+	toggles.forEach((sel) => {
+		document.querySelector(sel)?.addEventListener("click", (e) => {
+			e.stopPropagation();
+			toggleDialogFullscreen(dialog);
+		});
+	});
+	dialog.addEventListener("close", () => {
+		dialog.classList.remove("is-fullscreen");
+		if (document.fullscreenElement) {
+			document.exitFullscreen().catch(() => {});
+		}
+		updateDialogFullscreenUI(dialog);
+	});
+});
+
+document.addEventListener("fullscreenchange", () => {
+	[clustrDialog, agencyDialog, assessmentDialog].forEach((dlg) => {
+		if (!dlg) return;
+		if (!document.fullscreenElement && dlg.classList.contains("is-fullscreen")) {
+			dlg.classList.remove("is-fullscreen");
+		}
+		updateDialogFullscreenUI(dlg);
+	});
+});
+
+document.addEventListener("keydown", (e) => {
+	if ((e.key === "f" || e.key === "F") && !e.ctrlKey && !e.metaKey && !e.altKey) {
+		if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+		if (clustrDialog && clustrDialog.open) {
+			e.preventDefault();
+			toggleDialogFullscreen(clustrDialog);
+		} else if (agencyDialog && agencyDialog.open) {
+			e.preventDefault();
+			toggleDialogFullscreen(agencyDialog);
+		} else if (assessmentDialog && assessmentDialog.open) {
+			e.preventDefault();
+			toggleDialogFullscreen(assessmentDialog);
+		}
+	}
+});
+
 function openStory(key) {
+	if (key === "clustr") {
+		openClustrDialog();
+		return;
+	}
+	if (key === "agency") {
+		openAgencyDialog();
+		return;
+	}
 	const story = stories[key];
 	if (!story) return;
 	document.querySelector("#story-kicker").textContent = story.kicker;
@@ -489,13 +860,16 @@ function makeInteractive(element, label, action) {
 
 function setupSpreadInteractions(frameDocument, index = pageIndex) {
 	if (index === 1) {
-		makeInteractive(frameDocument.querySelector(".text-input1"), "Open the CLUSTR volunteering app case study", () => openStory("clustr"));
-		makeInteractive(frameDocument.querySelector(".text-input2"), "Open assessment work", () => openStory("assessment"));
+		makeInteractive(frameDocument.querySelector(".text-input1"), "Open the CLUSTR volunteering app case study", () => openClustrDialog());
+		makeInteractive(frameDocument.querySelector(".graphic"), "Open the CLUSTR volunteering app case study", () => openClustrDialog());
+		makeInteractive(frameDocument.querySelector(".case-study-heading"), "Open the CLUSTR volunteering app case study", () => openClustrDialog());
+		makeInteractive(frameDocument.querySelector(".text-input2"), "Open The OG Architect assessment work", () => openAssessmentDialog());
 	}
 	if (index === 2) {
-		makeInteractive(frameDocument.querySelector(".text-input"), "Open agency work", () => openStory("agency"));
-		makeInteractive(frameDocument.querySelector(".text1"), "Open agency work", () => openStory("agency"));
-		makeInteractive(frameDocument.querySelector(".text2"), "Open beauty brand work", () => openStory("agency"));
+		makeInteractive(frameDocument.querySelector(".text-input"), "Open agency work & beauty brands", () => openAgencyDialog());
+		makeInteractive(frameDocument.querySelector(".text1"), "Open agency work & beauty brands", () => openAgencyDialog());
+		makeInteractive(frameDocument.querySelector(".text2"), "Open agency work & beauty brands", () => openAgencyDialog());
+		makeInteractive(frameDocument.querySelector(".col-left"), "Open agency work & beauty brands", () => openAgencyDialog());
 		makeInteractive(frameDocument.querySelector(".text-top"), "Open college campaign work", () => openStory("college"));
 		makeInteractive(frameDocument.querySelector(".text-campaigns"), "Open college campaign work", () => openStory("college"));
 		makeInteractive(frameDocument.querySelector(".img6"), "Play LOST campaign video", () => openLostVideo());
@@ -1006,13 +1380,19 @@ document.querySelector(".wordmark").addEventListener("click", (event) => {
 window.addEventListener("wheel", handleWheelNavigation, { passive: false });
 document.querySelector("#previous-page").addEventListener("click", () => turnPage(-1));
 document.querySelector("#next-page").addEventListener("click", () => turnPage(1));
+function openResumeDialog() {
+	openDialog(resumeDialog);
+}
+window.openResumeDialog = openResumeDialog;
+window.resumeDialog = resumeDialog;
+
 document.querySelectorAll("[data-open-contact]").forEach((button) => button.addEventListener("click", () => openDialog(contactDialog)));
-document.querySelectorAll("[data-open-resume]").forEach((button) => button.addEventListener("click", () => openDialog(resumeDialog)));
+document.querySelectorAll("[data-open-resume]").forEach((button) => button.addEventListener("click", openResumeDialog));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog").close()));
-[storyDialog, resumeDialog, contactDialog, videoDialog].forEach((dialog) => {
+[storyDialog, resumeDialog, contactDialog, videoDialog, assessmentDialog, agencyDialog, clustrDialog].forEach((dialog) => {
 	if (!dialog) return;
 	dialog.addEventListener("click", (event) => {
-		const sheet = dialog.querySelector(".story-sheet, .resume-sheet, .contact-sheet, .video-sheet");
+		const sheet = dialog.querySelector(".story-sheet, .resume-sheet, .contact-sheet, .video-sheet, .assessment-sheet, .clustr-sheet");
 		if (sheet && !sheet.contains(event.target)) {
 			dialog.close();
 		}
@@ -1020,6 +1400,9 @@ document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addE
 	dialog.addEventListener("close", () => {
 		if (dialog === videoDialog && lostVideo) {
 			lostVideo.pause();
+		}
+		if (dialog === assessmentDialog && assessmentVideo) {
+			assessmentVideo.pause();
 		}
 		handleDialogClose(dialog);
 	});
@@ -1048,7 +1431,19 @@ document.addEventListener("pointerenter", (event) => movePencil(event.clientX, e
 document.addEventListener("pointermove", (event) => movePencil(event.clientX, event.clientY));
 document.addEventListener("pointerleave", hidePencil);
 document.addEventListener("keydown", (event) => {
-	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open && !videoDialog?.open) {
+	if (assessmentDialog?.open) {
+		if (event.key === "ArrowRight") {
+			event.preventDefault();
+			setAssessmentSlide(assessmentSlide + 1);
+			return;
+		}
+		if (event.key === "ArrowLeft") {
+			event.preventDefault();
+			setAssessmentSlide(assessmentSlide - 1);
+			return;
+		}
+	}
+	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open && !videoDialog?.open && !assessmentDialog?.open && !agencyDialog?.open && !clustrDialog?.open) {
 		const isDeleteKey = event.key === "Delete" || event.key === "Backspace" || event.key === "Del" || event.code === "Delete" || event.code === "Backspace" || event.code === "NumpadDecimal" || event.keyCode === 46 || event.keyCode === 8;
 		if (pageIndex === 4 && isDeleteKey) {
 			if (event.target.tagName === "INPUT" && event.target.type !== "range") return;

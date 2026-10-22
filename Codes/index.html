@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#171713">
 	<title>Bharati Kamble | Visual Designer</title>
-	<link rel="stylesheet" href="portfolio.css?v=29">
+	<link rel="stylesheet" href="portfolio.css?v=48">
 </head>
 <body>
 	<header class="site-header">
@@ -50,44 +50,450 @@
 
 	<dialog class="story-dialog" id="story-dialog" aria-labelledby="story-title">
 		<div class="story-sheet">
-			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
 			<p class="dialog-kicker" id="story-kicker"></p>
 			<h1 id="story-title"></h1>
 			<p class="story-intro" id="story-intro"></p>
 			<div class="story-sections" id="story-sections"></div>
 			<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			<div class="sheet-corner-fold" aria-hidden="true"></div>
 		</div>
 	</dialog>
 
 	<dialog class="resume-dialog" id="resume-dialog" aria-labelledby="resume-title">
 		<div class="resume-sheet">
-			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
-			<p class="dialog-kicker">Folded paper, opened</p>
-			<h1 id="resume-title">Bharati Kamble</h1>
-			<p class="resume-summary">Senior graphic designer and visualizer with 5+ years in brand communication, now expanding into UX / UI design.</p>
-			<div class="resume-facts"><span>Focus</span><p>Visual design, brand communication, UX / UI</p><span>Currently</span><p>Looking for a UX / UI designer role</p></div>
-			<p class="resume-note">Add your finished résumé PDF and contact details here before publishing.</p>
-			<button class="story-back" type="button" id="print-resume">Print / save as PDF <span aria-hidden="true">↗</span></button>
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
+
+			<div class="resume-scroll-container">
+				<!-- Centered Resume Header -->
+				<header class="resume-header">
+					<h1 class="resume-name" id="resume-title">BHARATI KAMBLE</h1>
+					<p class="resume-subtitle">UX/UI &amp; Senior Visual Designer</p>
+					<div class="resume-contact-bar">
+						<span>Mumbai, India</span>
+						<span class="sep">•</span>
+						<a href="tel:+919137225648" class="resume-contact-link">+91 91372 25648</a>
+						<span class="sep">•</span>
+						<a href="mailto:bharatikamble697@gmail.com" class="resume-contact-link">bharatikamble697@gmail.com</a>
+					</div>
+					<div class="resume-links-bar">
+						<a href="https://www.linkedin.com/in/bharatikamble" target="_blank" rel="noopener noreferrer" class="resume-social-link">LinkedIn ↗</a>
+						<span class="sep">•</span>
+						<a href="https://www.behance.net/bharatikamble" target="_blank" rel="noopener noreferrer" class="resume-social-link">Behance ↗</a>
+					</div>
+				</header>
+
+				<!-- Professional Summary -->
+				<section class="resume-section">
+					<h2 class="resume-section-title">PROFESSIONAL SUMMARY</h2>
+					<p class="resume-summary-text">
+						UX/UI &amp; Senior Visual Designer with 5.5+ years of design experience combining human-centred product design with high-craft brand storytelling. Experienced in leveraging modern AI tools (Claude, Gemini, ChatGPT) across user research synthesis, design ideation, and rapid prototyping to accelerate product delivery. Proven track record directing visual strategy, design systems, and multi-channel campaigns for major retail, beauty, and lifestyle brands, bridging the gap between product strategy and polished visual execution.
+					</p>
+				</section>
+
+				<!-- Core Competencies & Skills -->
+				<section class="resume-section">
+					<h2 class="resume-section-title">CORE COMPETENCIES &amp; SKILLS</h2>
+					<div class="resume-skills-grid">
+						<div class="resume-skill-group">
+							<span class="skill-category">Product &amp; UX/UI:</span>
+							<span class="skill-items">User Research, Information Architecture, User Flows, Wireframing, High-Fidelity Prototyping, Usability Testing, Design Systems, Responsive Web &amp; Mobile Design</span>
+						</div>
+						<div class="resume-skill-group">
+							<span class="skill-category">Visual &amp; Brand:</span>
+							<span class="skill-items">Art Direction, Key Visuals, Visual Storytelling, Brand Identity, Packaging, Social Media Campaigns, Pitch Decks</span>
+						</div>
+						<div class="resume-skill-group">
+							<span class="skill-category">Design &amp; Dev Tools:</span>
+							<span class="skill-items">Figma, FigJam, Photoshop, Illustrator, Visual Studio Code</span>
+						</div>
+						<div class="resume-skill-group">
+							<span class="skill-category">AI &amp; Workflow:</span>
+							<span class="skill-items">Claude, Gemini, ChatGPT, Google AI Studio, Generative AI for UX synthesis, prompt-assisted ideation &amp; rapid front-end prototyping</span>
+						</div>
+					</div>
+				</section>
+
+				<!-- Selected UX / Product Design Projects -->
+				<section class="resume-section">
+					<h2 class="resume-section-title">SELECTED UX / PRODUCT DESIGN PROJECTS</h2>
+					
+					<article class="resume-entry">
+						<div class="resume-entry-header">
+							<h3 class="entry-title">CLUSTR — Mobile Volunteering Application</h3>
+							<span class="entry-role">UX/UI Designer</span>
+						</div>
+						<ul class="resume-bullets">
+							<li>Designed end-to-end user flows and responsive screens for a mobile platform helping young professionals discover and commit to local volunteering events.</li>
+							<li>Conducted user interviews and competitive benchmarking to identify key drop-off factors in event sign-ups, introducing a seamless buddy-connection feature that reduced commitment friction.</li>
+							<li>Leveraged AI-assisted workflows to synthesize qualitative interview data, map user journey edge cases, and draft clear interface microcopy.</li>
+							<li>Built a modular UI design system with accessible typography, text-focused preview cards, and custom components optimized for clear scannability.</li>
+						</ul>
+					</article>
+
+					<article class="resume-entry">
+						<div class="resume-entry-header">
+							<h3 class="entry-title">Portfolio Website Development</h3>
+							<span class="entry-role">Designer &amp; Front-End Prototyper</span>
+						</div>
+						<ul class="resume-bullets">
+							<li>Designed and built an interactive personal portfolio website using Visual Studio Code, translating UX wireframes and visual components into responsive web layouts.</li>
+							<li>Utilized AI coding assistants to troubleshoot front-end interactions, optimize responsive behavior, and streamline deployment workflows.</li>
+						</ul>
+					</article>
+				</section>
+
+				<!-- Professional Experience -->
+				<section class="resume-section">
+					<h2 class="resume-section-title">PROFESSIONAL EXPERIENCE</h2>
+					
+					<article class="resume-entry">
+						<div class="resume-entry-header">
+							<h3 class="entry-title">Yellow Advertising Agency</h3>
+							<span class="entry-meta">Jul 2023 – Feb 2026</span>
+						</div>
+						<div class="resume-sub-meta">Mumbai, India &nbsp;·&nbsp; Visualiser &amp; Senior Designer</div>
+						<ul class="resume-bullets">
+							<li>Led art direction, digital communication, and key visual development for prominent beauty, cosmetic, and lifestyle accounts (Smashbox, Bobbi Brown, Sephora, Tira, USPA, Hamleys).</li>
+							<li>Conceptualized and designed 360° multi-channel campaigns, high-converting social media creatives, and strategic pitch presentations for new client acquisitions.</li>
+							<li>Partnered closely with copywriters, strategy leads, and production teams to translate brand goals into compelling, high-impact digital experiences.</li>
+						</ul>
+					</article>
+
+					<article class="resume-entry">
+						<div class="resume-entry-header">
+							<h3 class="entry-title">The Fast Way</h3>
+							<span class="entry-meta">Feb 2023 – Jul 2023</span>
+						</div>
+						<div class="resume-sub-meta">Mumbai, India &nbsp;·&nbsp; Senior Designer</div>
+						<ul class="resume-bullets">
+							<li>Directed visual assets across digital campaigns, motion/video communication, packaging, and print collateral.</li>
+							<li>Established consistent visual language and brand guidelines across diverse client deliverables.</li>
+						</ul>
+					</article>
+
+					<article class="resume-entry">
+						<div class="resume-entry-header">
+							<h3 class="entry-title">Brotards</h3>
+							<span class="entry-meta">Oct 2020 – Jan 2023</span>
+						</div>
+						<div class="resume-sub-meta">Mumbai, India &nbsp;·&nbsp; Senior Designer</div>
+						<ul class="resume-bullets">
+							<li>Designed brand identity systems, logos, packaging solutions, and digital/e-commerce creative assets.</li>
+							<li>Collaborated cross-functionally with marketing and development teams to deliver user-focused digital marketing collateral and website creatives.</li>
+						</ul>
+					</article>
+				</section>
+
+				<!-- Education & Certifications -->
+				<section class="resume-section">
+					<h2 class="resume-section-title">EDUCATION &amp; CERTIFICATIONS</h2>
+					
+					<article class="resume-entry">
+						<div class="resume-entry-header">
+							<h3 class="entry-title">UI/UX Design Certification</h3>
+							<span class="entry-meta">IIM SKILLS</span>
+						</div>
+						<p class="entry-desc">Intensive coursework and practical training in human-centred design, user research methodologies, prototyping, usability evaluation, and digital product workflows.</p>
+					</article>
+
+					<article class="resume-entry">
+						<div class="resume-entry-header">
+							<h3 class="entry-title">Bachelor of Fine Arts (Applied Art)</h3>
+							<span class="entry-meta">2016 – 2020</span>
+						</div>
+						<div class="resume-sub-meta">Sir J.J. Institute of Applied Art, Mumbai</div>
+						<ul class="resume-bullets honors-bullets">
+							<li>Best Student Award – Final Year B.F.A.</li>
+							<li>Best Student Award – Second Year B.F.A.</li>
+							<li>Best in Layout Award – First Year B.F.A.</li>
+							<li>Artwork selected for the 56th State Art Exhibition</li>
+						</ul>
+					</article>
+				</section>
+
+				<!-- Actions Footer -->
+				<footer class="resume-actions-footer">
+					<div class="resume-actions-group">
+						<button class="resume-btn resume-btn-primary" type="button" id="print-resume">
+							<span>🖨️</span> Print / Save as PDF
+						</button>
+						<a class="resume-btn resume-btn-secondary" href="assets/Bharati_Kamble_Resume.docx" download="Bharati_Kamble_Resume.docx">
+							<span>⬇</span> Download DOCX
+						</a>
+					</div>
+					<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+				</footer>
+			</div>
 		</div>
 	</dialog>
 
 	<dialog class="contact-dialog" id="contact-dialog" aria-labelledby="contact-title">
 		<div class="contact-sheet">
-			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
 			<p class="dialog-kicker">A note is always welcome</p>
 			<h1 id="contact-title">Let’s make<br>something matter.</h1>
 			<a class="email-link" href="mailto:your.email@example.com">your.email@example.com <span aria-hidden="true">↗</span></a>
 			<p class="resume-note">Replace this placeholder with your preferred email before sharing the portfolio.</p>
 			<button class="story-back" type="button" data-close-dialog>Back to the book</button>
+			<div class="sheet-corner-fold" aria-hidden="true"></div>
+		</div>
+	</dialog>
+
+	<!-- CLUSTR Case Study Modal -->
+	<dialog class="clustr-dialog" id="clustr-dialog" aria-labelledby="clustr-title">
+		<div class="clustr-sheet">
+			<div class="dialog-top-actions">
+				<a class="dialog-action-btn" href="clustr/index.html" target="_blank" rel="noopener noreferrer" title="Open CLUSTR Case Study in new tab">
+					<span>↗</span>
+					<span class="action-btn-label">Open in Tab</span>
+				</a>
+				<button class="dialog-action-btn fullscreen-toggle-btn" id="clustr-fullscreen-toggle" type="button" aria-label="Toggle full screen" title="Toggle full screen (F)">
+					<svg class="pixel-fs-icon fs-icon-expand" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="2"/><rect x="0" y="2" width="2" height="3"/><rect x="9" y="0" width="5" height="2"/><rect x="12" y="2" width="2" height="3"/><rect x="0" y="9" width="2" height="3"/><rect x="0" y="12" width="5" height="2"/><rect x="12" y="9" width="2" height="3"/><rect x="9" y="12" width="5" height="2"/></svg>
+					<svg class="pixel-fs-icon fs-icon-compress" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true" style="display:none;"><rect x="3" y="1" width="2" height="4"/><rect x="1" y="3" width="4" height="2"/><rect x="9" y="1" width="2" height="4"/><rect x="9" y="3" width="4" height="2"/><rect x="3" y="9" width="2" height="4"/><rect x="1" y="9" width="4" height="2"/><rect x="9" y="9" width="2" height="4"/><rect x="9" y="9" width="4" height="2"/></svg>
+					<span class="action-btn-label">Full Screen</span>
+				</button>
+				<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
+			</div>
+			
+			<div class="clustr-header">
+				<p class="dialog-kicker">UX/UI CASE STUDY · PRODUCT DESIGN &amp; INTERACTIVE PROTOTYPE</p>
+				<h1 id="clustr-title">CLUSTR</h1>
+				<p class="clustr-intro">An interactive animated case study and live iOS prototype for a micro-volunteering ecosystem designed for busy working professionals.</p>
+			</div>
+
+			<div class="clustr-frame-wrap">
+				<iframe id="clustr-frame" src="about:blank" data-src="clustr/index.html" title="CLUSTR Case Study &amp; Interactive Prototype" loading="lazy"></iframe>
+			</div>
+		</div>
+	</dialog>
+
+	<!-- Agency Work Modal (Beauty Brands) -->
+	<dialog class="assessment-dialog agency-dialog" id="agency-dialog" aria-labelledby="agency-title">
+		<div class="assessment-sheet agency-sheet">
+			<div class="dialog-top-actions">
+				<button class="dialog-action-btn fullscreen-toggle-btn" id="agency-fullscreen-toggle" type="button" aria-label="Toggle full screen" title="Toggle full screen (F)">
+					<svg class="pixel-fs-icon fs-icon-expand" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="2"/><rect x="0" y="2" width="2" height="3"/><rect x="9" y="0" width="5" height="2"/><rect x="12" y="2" width="2" height="3"/><rect x="0" y="9" width="2" height="3"/><rect x="0" y="12" width="5" height="2"/><rect x="12" y="9" width="2" height="3"/><rect x="9" y="12" width="5" height="2"/></svg>
+					<svg class="pixel-fs-icon fs-icon-compress" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true" style="display:none;"><rect x="3" y="1" width="2" height="4"/><rect x="1" y="3" width="4" height="2"/><rect x="9" y="1" width="2" height="4"/><rect x="9" y="3" width="4" height="2"/><rect x="3" y="9" width="2" height="4"/><rect x="1" y="9" width="4" height="2"/><rect x="9" y="9" width="2" height="4"/><rect x="9" y="9" width="4" height="2"/></svg>
+					<span class="action-btn-label">Full Screen</span>
+				</button>
+				<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
+			</div>
+			
+			<div class="assessment-header">
+				<p class="dialog-kicker">AGENCY WORK · BEAUTY BRANDS &amp; ART DIRECTION</p>
+				<h1 id="agency-title">Beauty Brands</h1>
+				<p class="assessment-intro">360° visual campaigns, key visuals, packaging, and digital storytelling for prominent beauty, cosmetic, and lifestyle brands including Smashbox, Bobbi Brown, Tira, M·A·C, and Sephora.</p>
+			</div>
+
+			<!-- Interactive Tab Navigation -->
+			<div class="assessment-nav" role="tablist">
+				<button class="assessment-tab is-active" type="button" data-agency-tab="campaigns" role="tab" aria-selected="true">
+					<span class="tab-icon">✨</span> Campaigns (Scroll to Explore)
+				</button>
+				<button class="assessment-tab" type="button" data-agency-tab="brands" role="tab" aria-selected="false">
+					<span class="tab-icon">💄</span> Featured Brands &amp; Scope
+				</button>
+			</div>
+
+			<!-- Tab Panel 1: Seamless Long-Scroll View -->
+			<div class="assessment-panel is-active" id="agency-panel-campaigns" role="tabpanel">
+				<div class="pdf-scroll-container">
+					<div class="pdf-scroll-header-bar">
+						<div class="pdf-scroll-status">
+							<span class="pdf-live-dot" aria-hidden="true"></span>
+							<span class="pdf-scroll-hint">Scroll with mouse wheel or drag to explore</span>
+						</div>
+						<div class="pdf-scroll-meta">
+							<div class="pdf-progress-track" title="Reading progress">
+								<div class="pdf-progress-fill" id="agency-progress-bar"></div>
+							</div>
+							<span class="pdf-percent-badge" id="agency-percent-text">0%</span>
+							<button class="pdf-fullscreen-btn" id="agency-toolbar-fullscreen-btn" type="button" title="Toggle full screen view (F)">
+								<svg class="pixel-fs-icon-sm" width="10" height="10" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="2"/><rect x="0" y="2" width="2" height="3"/><rect x="9" y="0" width="5" height="2"/><rect x="12" y="2" width="2" height="3"/><rect x="0" y="9" width="2" height="3"/><rect x="0" y="12" width="5" height="2"/><rect x="12" y="9" width="2" height="3"/><rect x="9" y="12" width="5" height="2"/></svg>
+								<span class="pdf-fs-text">Full Screen</span>
+							</button>
+							<button class="pdf-top-btn" id="agency-scroll-top-btn" type="button" title="Back to top">↑ Top</button>
+						</div>
+					</div>
+
+					<div class="pdf-scroll-viewport" id="agency-scroll-viewport" tabindex="0" role="region" aria-label="Seamless agency campaigns document">
+						<div class="pdf-scroll-track" id="agency-scroll-track">
+							<img src="assets/agency/agency-slice-1.jpg" alt="Pitches &amp; Key Visuals - Tira &amp; MAC" loading="eager" draggable="false">
+							<img src="assets/agency/agency-slice-2.jpg" alt="Smashbox x Nykaaland - Photo Finish Primer" loading="eager" draggable="false">
+							<img src="assets/agency/agency-slice-3.jpg" alt="Smashbox Halo Franchise &amp; Festive Diwali" loading="lazy" draggable="false">
+							<img src="assets/agency/agency-slice-4.jpg" alt="Tira Launches - Christmas, 14 Days of Beauty &amp; Hyderabad Flagship" loading="lazy" draggable="false">
+							<img src="assets/agency/agency-slice-5.jpg" alt="Multi-Brand Moodboards &amp; Editorial Beauty Collages" loading="lazy" draggable="false">
+							<img src="assets/agency/agency-slice-6.jpg" alt="Bobbi Brown - Vitamin Enriched &amp; Extra Plump Lip Serum" loading="lazy" draggable="false">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Tab Panel 2: Featured Brands & Scope -->
+			<div class="assessment-panel" id="agency-panel-brands" role="tabpanel">
+				<div class="overview-grid">
+					<div class="overview-card">
+						<span class="card-num">01</span>
+						<h3>Tira Beauty</h3>
+						<p>Conceptual social-first campaign pitches, flagship Hyderabad store launch collateral, 'A Very Tira Christmas', and digital extensions of Tira's Powder Room.</p>
+					</div>
+					<div class="overview-card">
+						<span class="card-num">02</span>
+						<h3>Smashbox &amp; Nykaaland</h3>
+						<p>Photo Finish Primer 'One Iconic Drop' launch, Smashbox casting call rollouts, Halo Lip &amp; Cheek Tint, and high-impact Diwali 'Glow into Focus' festive campaigns.</p>
+					</div>
+					<div class="overview-card">
+						<span class="card-num">03</span>
+						<h3>Bobbi Brown &amp; M·A·C</h3>
+						<p>Multi-channel campaigns for Bobbi Brown Vitamin Enriched franchise, Extra Plump Lip Serum storytelling, and M·A·C hero product digital showcases.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="assessment-footer">
+				<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			</div>
+		</div>
+	</dialog>
+
+	<dialog class="assessment-dialog" id="assessment-dialog" aria-labelledby="assessment-title">
+		<div class="assessment-sheet">
+			<div class="dialog-top-actions">
+				<button class="dialog-action-btn fullscreen-toggle-btn" id="assessment-fullscreen-toggle" type="button" aria-label="Toggle full screen" title="Toggle full screen (F)">
+					<svg class="pixel-fs-icon fs-icon-expand" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="2"/><rect x="0" y="2" width="2" height="3"/><rect x="9" y="0" width="5" height="2"/><rect x="12" y="2" width="2" height="3"/><rect x="0" y="9" width="2" height="3"/><rect x="0" y="12" width="5" height="2"/><rect x="12" y="9" width="2" height="3"/><rect x="9" y="12" width="5" height="2"/></svg>
+					<svg class="pixel-fs-icon fs-icon-compress" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true" style="display:none;"><rect x="3" y="1" width="2" height="4"/><rect x="1" y="3" width="4" height="2"/><rect x="9" y="1" width="2" height="4"/><rect x="9" y="3" width="4" height="2"/><rect x="3" y="9" width="2" height="4"/><rect x="1" y="9" width="4" height="2"/><rect x="9" y="9" width="2" height="4"/><rect x="9" y="9" width="4" height="2"/></svg>
+					<span class="action-btn-label">Full Screen</span>
+				</button>
+				<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
+			</div>
+			
+			<div class="assessment-header">
+				<p class="dialog-kicker">ASSESSMENT WORK · DESIGN SYSTEMS & UI ARCHITECTURE</p>
+				<h1 id="assessment-title">The OG Architect</h1>
+				<p class="assessment-intro">Deconstructing 108 traditional attributes of cultural iconography into scalable design systems, auto-layout component specs, and generative AI systems.</p>
+			</div>
+
+			<!-- Interactive Tab Navigation -->
+			<div class="assessment-nav" role="tablist">
+				<button class="assessment-tab is-active" type="button" data-tab="slides" role="tab" aria-selected="true">
+					<span class="tab-icon">📜</span> Case Study (Scroll to Explore)
+				</button>
+				<button class="assessment-tab" type="button" data-tab="video" role="tab" aria-selected="false">
+					<span class="tab-icon">🎬</span> Concept Motion Film
+				</button>
+				<button class="assessment-tab" type="button" data-tab="overview" role="tab" aria-selected="false">
+					<span class="tab-icon">💡</span> System Architecture
+				</button>
+				<a class="assessment-tab download-tab" href="assets/assessment/Assessment.pdf" target="_blank" download="The-OG-Architect-Assessment.pdf" title="Download or open original presentation PDF">
+					<span class="tab-icon">⬇</span> Download PDF
+				</a>
+			</div>
+
+			<!-- Tab Panel 1: Interactive PDF Scroll View -->
+			<div class="assessment-panel is-active" id="panel-slides" role="tabpanel">
+				<div class="pdf-scroll-container">
+					<div class="pdf-scroll-header-bar">
+						<div class="pdf-scroll-status">
+							<span class="pdf-live-dot" aria-hidden="true"></span>
+							<span class="pdf-scroll-hint">Scroll with mouse wheel or drag to explore</span>
+						</div>
+						<div class="pdf-scroll-meta">
+							<div class="pdf-progress-track" title="Reading progress">
+								<div class="pdf-progress-fill" id="pdf-progress-bar"></div>
+							</div>
+							<span class="pdf-percent-badge" id="pdf-percent-text">0%</span>
+							<button class="pdf-fullscreen-btn" id="assessment-toolbar-fullscreen-btn" type="button" title="Toggle full screen view (F)">
+								<svg class="pixel-fs-icon-sm" width="10" height="10" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="2"/><rect x="0" y="2" width="2" height="3"/><rect x="9" y="0" width="5" height="2"/><rect x="12" y="2" width="2" height="3"/><rect x="0" y="9" width="2" height="3"/><rect x="0" y="12" width="5" height="2"/><rect x="12" y="9" width="2" height="3"/><rect x="9" y="12" width="5" height="2"/></svg>
+								<span class="pdf-fs-text">Full Screen</span>
+							</button>
+							<button class="pdf-top-btn" id="pdf-scroll-top-btn" type="button" title="Back to top">↑ Top</button>
+						</div>
+					</div>
+
+					<div class="pdf-scroll-viewport" id="assessment-scroll-viewport" tabindex="0" role="region" aria-label="Interactive assessment document">
+						<div class="pdf-scroll-track" id="assessment-scroll-track">
+							<img src="assets/assessment/doc-slice-1.jpg" alt="The OG Architect - Part 1" loading="eager" draggable="false">
+							<img src="assets/assessment/doc-slice-2.jpg" alt="The OG Architect - Part 2" loading="eager" draggable="false">
+							<img src="assets/assessment/doc-slice-3.jpg" alt="The OG Architect - Part 3" loading="lazy" draggable="false">
+							<img src="assets/assessment/doc-slice-4.jpg" alt="The OG Architect - Part 4" loading="lazy" draggable="false">
+							<div class="pdf-slice-wrapper reel-slice-container">
+								<img src="assets/assessment/doc-slice-5.jpg" alt="The OG Architect - Part 5" loading="lazy" draggable="false">
+								<div class="embedded-reel-player" id="embedded-reel-player" title="Click to play / pause video">
+									<video id="assessment-reel-video" autoplay loop muted playsinline preload="auto">
+										<source src="assets/assessment/og-architect-motion.mp4" type="video/mp4">
+										Your browser does not support the video tag.
+									</video>
+									<div class="reel-controls-overlay">
+										<div class="reel-top-controls">
+											<button class="reel-sound-toggle" id="reel-sound-btn" type="button" aria-label="Toggle sound">
+												<span class="reel-icon-muted" id="reel-icon-muted" aria-hidden="true">🔇</span>
+												<span class="reel-icon-sound" id="reel-icon-sound" aria-hidden="true" style="display:none;">🔊</span>
+											</button>
+										</div>
+										<div class="reel-bottom-controls">
+											<button class="reel-play-toggle" id="reel-play-btn" type="button" aria-label="Play or pause video">
+												<span class="reel-icon-pause" id="reel-icon-pause" aria-hidden="true">❚❚</span>
+												<span class="reel-icon-play" id="reel-icon-play" aria-hidden="true" style="display:none;">▶</span>
+											</button>
+											<span class="reel-badge">LIVE REEL</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<img src="assets/assessment/doc-slice-6.jpg" alt="The OG Architect - Part 6" loading="lazy" draggable="false">
+							<img src="assets/assessment/doc-slice-7.jpg" alt="The OG Architect - Part 7" loading="lazy" draggable="false">
+							<img src="assets/assessment/doc-slice-8.jpg" alt="The OG Architect - Part 8" loading="lazy" draggable="false">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Tab Panel 2: Concept Motion Film -->
+			<div class="assessment-panel" id="panel-video" role="tabpanel">
+				<div class="assessment-video-wrap">
+					<video id="assessment-video" controls playsinline preload="metadata">
+						<source src="assets/assessment/og-architect-motion.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p class="video-caption">OG ARCHITECT · Listen · Store · Protect — Concept Motion Exploration</p>
+				</div>
+			</div>
+
+			<!-- Tab Panel 3: System Architecture Overview -->
+			<div class="assessment-panel" id="panel-overview" role="tabpanel">
+				<div class="overview-grid">
+					<div class="overview-card">
+						<span class="card-num">01</span>
+						<h3>The Premise</h3>
+						<p>Ganesha as the Ultimate System Architect. Reinterpreting ancient iconography through the lens of modern digital systems, scalable UI components, and purposeful information hierarchy.</p>
+					</div>
+					<div class="overview-card">
+						<span class="card-num">02</span>
+						<h3>108 Attributes Deconstructed</h3>
+						<p>Each traditional attribute (Vighnaharta as obstacle/friction remover, Sumukha as harmonious visual balance) mapped directly into design specs, auto-layout grid logic, and micro-interactions.</p>
+					</div>
+					<div class="overview-card">
+						<span class="card-num">03</span>
+						<h3>Scalable UI & Motion</h3>
+						<p>Integrated motion principles (Listen • Store • Protect) coupled with generative AI workflows to create scalable, culturally resonant design frameworks.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="assessment-footer">
+				<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			</div>
+			<div class="sheet-corner-fold" aria-hidden="true"></div>
 		</div>
 	</dialog>
 
 	<dialog class="video-dialog" id="video-dialog" aria-labelledby="video-title">
 		<div class="video-sheet">
-			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
-			<p class="dialog-kicker">Campaigns · College Works</p>
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
+			<p class="dialog-kicker">VISUAL STORYTELLING · CONCEPT & MOTION</p>
 			<h1 id="video-title">LOST</h1>
-			<p class="video-intro">Campaign film and creative direction for LOST.</p>
+			<p class="video-intro">An animated narrative on screen dependency, contrasting digital isolation with the tactile presence of the physical world.</p>
 			<div class="video-player-wrap">
 				<video id="lost-video" controls playsinline preload="metadata">
 					<source src="assets/LOST%20Video.mp4" type="video/mp4">
@@ -96,9 +502,10 @@
 				</video>
 			</div>
 			<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			<div class="sheet-corner-fold" aria-hidden="true"></div>
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=49"></script>
+	<script src="portfolio.js?v=70"></script>
 </body>
 </html>

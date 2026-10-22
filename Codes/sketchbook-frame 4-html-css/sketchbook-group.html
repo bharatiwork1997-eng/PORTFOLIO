@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=2" />
 
 </head>
 
@@ -18,13 +18,26 @@
 		<div class="input card"></div>
 		<p class="text-personal-work">Personal Work</p>
 		<img src="assets/img1.png" class="img1" />
-		<img src="assets/img2.png" class="img2" />
+		<img src="assets/img2.png" class="img2" alt="Bharati Kamble Résumé Booklet" role="button" tabindex="0" title="Click to view Bharati Kamble's Résumé" />
 		<img src="assets/slider.png" class="slider" />
 		<img src="assets/img3.png" class="img3" />
 		<img src="assets/img4.png" class="img4" />
 		<img src="assets/img4.png" class="img5" />
 		<p class="text-experimental">Experimental </p>
 	</div>
+
+	<script>
+		const resumeEl = document.querySelector(".img2");
+		if (resumeEl) {
+			resumeEl.addEventListener("click", () => {
+				if (window.parent && window.parent !== window && typeof window.parent.openResumeDialog === "function") {
+					window.parent.openResumeDialog();
+				} else if (window.parent && typeof window.parent.openDialog === "function" && window.parent.resumeDialog) {
+					window.parent.openDialog(window.parent.resumeDialog);
+				}
+			});
+		}
+	</script>
 </body>
 
 </html>

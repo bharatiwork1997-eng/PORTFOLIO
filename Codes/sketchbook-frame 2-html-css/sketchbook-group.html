@@ -7,16 +7,36 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=6" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=15" />
 
 </head>
 
 <body>
 	<div class="col">
-		<div class="text-input text-input1"></div>
-		<div class="text-input text-input2"></div>
-		<img src="assets/img1.png" class="img1" />
-		<object data="assets/graphic.svg" class="graphic" type="image/svg+xml"></object>
+		<div class="text-input text-input1" role="button" tabindex="0" title="Explore CLUSTR Volunteering App Case Study">
+			<div class="cover-card-artwork-wrap">
+				<img class="cover-card-artwork" src="assets/clustr-cover.jpg?v=1" alt="CLUSTR - Volunteering App Case Study" loading="eager">
+				<div class="cover-card-glare"></div>
+				<div class="cover-card-footer-pill">
+					<span class="pill-pulse" aria-hidden="true"></span>
+					<span class="pill-text">TAP TO EXPLORE</span>
+					<span class="pill-arrow" aria-hidden="true">↗</span>
+				</div>
+			</div>
+		</div>
+		<div class="text-input text-input2" role="button" tabindex="0" title="Explore The OG Architect Assessment Work">
+			<div class="cover-card-artwork-wrap">
+				<img class="cover-card-artwork" src="assets/og-architect-cover-v2.jpg?v=3" alt="The OG Architect Assessment Work" loading="eager">
+				<div class="cover-card-glare"></div>
+				<div class="cover-card-footer-pill">
+					<span class="pill-pulse" aria-hidden="true"></span>
+					<span class="pill-text">TAP TO EXPLORE</span>
+					<span class="pill-arrow" aria-hidden="true">↗</span>
+				</div>
+			</div>
+		</div>
+		<img src="assets/img1.png" class="img1" alt="Multitasking hourglass character" role="button" tabindex="0" title="Give me a tap!" />
+		<img src="assets/clustr-sketched.png" class="graphic" alt="CLUSTR sketched logo sticker" role="button" tabindex="0" title="Explore CLUSTR Volunteering App Case Study" />
 		
 		<div class="row-top">
 			<div class="case-study-heading">
@@ -31,6 +51,294 @@
 			<img src="assets/img2.png" class="image img3" />
 		</div>
 	</div>
+
+	<!-- Standalone Modal (when opened directly inside this folder) -->
+	<dialog class="assessment-dialog" id="local-assessment-dialog" aria-labelledby="local-assessment-title">
+		<div class="assessment-sheet">
+			<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
+			
+			<div class="assessment-header">
+				<p class="dialog-kicker">ASSESSMENT WORK · DESIGN SYSTEMS & UI ARCHITECTURE</p>
+				<h1 id="local-assessment-title">The OG Architect</h1>
+				<p class="assessment-intro">Deconstructing 108 traditional attributes of cultural iconography into scalable design systems, auto-layout component specs, and generative AI systems.</p>
+			</div>
+
+			<!-- Interactive Tab Navigation -->
+			<div class="assessment-nav" role="tablist">
+				<button class="assessment-tab is-active" type="button" data-tab="slides" role="tab" aria-selected="true">
+					<span class="tab-icon">📑</span> Presentation Deck (24 Slides)
+				</button>
+				<button class="assessment-tab" type="button" data-tab="video" role="tab" aria-selected="false">
+					<span class="tab-icon">🎬</span> Concept Motion Film
+				</button>
+				<button class="assessment-tab" type="button" data-tab="overview" role="tab" aria-selected="false">
+					<span class="tab-icon">💡</span> System Architecture
+				</button>
+				<a class="assessment-tab download-tab" href="assets/assessment/Assessment.pdf" target="_blank" download="The-OG-Architect-Assessment.pdf" title="Download or open original presentation PDF">
+					<span class="tab-icon">⬇</span> Download PDF
+				</a>
+			</div>
+
+			<!-- Tab Panel 1: Interactive PDF Scroll View -->
+			<div class="assessment-panel is-active" id="local-panel-slides" role="tabpanel">
+				<div class="pdf-scroll-container">
+					<div class="pdf-scroll-header-bar">
+						<div class="pdf-scroll-status">
+							<span class="pdf-live-dot" aria-hidden="true"></span>
+							<span class="pdf-scroll-hint">Scroll with mouse wheel or drag to explore</span>
+						</div>
+						<div class="pdf-scroll-meta">
+							<div class="pdf-progress-track" title="Reading progress">
+								<div class="pdf-progress-fill" id="local-pdf-progress-bar"></div>
+							</div>
+							<span class="pdf-percent-badge" id="local-pdf-percent-text">0%</span>
+							<button class="pdf-top-btn" id="local-pdf-scroll-top-btn" type="button" title="Back to top">↑ Top</button>
+						</div>
+					</div>
+
+					<div class="pdf-scroll-viewport" id="local-assessment-scroll-viewport" tabindex="0" role="region" aria-label="Interactive assessment document">
+						<div class="pdf-scroll-track" id="local-assessment-scroll-track">
+							<img src="assets/assessment/doc-slice-1.jpg" alt="The OG Architect - Part 1" loading="eager" draggable="false">
+							<img src="assets/assessment/doc-slice-2.jpg" alt="The OG Architect - Part 2" loading="eager" draggable="false">
+							<img src="assets/assessment/doc-slice-3.jpg" alt="The OG Architect - Part 3" loading="lazy" draggable="false">
+							<img src="assets/assessment/doc-slice-4.jpg" alt="The OG Architect - Part 4" loading="lazy" draggable="false">
+							<div class="pdf-slice-wrapper reel-slice-container">
+								<img src="assets/assessment/doc-slice-5.jpg" alt="The OG Architect - Part 5" loading="lazy" draggable="false">
+								<div class="embedded-reel-player" id="local-embedded-reel-player" title="Click to play / pause video">
+									<video id="local-assessment-reel-video" autoplay loop muted playsinline preload="auto">
+										<source src="assets/assessment/og-architect-motion.mp4" type="video/mp4">
+										Your browser does not support the video tag.
+									</video>
+									<div class="reel-controls-overlay">
+										<div class="reel-top-controls">
+											<button class="reel-sound-toggle" id="local-reel-sound-btn" type="button" aria-label="Toggle sound">
+												<span class="reel-icon-muted" id="local-reel-icon-muted" aria-hidden="true">🔇</span>
+												<span class="reel-icon-sound" id="local-reel-icon-sound" aria-hidden="true" style="display:none;">🔊</span>
+											</button>
+										</div>
+										<div class="reel-bottom-controls">
+											<button class="reel-play-toggle" id="local-reel-play-btn" type="button" aria-label="Play or pause video">
+												<span class="reel-icon-pause" id="local-reel-icon-pause" aria-hidden="true">❚❚</span>
+												<span class="reel-icon-play" id="local-reel-icon-play" aria-hidden="true" style="display:none;">▶</span>
+											</button>
+											<span class="reel-badge">LIVE REEL</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<img src="assets/assessment/doc-slice-6.jpg" alt="The OG Architect - Part 6" loading="lazy" draggable="false">
+							<img src="assets/assessment/doc-slice-7.jpg" alt="The OG Architect - Part 7" loading="lazy" draggable="false">
+							<img src="assets/assessment/doc-slice-8.jpg" alt="The OG Architect - Part 8" loading="lazy" draggable="false">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Tab Panel 2: Concept Motion Film -->
+			<div class="assessment-panel" id="local-panel-video" role="tabpanel">
+				<div class="assessment-video-wrap">
+					<video id="local-assessment-video" controls playsinline preload="metadata">
+						<source src="assets/assessment/og-architect-motion.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p class="video-caption">OG ARCHITECT · Listen · Store · Protect — Concept Motion Exploration</p>
+				</div>
+			</div>
+
+			<!-- Tab Panel 3: System Architecture Overview -->
+			<div class="assessment-panel" id="local-panel-overview" role="tabpanel">
+				<div class="overview-grid">
+					<div class="overview-card">
+						<span class="card-num">01</span>
+						<h3>The Premise</h3>
+						<p>Ganesha as the Ultimate System Architect. Reinterpreting ancient iconography through the lens of modern digital systems, scalable UI components, and purposeful information hierarchy.</p>
+					</div>
+					<div class="overview-card">
+						<span class="card-num">02</span>
+						<h3>108 Attributes Deconstructed</h3>
+						<p>Each traditional attribute (Vighnaharta as obstacle/friction remover, Sumukha as harmonious visual balance) mapped directly into design specs, auto-layout grid logic, and micro-interactions.</p>
+					</div>
+					<div class="overview-card">
+						<span class="card-num">03</span>
+						<h3>Scalable UI & Motion</h3>
+						<p>Integrated motion principles (Listen • Store • Protect) coupled with generative AI workflows to create scalable, culturally resonant design frameworks.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="assessment-footer">
+				<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			</div>
+			<div class="sheet-corner-fold" aria-hidden="true"></div>
+		</div>
+	</dialog>
+
+	<script>
+		const localDialog = document.querySelector("#local-assessment-dialog");
+		const localVideo = document.querySelector("#local-assessment-video");
+		const localViewport = document.querySelector("#local-assessment-scroll-viewport");
+		const localProgressBar = document.querySelector("#local-pdf-progress-bar");
+		const localPercentText = document.querySelector("#local-pdf-percent-text");
+		const localTopBtn = document.querySelector("#local-pdf-scroll-top-btn");
+
+		function updateLocalProgress() {
+			if (!localViewport) return;
+			const maxScroll = localViewport.scrollHeight - localViewport.clientHeight;
+			if (maxScroll <= 0) return;
+			const pct = Math.min(100, Math.max(0, Math.round((localViewport.scrollTop / maxScroll) * 100)));
+			if (localProgressBar) localProgressBar.style.width = `${pct}%`;
+			if (localPercentText) localPercentText.textContent = `${pct}%`;
+		}
+
+		if (localViewport) {
+			localViewport.addEventListener("scroll", updateLocalProgress, { passive: true });
+
+			let isDown = false;
+			let startY = 0;
+			let initialScroll = 0;
+
+			localViewport.addEventListener("mousedown", (e) => {
+				isDown = true;
+				localViewport.classList.add("is-dragging");
+				startY = e.pageY;
+				initialScroll = localViewport.scrollTop;
+			});
+
+			window.addEventListener("mouseup", () => {
+				if (isDown) {
+					isDown = false;
+					localViewport.classList.remove("is-dragging");
+				}
+			});
+
+			window.addEventListener("mousemove", (e) => {
+				if (!isDown) return;
+				e.preventDefault();
+				const walk = (e.pageY - startY) * 1.5;
+				localViewport.scrollTop = initialScroll - walk;
+			});
+
+			if (localTopBtn) {
+				localTopBtn.addEventListener("click", () => {
+					localViewport.scrollTo({ top: 0, behavior: "smooth" });
+				});
+			}
+
+			updateLocalProgress();
+		}
+
+		const localReelVideo = document.querySelector("#local-assessment-reel-video");
+		const localReelPlayBtn = document.querySelector("#local-reel-play-btn");
+		const localReelSoundBtn = document.querySelector("#local-reel-sound-btn");
+		const localReelIconPlay = document.querySelector("#local-reel-icon-play");
+		const localReelIconPause = document.querySelector("#local-reel-icon-pause");
+		const localReelIconMuted = document.querySelector("#local-reel-icon-muted");
+		const localReelIconSound = document.querySelector("#local-reel-icon-sound");
+		const localEmbeddedPlayer = document.querySelector("#local-embedded-reel-player");
+
+		function toggleLocalReelPlay(e) {
+			if (e) e.stopPropagation();
+			if (!localReelVideo) return;
+			if (localReelVideo.paused) {
+				localReelVideo.play().catch(() => {});
+				if (localReelIconPlay) localReelIconPlay.style.display = "none";
+				if (localReelIconPause) localReelIconPause.style.display = "inline";
+			} else {
+				localReelVideo.pause();
+				if (localReelIconPlay) localReelIconPlay.style.display = "inline";
+				if (localReelIconPause) localReelIconPause.style.display = "none";
+			}
+		}
+
+		function toggleLocalReelSound(e) {
+			if (e) e.stopPropagation();
+			if (!localReelVideo) return;
+			localReelVideo.muted = !localReelVideo.muted;
+			if (localReelIconMuted) localReelIconMuted.style.display = localReelVideo.muted ? "inline" : "none";
+			if (localReelIconSound) localReelIconSound.style.display = localReelVideo.muted ? "none" : "inline";
+		}
+
+		if (localReelPlayBtn) localReelPlayBtn.addEventListener("click", toggleLocalReelPlay);
+		if (localEmbeddedPlayer) localEmbeddedPlayer.addEventListener("click", toggleLocalReelPlay);
+		if (localReelSoundBtn) localReelSoundBtn.addEventListener("click", toggleLocalReelSound);
+
+		document.querySelectorAll(".assessment-tab[data-tab]").forEach((tabBtn) => {
+			tabBtn.addEventListener("click", () => {
+				const tab = tabBtn.dataset.tab;
+				document.querySelectorAll(".assessment-tab[data-tab]").forEach((b) => {
+					b.classList.toggle("is-active", b === tabBtn);
+					b.setAttribute("aria-selected", b === tabBtn ? "true" : "false");
+				});
+				document.querySelectorAll(".assessment-panel").forEach((panel) => {
+					panel.classList.toggle("is-active", panel.id === `local-panel-${tab}`);
+				});
+				if (tab !== "video" && localVideo) {
+					localVideo.pause();
+				}
+				if (tab === "video" && localReelVideo) {
+					localReelVideo.pause();
+				}
+				if (tab === "slides") {
+					setTimeout(updateLocalProgress, 50);
+					if (localReelVideo && localReelVideo.paused) {
+						localReelVideo.play().catch(() => {});
+					}
+				}
+			});
+		});
+
+		const hourglass = document.querySelector(".img1");
+		if (hourglass) {
+			hourglass.addEventListener("click", (e) => {
+				e.stopPropagation();
+				hourglass.classList.remove("jiggle");
+				void hourglass.offsetWidth;
+				hourglass.classList.add("jiggle");
+			});
+		}
+
+		function openAssessment() {
+			if (window.parent && window.parent !== window && typeof window.parent.openAssessmentDialog === "function") {
+				window.parent.openAssessmentDialog();
+				return;
+			}
+			if (localDialog) {
+				localDialog.showModal();
+				localViewport.scrollTop = 0;
+				updateLocalProgress();
+			}
+		}
+
+		function openClustr() {
+			if (window.parent && window.parent !== window && typeof window.parent.openClustrDialog === "function") {
+				window.parent.openClustrDialog();
+				return;
+			}
+			if (window.parent && typeof window.parent.openStory === "function") {
+				window.parent.openStory("clustr");
+				return;
+			}
+			window.location.href = "../clustr/index.html";
+		}
+
+		document.querySelector(".text-input1")?.addEventListener("click", openClustr);
+		document.querySelector(".graphic")?.addEventListener("click", openClustr);
+		document.querySelector(".case-study-heading")?.addEventListener("click", openClustr);
+		document.querySelector(".text-input2")?.addEventListener("click", openAssessment);
+		document.querySelectorAll("[data-close-dialog]").forEach((b) => {
+			b.addEventListener("click", () => {
+				if (localVideo) localVideo.pause();
+				localDialog?.close();
+			});
+		});
+		localDialog?.addEventListener("click", (e) => {
+			const sheet = localDialog.querySelector(".assessment-sheet");
+			if (sheet && !sheet.contains(e.target)) {
+				if (localVideo) localVideo.pause();
+				localDialog.close();
+			}
+		});
+	</script>
 </body>
 
 </html>
