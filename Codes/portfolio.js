@@ -7,24 +7,6 @@ const spreads = [
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=8" }
 ];
 
-const singlePages = [
-	{ title: "About me · Explorer", spreadIndex: 0, sub: 0 },
-	{ title: "About me · Human behind screen", spreadIndex: 0, sub: 1 },
-	{ title: "CLUSTR · Volunteering", spreadIndex: 1, sub: 0 },
-	{ title: "The OG Architect · Assessment", spreadIndex: 1, sub: 1 },
-	{ title: "Agency Work · Beauty Brands", spreadIndex: 2, sub: 0 },
-	{ title: "College Works · Campaigns", spreadIndex: 2, sub: 1 },
-	{ title: "Personal Work · Experimental", spreadIndex: 3, sub: 0 },
-	{ title: "Bharati Kamble · Résumé", spreadIndex: 3, sub: 1 },
-	{ title: "Fun Break · Sketch space", spreadIndex: 4, sub: 0 },
-	{ title: "Fun Break · Collage space", spreadIndex: 4, sub: 1 },
-	{ title: "Thank you", spreadIndex: 5, sub: 0.5 }
-];
-let mobilePageIndex = 0;
-
-function isMobileSinglePage() {
-	return window.innerWidth <= 768;
-}
 const spreadNavigationArtwork = [
 	".row-bottom",
 	".row-bottom",
@@ -140,16 +122,9 @@ function fitCanvas(iframe, width, height, parent) {
 fitCanvas(coverFrame, 1920, 1080, document.querySelector(".cover-art"));
 
 function fitBookScene() {
-	if (isMobileSinglePage()) {
-		const scale = bookStage.clientWidth / 640;
-		bookScene.style.setProperty("--book-scale", String(scale));
-		const currentSub = singlePages[mobilePageIndex]?.sub ?? 0;
-		const offsetX = currentSub === 0.5 ? -320 : (currentSub === 1 ? -640 : 0);
-		bookScene.style.setProperty("--book-offset-x", `${offsetX}px`);
-	} else {
-		bookScene.style.setProperty("--book-scale", String(bookStage.clientWidth / 1280));
-		bookScene.style.setProperty("--book-offset-x", "0px");
-	}
+	const scale = bookStage.clientWidth / 1280;
+	bookScene.style.setProperty("--book-scale", String(scale));
+	bookScene.style.setProperty("--book-offset-x", "0px");
 	updateFrameRects();
 }
 
@@ -163,35 +138,24 @@ function showToast(message) {
 }
 
 function updateBookControls() {
-	const isMobile = isMobileSinglePage();
 	const prevBtn = document.querySelector("#previous-page");
 	const nextBtn = document.querySelector("#next-page");
 	const pageTotal = document.querySelector("#page-total");
 	const coverIndicator = document.querySelector("#cover-page-indicator");
 
-	if (isMobile) {
-		const curr = mobilePageIndex + 1;
-		const total = singlePages.length;
-		pageCount.textContent = String(curr).padStart(2, "0");
-		if (pageTotal) pageTotal.textContent = String(total).padStart(2, "0");
-		pageName.textContent = singlePages[mobilePageIndex].title;
-		if (prevBtn) prevBtn.disabled = mobilePageIndex === 0 || turnBusy;
-		if (nextBtn) nextBtn.disabled = mobilePageIndex === total - 1 || turnBusy;
-		if (coverIndicator) coverIndicator.textContent = "01 / 06";
-	} else {
-		const curr = pageIndex + 1;
-		const total = spreads.length;
-		pageCount.textContent = String(curr).padStart(2, "0");
-		if (pageTotal) pageTotal.textContent = String(total).padStart(2, "0");
-		pageName.textContent = spreads[pageIndex].title;
-		if (prevBtn) prevBtn.disabled = pageIndex === 0 || turnBusy;
-		if (nextBtn) nextBtn.disabled = pageIndex === total - 1 || turnBusy;
-		if (coverIndicator) coverIndicator.textContent = "01 / 06";
-	}
+	const curr = pageIndex + 1;
+	const total = spreads.length;
+	pageCount.textContent = String(curr).padStart(2, "0");
+	if (pageTotal) pageTotal.textContent = String(total).padStart(2, "0");
+	pageName.textContent = spreads[pageIndex].title;
+	if (prevBtn) prevBtn.disabled = pageIndex === 0 || turnBusy;
+	if (nextBtn) nextBtn.disabled = pageIndex === total - 1 || turnBusy;
+	if (coverIndicator) coverIndicator.textContent = "01 / 06";
 
 	if (workspaceTools) workspaceTools.hidden = true;
 	if (arrowCursor) arrowCursor.style.display = "none";
 
+	const isMobile = window.innerWidth <= 768;
 	const activeDoc = activeFrame?.contentDocument;
 	if (activeDoc?.body && activeFrame?.dataset?.src?.includes("last-group")) {
 		activeDoc.body.classList.toggle("is-mobile-view", isMobile);
@@ -257,7 +221,7 @@ function prepareFrame(iframe, src) {
 			frameDocument.body.style.overflow = "hidden";
 			frameDocument.documentElement.style.overflow = "hidden";
 			if (frameIndex === 5) {
-				frameDocument.body.classList.toggle("is-mobile-view", isMobileSinglePage());
+				frameDocument.body.classList.toggle("is-mobile-view", window.innerWidth <= 768);
 			}
 			frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event));
 			frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event));
@@ -392,7 +356,7 @@ function setupCover() {
 			frameDocument.head.append(style);
 			frameDocument.documentElement.style.overflow = "hidden";
 			if (frameIndex === 5) {
-				frameDocument.body.classList.toggle("is-mobile-view", isMobileSinglePage());
+				frameDocument.body.classList.toggle("is-mobile-view", window.innerWidth <= 768);
 			}
 			frameDocument.documentElement.style.scrollbarWidth = "none";
 			frameDocument.body.style.width = "1920px";
@@ -504,78 +468,20 @@ function handleWheelNavigation(event) {
 	if (!cover.hidden) {
 		if (direction > 0) openBook();
 	} else if (!portfolio.hidden) {
-		const currentIdx = isMobileSinglePage() ? mobilePageIndex : pageIndex;
-		const maxPages = isMobileSinglePage() ? singlePages.length : spreads.length;
-		if (currentIdx === 0 && direction < 0) {
+		if (pageIndex === 0 && direction < 0) {
 			returnHome();
-		} else if (currentIdx + direction >= 0 && currentIdx + direction < maxPages) {
+		} else if (pageIndex + direction >= 0 && pageIndex + direction < spreads.length) {
 			turnPage(direction);
 		}
 	}
 }
 
-async function turnPageMobile(direction) {
-	const nextMobileIndex = mobilePageIndex + direction;
-	if (turnBusy || nextMobileIndex < 0 || nextMobileIndex >= singlePages.length) return;
-	turnBusy = true;
-
-	const currentEntry = singlePages[mobilePageIndex];
-	const nextEntry = singlePages[nextMobileIndex];
-	mobilePageIndex = nextMobileIndex;
-	pageIndex = nextEntry.spreadIndex;
-	updateBookControls();
-
-	const targetOffsetX = nextEntry.sub === 0.5 ? -320 : (nextEntry.sub === 1 ? -640 : 0);
-
-	// Case A: Moving within the SAME spread (sub 0 <-> sub 1)
-	if (currentEntry.spreadIndex === nextEntry.spreadIndex) {
-		bookScene.style.setProperty("--book-offset-x", `${targetOffsetX}px`);
-		await new Promise((r) => setTimeout(r, 260));
-		turnBusy = false;
-		wheelLocked = false;
-		updateBookControls();
-		return;
-	}
-
-	// Case B: Moving to a DIFFERENT spread
-	const nextSpread = spreads[nextEntry.spreadIndex];
-	if (standbyFrame.dataset.src !== nextSpread.src) {
-		await prepareFrame(standbyFrame, nextSpread.src);
-	}
-
-	bookScene.style.setProperty("--book-offset-x", `${targetOffsetX}px`);
-
-	standbyFrame.classList.add("is-active");
-	activeFrame.classList.remove("is-active");
-
-	const previousActive = activeFrame;
-	activeFrame = standbyFrame;
-	standbyFrame = previousActive;
-	activeFrameDocument = activeFrame.contentDocument;
-	updateFrameRects();
-
-	await new Promise((resolve) => setTimeout(resolve, 240));
-	turnBusy = false;
-	wheelLocked = false;
-	updateBookControls();
-
-	const nextPotential = singlePages[mobilePageIndex + 1];
-	if (nextPotential && nextPotential.spreadIndex !== pageIndex) {
-		preloadNextSpread(nextPotential.spreadIndex);
-	}
-}
-
 async function turnPage(direction) {
-	if (isMobileSinglePage()) {
-		return turnPageMobile(direction);
-	}
 	const nextIndex = pageIndex + direction;
 	if (turnBusy || nextIndex < 0 || nextIndex >= spreads.length) return;
 	turnBusy = true;
 	const nextSpread = spreads[nextIndex];
 	pageIndex = nextIndex;
-	mobilePageIndex = singlePages.findIndex((sp) => sp.spreadIndex === pageIndex);
-	if (mobilePageIndex === -1) mobilePageIndex = 0;
 	updateBookControls();
 
 	// Check if standbyFrame already has the next spread preloaded (0ms instant wait!)
@@ -614,7 +520,7 @@ function preloadNextSpread(index) {
 
 function startEdgeGesture(frameDocument, event) {
 	if (event.target.closest("button, a, input, canvas, .folio-canvas, .collage-sticker, .cover-card-artwork-wrap, .sketch-wrapper, .collage-wrapper, .sketch-tools, .collage-tools, #sticker-folder, .sticker-folder, .img9")) return;
-	const isTouch = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || isMobileSinglePage();
+	const isTouch = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
 	if (isTouch) {
 		gesture = { side: "touch", x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: true };
 		return;
@@ -632,15 +538,13 @@ function finishGesture(event) {
 	if (!gesture || event.pointerId !== gesture.id) return;
 	const deltaX = event.clientX - gesture.x;
 	const deltaY = event.clientY - gesture.y;
-	const maxPages = isMobileSinglePage() ? singlePages.length : spreads.length;
-	const currentIdx = isMobileSinglePage() ? mobilePageIndex : pageIndex;
 
 	if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.1) {
-		if (deltaX < 0 && currentIdx < maxPages - 1) {
+		if (deltaX < 0 && pageIndex < spreads.length - 1) {
 			cancelGesture();
 			turnPage(1);
 			return;
-		} else if (deltaX > 0 && currentIdx > 0) {
+		} else if (deltaX > 0 && pageIndex > 0) {
 			cancelGesture();
 			turnPage(-1);
 			return;
@@ -648,15 +552,15 @@ function finishGesture(event) {
 	} else if (!gesture.isTouch) {
 		const tapForward = gesture.side === "right" && Math.abs(deltaX) <= 40;
 		const tapBackward = gesture.side === "left" && Math.abs(deltaX) <= 40;
-		if (tapForward && currentIdx < maxPages - 1) turnPage(1);
-		else if (tapBackward && currentIdx > 0) turnPage(-1);
+		if (tapForward && pageIndex < spreads.length - 1) turnPage(1);
+		else if (tapBackward && pageIndex > 0) turnPage(-1);
 	}
 	cancelGesture();
 }
 
 function openDialog(dialog) {
 	if (!dialog) return;
-	if (isMobileSinglePage() || window.innerWidth <= 768 || window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches) {
+	if (window.innerWidth <= 768 || window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches) {
 		hidePencil();
 		if (pencil && pencil.parentNode) {
 			pencil.style.display = "none";

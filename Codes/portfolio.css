@@ -714,17 +714,18 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.contact-link, .fullscreen-site-btn { font-size: 11px; padding: 2px 0 1px; gap: 3px; white-space: nowrap; }
 	.contact-link span, .fullscreen-site-btn .fs-icon { font-size: 10px; }
 	.portfolio-view {
-		padding: 48px 8px 12px !important;
+		padding: 52px 8px 14px !important;
 		min-height: 100svh !important;
 		display: flex !important;
 		flex-direction: column !important;
 		justify-content: center !important;
 		align-items: center !important;
+		box-sizing: border-box !important;
 	}
 	.book-stage {
-		width: min(92vw, 420px, calc((100svh - 130px) * 0.7111)) !important;
+		width: min(96vw, calc((100svh - 130px) * 1.422222)) !important;
 		min-width: 0 !important;
-		aspect-ratio: 640 / 900 !important;
+		aspect-ratio: 1280 / 900 !important;
 		margin: 0 auto !important;
 		border-radius: 6px !important;
 		overflow: hidden !important;
@@ -733,19 +734,22 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.book-scene {
 		width: 1280px !important;
 		height: 900px !important;
-		transform: scale(var(--book-scale, 0.55)) translate3d(var(--book-offset-x, 0px), 0, 0) !important;
+		transform: scale(var(--book-scale, 0.3)) translate3d(0, 0, 0) !important;
 		transform-origin: top left !important;
 		border-radius: 6px !important;
 		transition: transform 260ms cubic-bezier(0.2, 0.8, 0.25, 1) !important;
 	}
 	.book-controls {
-		width: min(92vw, 420px, calc((100svh - 130px) * 0.7111)) !important;
-		margin-top: 10px !important;
+		width: min(96vw, calc((100svh - 130px) * 1.422222)) !important;
+		margin-top: 14px !important;
 		font-size: 13px !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: space-between !important;
 	}
 	.turn-button { font-size: 13px !important; padding: 6px 4px !important; }
 	.page-position { font-size: 13px !important; }
-	.page-name { display: inline-block !important; font-size: 13px !important; max-width: 140px !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+	.page-name { display: inline-block !important; font-size: 13px !important; max-width: 160px !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
 	.workspace-tools { gap: 5px; }
 	.workspace-tools button, .size-control { padding: 6px 7px; font-size: 9px; }
 	.size-control input { width: 65px; }
