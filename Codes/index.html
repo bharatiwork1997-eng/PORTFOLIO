@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#171713">
 	<title>Bharati Kamble | Visual Designer</title>
-	<link rel="stylesheet" href="portfolio.css?v=49">
+	<link rel="stylesheet" href="portfolio.css?v=50">
 </head>
 <body>
 	<header class="site-header">
@@ -382,7 +382,10 @@
 			<!-- Interactive Tab Navigation -->
 			<div class="assessment-nav" role="tablist">
 				<button class="assessment-tab is-active" type="button" data-wattpad-tab="presentation" role="tab" aria-selected="true">
-					<span class="tab-icon">📖</span> Campaign Presentation
+					<span class="tab-icon">📖</span> High-Res Presentation
+				</button>
+				<button class="assessment-tab" type="button" data-wattpad-tab="vectorpdf" role="tab" aria-selected="false">
+					<span class="tab-icon">📄</span> Vector PDF (Zoomable)
 				</button>
 				<button class="assessment-tab" type="button" data-wattpad-tab="overview" role="tab" aria-selected="false">
 					<span class="tab-icon">💡</span> Concept &amp; Strategy
@@ -415,18 +418,25 @@
 
 					<div class="pdf-scroll-viewport" id="wattpad-scroll-viewport" tabindex="0" role="region" aria-label="Wattpad campaign presentation">
 						<div class="pdf-scroll-track" id="wattpad-scroll-track">
-							<img src="assets/college/wattpad-slice-1.jpg?v=3" alt="Wattpad Campaign - Part 1" loading="eager" draggable="false">
-							<img src="assets/college/wattpad-slice-2.jpg?v=3" alt="Wattpad Campaign - Part 2" loading="eager" draggable="false">
-							<img src="assets/college/wattpad-slice-3.jpg?v=3" alt="Wattpad Campaign - Part 3" loading="lazy" draggable="false">
-							<img src="assets/college/wattpad-slice-4.jpg?v=3" alt="Wattpad Campaign - Part 4" loading="lazy" draggable="false">
-							<img src="assets/college/wattpad-slice-5.jpg?v=3" alt="Wattpad Campaign - Part 5" loading="lazy" draggable="false">
-							<img src="assets/college/wattpad-slice-6.jpg?v=3" alt="Wattpad Campaign - Part 6" loading="lazy" draggable="false">
+							<img src="assets/college/wattpad-slice-1.jpg?v=4" alt="Wattpad Campaign - Part 1" loading="eager" draggable="false">
+							<img src="assets/college/wattpad-slice-2.jpg?v=4" alt="Wattpad Campaign - Part 2" loading="eager" draggable="false">
+							<img src="assets/college/wattpad-slice-3.jpg?v=4" alt="Wattpad Campaign - Part 3" loading="lazy" draggable="false">
+							<img src="assets/college/wattpad-slice-4.jpg?v=4" alt="Wattpad Campaign - Part 4" loading="lazy" draggable="false">
+							<img src="assets/college/wattpad-slice-5.jpg?v=4" alt="Wattpad Campaign - Part 5" loading="lazy" draggable="false">
+							<img src="assets/college/wattpad-slice-6.jpg?v=4" alt="Wattpad Campaign - Part 6" loading="lazy" draggable="false">
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- Tab Panel 2: Concept & Strategy Overview -->
+			<!-- Tab Panel 2: Direct Vector PDF Viewer -->
+			<div class="assessment-panel" id="wattpad-panel-vectorpdf" role="tabpanel">
+				<div class="pdf-embed-wrapper" style="width: 100%; height: min(65vh, 600px); min-height: 420px; border-radius: 6px; overflow: hidden; background: #1c1917; border: 1px solid rgba(40, 36, 30, 0.28); box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);">
+					<iframe src="assets/college/Wattpad%20CAMPAIGN2.pdf#view=FitH&toolbar=1" width="100%" height="100%" style="border: 0; display: block;" title="Wattpad Campaign Vector PDF Viewer"></iframe>
+				</div>
+			</div>
+
+			<!-- Tab Panel 3: Concept & Strategy Overview -->
 			<div class="assessment-panel" id="wattpad-panel-overview" role="tabpanel">
 				<div class="overview-grid">
 					<div class="overview-card">
