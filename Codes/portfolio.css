@@ -1081,16 +1081,21 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 }
 
 .assessment-dialog.is-fullscreen .pdf-scroll-track {
+	display: flex;
+	flex-direction: column;
 	align-items: center;
 	width: 100%;
+	max-width: 1700px;
+	margin: 0 auto;
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
 }
 
 .assessment-dialog.is-fullscreen .pdf-scroll-track img {
 	width: 100%;
-	max-width: 1700px;
+	max-width: 100%;
 	height: auto;
-	margin: 0 auto;
-	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+	margin: 0;
+	box-shadow: none;
 }
 
 .assessment-dialog.is-fullscreen .assessment-footer {
