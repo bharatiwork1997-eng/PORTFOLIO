@@ -519,3 +519,94 @@ body {
 		width: 100%;
 	}
 }
+
+/* Touch and Pointer Interaction Polish */
+@media (hover: none), (pointer: coarse) {
+	*, *::before, *::after, html, body {
+		cursor: auto !important;
+	}
+}
+
+.draw-area,
+.text-input1 {
+	touch-action: none !important;
+}
+
+.draw-area canvas,
+.folio-canvas,
+.text-input1 canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	touch-action: none !important;
+	cursor: crosshair;
+}
+
+.collage-layer {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.collage-sticker {
+	position: absolute;
+	max-width: none !important;
+	height: auto;
+	touch-action: none !important;
+	user-select: none;
+	-webkit-user-select: none;
+	cursor: grab;
+	pointer-events: auto !important;
+	will-change: transform, left, top;
+}
+
+.collage-sticker:active {
+	cursor: grabbing;
+}
+
+.collage-sticker.is-selected {
+	outline: 2px dashed rgba(203, 93, 91, 0.65);
+	outline-offset: 3px;
+}
+
+@keyframes sticker-pop-in {
+	0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+	60% { transform: scale(1.12) rotate(4deg); opacity: 1; }
+	100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.collage-sticker.popping {
+	animation: sticker-pop-in 340ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+#sticker-folder,
+.sticker-folder,
+.img9 {
+	cursor: pointer !important;
+	pointer-events: auto !important;
+	user-select: none;
+	transition: transform 180ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#sticker-folder:hover,
+.sticker-folder:hover,
+.img9:hover {
+	transform: scale(1.08) rotate(-3deg);
+}
+
+#sticker-folder.is-popping,
+.sticker-folder.is-popping,
+.img9.is-popping {
+	animation: sticker-pop-in 340ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.sketch-btn,
+.collage-btn,
+.collage-size-control,
+.collage-size-control input {
+	cursor: pointer !important;
+	pointer-events: auto !important;
+	touch-action: manipulation;
+}

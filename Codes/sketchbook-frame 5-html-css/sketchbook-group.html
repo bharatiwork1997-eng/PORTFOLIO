@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=8" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=9" />
 </head>
 
 <body>
@@ -49,7 +49,6 @@
 					<button type="button" class="sketch-btn collage-btn" data-tool="clear-collage">Clear collage</button>
 					<button type="button" class="sketch-btn collage-btn" data-tool="delete-sticker">Delete sticker</button>
 					<button type="button" class="sketch-btn collage-btn" data-tool="download">Download</button>
-					<button type="button" class="sketch-btn collage-btn" data-tool="share">Share</button>
 				</div>
 			</div>
 		</div>
@@ -61,127 +60,152 @@
 	</div>
 
 	<script>
-		if (window.self === window.top) {
-			function renderPencilDot(context, x, y) {
-				context.save();
-				context.fillStyle = "rgba(92, 96, 102, 0.65)";
-				context.beginPath();
-				context.arc(x, y, 1.8, 0, Math.PI * 2);
-				context.fill();
+		// Ensure both sides start completely blank on open
+		try {
+			localStorage.removeItem("bharati-collage");
+			localStorage.removeItem("bharati-sketch");
+		} catch (e) {}
 
-				for (let g = 0; g < 8; g++) {
+		// Pencil texture rendering helpers
+		function renderPencilDot(context, x, y) {
+			context.save();
+			context.fillStyle = "rgba(92, 96, 102, 0.65)";
+			context.beginPath();
+			context.arc(x, y, 1.8, 0, Math.PI * 2);
+			context.fill();
+
+			for (let g = 0; g < 8; g++) {
+				const angle = Math.random() * Math.PI * 2;
+				const radius = Math.random() * 2.5;
+				const alpha = 0.15 + Math.random() * 0.35;
+				context.fillStyle = `rgba(120, 124, 130, ${alpha.toFixed(2)})`;
+				context.fillRect(
+					x + Math.cos(angle) * radius - 0.6,
+					y + Math.sin(angle) * radius - 0.6,
+					1.2,
+					1.2
+				);
+			}
+			context.restore();
+		}
+
+		function renderPencilSegment(context, x0, y0, x1, y1) {
+			const dx = x1 - x0;
+			const dy = y1 - y0;
+			const dist = Math.hypot(dx, dy);
+
+			context.save();
+			context.lineCap = "round";
+			context.lineJoin = "round";
+			context.strokeStyle = "rgba(108, 112, 118, 0.45)";
+			context.lineWidth = 3.4;
+			context.beginPath();
+			context.moveTo(x0, y0);
+			context.lineTo(x1, y1);
+			context.stroke();
+
+			const step = 1.0;
+			const steps = Math.min(100, Math.max(1, Math.ceil(dist / step)));
+			for (let i = 0; i <= steps; i++) {
+				const t = i / steps;
+				const cx = x0 + dx * t;
+				const cy = y0 + dy * t;
+
+				const jx = (Math.random() - 0.5) * 1.5;
+				const jy = (Math.random() - 0.5) * 1.5;
+				const coreAlpha = 0.28 + Math.random() * 0.32;
+				context.fillStyle = `rgba(92, 96, 102, ${coreAlpha.toFixed(2)})`;
+				context.fillRect(cx + jx - 1, cy + jy - 1, 2.2, 2.2);
+
+				const grainCount = 3 + Math.floor(Math.random() * 3);
+				for (let g = 0; g < grainCount; g++) {
 					const angle = Math.random() * Math.PI * 2;
 					const radius = Math.random() * 2.5;
-					const alpha = 0.15 + Math.random() * 0.35;
-					context.fillStyle = `rgba(120, 124, 130, ${alpha.toFixed(2)})`;
+					const grainAlpha = 0.15 + Math.random() * 0.35;
+					context.fillStyle = `rgba(120, 124, 130, ${grainAlpha.toFixed(2)})`;
 					context.fillRect(
-						x + Math.cos(angle) * radius - 0.6,
-						y + Math.sin(angle) * radius - 0.6,
+						cx + Math.cos(angle) * radius - 0.6,
+						cy + Math.sin(angle) * radius - 0.6,
 						1.2,
 						1.2
 					);
 				}
-				context.restore();
 			}
+			context.restore();
+		}
 
-			function renderPencilSegment(context, x0, y0, x1, y1) {
-				const dx = x1 - x0;
-				const dy = y1 - y0;
-				const dist = Math.hypot(dx, dy);
+		// Initialize Left Canvas (Sketch - 100% blank on open)
+		const sketchArea = document.querySelector(".text-input1");
+		if (sketchArea && !sketchArea.querySelector("canvas")) {
+			sketchArea.style.position = "relative";
+			const canvas = document.createElement("canvas");
+			canvas.className = "folio-canvas";
+			canvas.style.position = "absolute";
+			canvas.style.inset = "0";
+			canvas.style.width = "100%";
+			canvas.style.height = "100%";
+			canvas.style.touchAction = "none";
+			sketchArea.append(canvas);
+			const ctx = canvas.getContext("2d");
+			let drawing = false;
+			let lastX = 0;
+			let lastY = 0;
 
-				context.save();
-				context.lineCap = "round";
-				context.lineJoin = "round";
-				context.strokeStyle = "rgba(108, 112, 118, 0.45)";
-				context.lineWidth = 3.4;
-				context.beginPath();
-				context.moveTo(x0, y0);
-				context.lineTo(x1, y1);
-				context.stroke();
-
-				const step = 1.0;
-				const steps = Math.min(100, Math.max(1, Math.ceil(dist / step)));
-				for (let i = 0; i <= steps; i++) {
-					const t = i / steps;
-					const cx = x0 + dx * t;
-					const cy = y0 + dy * t;
-
-					const jx = (Math.random() - 0.5) * 1.5;
-					const jy = (Math.random() - 0.5) * 1.5;
-					const coreAlpha = 0.28 + Math.random() * 0.32;
-					context.fillStyle = `rgba(92, 96, 102, ${coreAlpha.toFixed(2)})`;
-					context.fillRect(cx + jx - 1, cy + jy - 1, 2.2, 2.2);
-
-					const grainCount = 3 + Math.floor(Math.random() * 3);
-					for (let g = 0; g < grainCount; g++) {
-						const angle = Math.random() * Math.PI * 2;
-						const radius = Math.random() * 2.5;
-						const grainAlpha = 0.15 + Math.random() * 0.35;
-						context.fillStyle = `rgba(120, 124, 130, ${grainAlpha.toFixed(2)})`;
-						context.fillRect(
-							cx + Math.cos(angle) * radius - 0.6,
-							cy + Math.sin(angle) * radius - 0.6,
-							1.2,
-							1.2
-						);
-					}
+			const resize = () => {
+				const r = window.devicePixelRatio || 1;
+				const w = sketchArea.clientWidth;
+				const h = sketchArea.clientHeight;
+				if (!w || !h) return;
+				const prev = canvas.width && canvas.height ? canvas.toDataURL() : "";
+				canvas.width = Math.max(1, Math.round(w * r));
+				canvas.height = Math.max(1, Math.round(h * r));
+				ctx.setTransform(r, 0, 0, r, 0, 0);
+				if (prev) {
+					const img = new Image();
+					img.onload = () => ctx.drawImage(img, 0, 0, w, h);
+					img.src = prev;
 				}
-				context.restore();
-			}
+			};
+			resize();
+			window.addEventListener("resize", resize);
 
-			const sketchArea = document.querySelector(".text-input1");
-			if (sketchArea && !sketchArea.querySelector("canvas")) {
-				sketchArea.style.position = "relative";
-				const canvas = document.createElement("canvas");
-				canvas.style.position = "absolute";
-				canvas.style.inset = "0";
-				canvas.style.width = "100%";
-				canvas.style.height = "100%";
-				sketchArea.append(canvas);
-				const ctx = canvas.getContext("2d");
-				let drawing = false;
-				let lastX = 0;
-				let lastY = 0;
-				const resize = () => {
-					const prev = canvas.width ? canvas.toDataURL() : "";
-					const r = window.devicePixelRatio || 1;
-					const w = sketchArea.clientWidth;
-					const h = sketchArea.clientHeight;
-					canvas.width = Math.max(1, Math.round(w * r));
-					canvas.height = Math.max(1, Math.round(h * r));
-					ctx.setTransform(r, 0, 0, r, 0, 0);
-					if (prev) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = prev; }
-				};
-				resize();
-				window.addEventListener("resize", resize);
+			const getPos = (e) => {
+				const rect = canvas.getBoundingClientRect();
+				return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+			};
 
-				const getPos = (e) => {
-					if (typeof e.offsetX === "number" && !isNaN(e.offsetX)) {
-						return { x: e.offsetX, y: e.offsetY };
-					}
-					const rect = canvas.getBoundingClientRect();
-					return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-				};
+			canvas.addEventListener("pointerdown", (e) => {
+				e.preventDefault();
+				drawing = true;
+				try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+				const pos = getPos(e);
+				lastX = pos.x;
+				lastY = pos.y;
+				renderPencilDot(ctx, lastX, lastY);
+			});
 
-				canvas.addEventListener("pointerdown", (e) => {
-					drawing = true;
-					canvas.setPointerCapture(e.pointerId);
-					const pos = getPos(e);
-					lastX = pos.x;
-					lastY = pos.y;
-					renderPencilDot(ctx, lastX, lastY);
-				});
-				canvas.addEventListener("pointermove", (e) => {
-					if (!drawing) return;
-					const pos = getPos(e);
-					renderPencilSegment(ctx, lastX, lastY, pos.x, pos.y);
-					lastX = pos.x;
-					lastY = pos.y;
-				});
-				canvas.addEventListener("pointerup", () => { drawing = false; });
-				canvas.addEventListener("pointercancel", () => { drawing = false; });
-				const clearBtn = document.querySelector(".clear-btn");
-				if (clearBtn) clearBtn.addEventListener("click", () => {
+			canvas.addEventListener("pointermove", (e) => {
+				if (!drawing) return;
+				e.preventDefault();
+				const pos = getPos(e);
+				renderPencilSegment(ctx, lastX, lastY, pos.x, pos.y);
+				lastX = pos.x;
+				lastY = pos.y;
+			});
+
+			const stopDrawing = (e) => {
+				if (drawing) {
+					drawing = false;
+					try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+				}
+			};
+			canvas.addEventListener("pointerup", stopDrawing);
+			canvas.addEventListener("pointercancel", stopDrawing);
+
+			const clearBtn = document.querySelector(".clear-btn, [data-tool='clear-drawing']");
+			if (clearBtn) {
+				clearBtn.addEventListener("click", (e) => {
+					e.stopPropagation();
 					ctx.save();
 					ctx.setTransform(1, 0, 0, 1, 0, 0);
 					ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -189,108 +213,256 @@
 				});
 			}
 
-			const collageArea = document.querySelector(".text-input2");
-			if (collageArea && !collageArea.querySelector(".collage-layer")) {
-				const layer = document.createElement("div");
-				layer.style.position = "absolute";
-				layer.style.inset = "0";
-				layer.style.overflow = "hidden";
-				layer.className = "collage-layer";
-				collageArea.append(layer);
-				const stickerBank = [
-					"img1.png", "img2.png", "img3.png", "img4.png", "img5.png",
-					"_7cea1.png", "_7cea2.png", "img6.png", "img7.png", "img8.png",
-					"img10.png", "img11.png", "img12.png", "img13.png", "img14.png",
-					"img15.png", "img16.png", "text-input.png", "rating.svg"
-				].map((f) => `assets/${f}`);
-				let stickerIndex = 0;
-				let activeSticker = null;
-				const sizeInput = document.querySelector("#collage-sticker-size");
-				const addStickerStandalone = () => {
-					const folder = document.querySelector(".img9");
-					if (folder) {
-						folder.classList.remove("is-popping");
-						void folder.offsetWidth;
-						folder.classList.add("is-popping");
-					}
-					const src = stickerBank[stickerIndex % stickerBank.length];
-					stickerIndex++;
-					const size = Number(sizeInput ? sizeInput.value : 160);
-					const img = document.createElement("img");
-					img.src = src;
-					img.className = "collage-sticker popping";
-					img.style.position = "absolute";
-					const areaW = collageArea.clientWidth || 520;
-					const areaH = collageArea.clientHeight || 480;
-					img.style.left = `${Math.max(16, Math.min(areaW - size - 16, (areaW * 0.5) - (size * 0.5) + (Math.random() * 50 - 25)))}px`;
-					img.style.top = `${Math.max(18, Math.min(areaH - size - 18, (areaH * 0.22) + (Math.random() * 40 - 20)))}px`;
-					img.style.width = `${size}px`;
-					img.style.zIndex = "40";
-					img.addEventListener("pointerdown", (e) => {
-						e.preventDefault();
-						img.classList.remove("popping");
-						activeSticker = img;
-						const startX = e.clientX;
-						const startY = e.clientY;
-						const initX = Number.parseFloat(img.style.left) || 0;
-						const initY = Number.parseFloat(img.style.top) || 0;
-						const onMove = (me) => {
-							const currentWidth = Number.parseFloat(img.style.width) || size;
-							const currentHeight = currentWidth * (img.naturalHeight / (img.naturalWidth || 1)) || currentWidth;
-							const minX = -currentWidth * 0.75;
-							const maxX = collageArea.clientWidth - (currentWidth * 0.25);
-							const minY = -currentHeight * 0.75;
-							const maxY = collageArea.clientHeight - (currentHeight * 0.25);
-							img.style.left = `${Math.max(minX, Math.min(maxX, initX + (me.clientX - startX)))}px`;
-							img.style.top = `${Math.max(minY, Math.min(maxY, initY + (me.clientY - startY)))}px`;
-						};
-						const onUp = () => {
-							document.removeEventListener("pointermove", onMove);
-							document.removeEventListener("pointerup", onUp);
-						};
-						document.addEventListener("pointermove", onMove);
-						document.addEventListener("pointerup", onUp);
-					});
-					layer.append(img);
-					activeSticker = img;
-				};
-				const stickerBtn = document.querySelector(".collage-tools [data-tool='sticker']");
-				if (stickerBtn) stickerBtn.addEventListener("click", addStickerStandalone);
-				if (sizeInput) sizeInput.addEventListener("input", () => {
-					if (activeSticker) activeSticker.style.width = `${sizeInput.value}px`;
-				});
-				const clearCollageBtn = document.querySelector(".collage-tools [data-tool='clear-collage']");
-				if (clearCollageBtn) clearCollageBtn.addEventListener("click", () => {
-					layer.replaceChildren();
-					activeSticker = null;
-				});
-				const deleteBtn = document.querySelector(".collage-tools [data-tool='delete-sticker']");
-				if (deleteBtn) deleteBtn.addEventListener("click", () => {
-					if (activeSticker && activeSticker.isConnected) {
-						activeSticker.remove();
-						activeSticker = layer.lastElementChild || null;
-					} else if (layer.lastElementChild) {
-						layer.lastElementChild.remove();
-						activeSticker = layer.lastElementChild || null;
-					}
-				});
-				const folder = document.querySelector(".img9");
-				if (folder) folder.addEventListener("click", addStickerStandalone);
-				window.addEventListener("keydown", (e) => {
-					const isDeleteKey = e.key === "Delete" || e.key === "Backspace" || e.key === "Del" || e.code === "Delete" || e.code === "Backspace" || e.code === "NumpadDecimal";
-					if (isDeleteKey) {
-						if (e.target.tagName === "INPUT" && e.target.type !== "range") return;
-						e.preventDefault();
-						if (activeSticker && activeSticker.isConnected) {
-							activeSticker.remove();
-							activeSticker = layer.lastElementChild || null;
-						} else if (layer.lastElementChild) {
-							layer.lastElementChild.remove();
-							activeSticker = layer.lastElementChild || null;
-						}
-					}
+			const drawBtn = document.querySelector(".draw-btn, [data-tool='draw']");
+			if (drawBtn) {
+				drawBtn.addEventListener("click", (e) => {
+					e.stopPropagation();
+					drawBtn.classList.add("active");
 				});
 			}
+		}
+
+		// Initialize Right Area (Collage - 100% blank on open)
+		const collageArea = document.querySelector(".text-input2");
+		let collageLayer = collageArea ? collageArea.querySelector(".collage-layer") : null;
+		if (collageArea && !collageLayer) {
+			collageLayer = document.createElement("div");
+			collageLayer.className = "collage-layer";
+			collageLayer.style.position = "absolute";
+			collageLayer.style.inset = "0";
+			collageLayer.style.overflow = "hidden";
+			collageLayer.style.pointerEvents = "none";
+			collageArea.append(collageLayer);
+		}
+
+		const stickerBank = [
+			"img1.png", "img2.png", "img3.png", "img4.png", "img5.png",
+			"_7cea1.png", "_7cea2.png", "img6.png", "img7.png", "img8.png",
+			"img10.png", "img11.png", "img12.png", "img13.png", "img14.png",
+			"img15.png", "img16.png", "text-input.png", "rating.svg"
+		].map((f) => `assets/${f}`);
+
+		let stickerIndex = 0;
+		let activeSticker = null;
+		let maxZIndex = 30;
+		const sizeInput = document.querySelector("#collage-sticker-size");
+
+		function selectSticker(sticker) {
+			if (collageLayer) {
+				collageLayer.querySelectorAll(".collage-sticker").forEach((s) => {
+					s.classList.toggle("is-selected", s === sticker);
+				});
+			}
+			activeSticker = sticker;
+			if (activeSticker && sizeInput) {
+				const currentW = Math.round(parseFloat(activeSticker.style.width) || 160);
+				sizeInput.value = currentW;
+			}
+		}
+
+		function addSticker() {
+			if (!collageLayer) return;
+
+			// Folder pop animation
+			const folder = document.querySelector(".img9, #sticker-folder");
+			if (folder) {
+				folder.classList.remove("is-popping");
+				void folder.offsetWidth;
+				folder.classList.add("is-popping");
+			}
+
+			const src = stickerBank[stickerIndex % stickerBank.length];
+			stickerIndex++;
+
+			const size = Number(sizeInput ? sizeInput.value : 160);
+			const img = document.createElement("img");
+			img.src = src;
+			img.className = "collage-sticker popping";
+			img.alt = "Collage sticker";
+			img.draggable = false;
+			img.style.position = "absolute";
+			img.style.touchAction = "none";
+			img.style.userSelect = "none";
+			img.style.webkitUserSelect = "none";
+			img.style.cursor = "grab";
+			img.style.pointerEvents = "auto";
+			img.style.zIndex = String(++maxZIndex);
+			img.style.width = `${size}px`;
+			img.style.height = "auto";
+
+			const areaW = collageArea.clientWidth || 520;
+			const areaH = collageArea.clientHeight || 480;
+			const posX = Math.max(16, Math.min(areaW - size - 16, (areaW * 0.5) - (size * 0.5) + (Math.random() * 50 - 25)));
+			const posY = Math.max(18, Math.min(areaH - size - 18, (areaH * 0.22) + (Math.random() * 40 - 20)));
+			img.style.left = `${posX}px`;
+			img.style.top = `${posY}px`;
+
+			// Draggable pointer interactions
+			img.addEventListener("pointerdown", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				img.classList.remove("popping");
+				selectSticker(img);
+				img.style.zIndex = String(++maxZIndex);
+				img.style.cursor = "grabbing";
+
+				try { img.setPointerCapture(e.pointerId); } catch (_) {}
+
+				const startX = e.clientX;
+				const startY = e.clientY;
+				const initX = parseFloat(img.style.left) || 0;
+				const initY = parseFloat(img.style.top) || 0;
+
+				const onMove = (me) => {
+					me.preventDefault();
+					const curW = parseFloat(img.style.width) || size;
+					const curH = img.clientHeight || curW;
+					const minX = -curW * 0.75;
+					const maxX = (collageArea.clientWidth || 520) - (curW * 0.25);
+					const minY = -curH * 0.75;
+					const maxY = (collageArea.clientHeight || 480) - (curH * 0.25);
+
+					const nextX = initX + (me.clientX - startX);
+					const nextY = initY + (me.clientY - startY);
+					img.style.left = `${Math.max(minX, Math.min(maxX, nextX))}px`;
+					img.style.top = `${Math.max(minY, Math.min(maxY, nextY))}px`;
+				};
+
+				const onUp = (ue) => {
+					img.style.cursor = "grab";
+					try { img.releasePointerCapture(ue.pointerId); } catch (_) {}
+					img.removeEventListener("pointermove", onMove);
+					img.removeEventListener("pointerup", onUp);
+					img.removeEventListener("pointercancel", onUp);
+				};
+
+				img.addEventListener("pointermove", onMove);
+				img.addEventListener("pointerup", onUp);
+				img.addEventListener("pointercancel", onUp);
+			});
+
+			img.addEventListener("click", (e) => {
+				e.stopPropagation();
+				selectSticker(img);
+			});
+
+			collageLayer.append(img);
+			selectSticker(img);
+			setTimeout(() => img.classList.remove("popping"), 400);
+		}
+
+		window.addStickerStandalone = addSticker;
+
+		// Button listeners
+		const stickerBtn = document.querySelector(".collage-tools [data-tool='sticker']");
+		if (stickerBtn) {
+			stickerBtn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				addSticker();
+			});
+		}
+
+		const folder = document.querySelector(".img9, #sticker-folder");
+		if (folder) {
+			folder.addEventListener("click", (e) => {
+				e.stopPropagation();
+				addSticker();
+			});
+		}
+
+		if (sizeInput) {
+			sizeInput.addEventListener("input", () => {
+				if (activeSticker) {
+					activeSticker.style.width = `${sizeInput.value}px`;
+				}
+			});
+		}
+
+		const clearCollageBtn = document.querySelector(".collage-tools [data-tool='clear-collage']");
+		if (clearCollageBtn) {
+			clearCollageBtn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				if (collageLayer) collageLayer.replaceChildren();
+				activeSticker = null;
+			});
+		}
+
+		function deleteActiveSticker() {
+			if (activeSticker && activeSticker.isConnected) {
+				activeSticker.remove();
+				activeSticker = collageLayer ? collageLayer.lastElementChild : null;
+				if (activeSticker) selectSticker(activeSticker);
+			} else if (collageLayer && collageLayer.lastElementChild) {
+				collageLayer.lastElementChild.remove();
+				activeSticker = collageLayer.lastElementChild;
+				if (activeSticker) selectSticker(activeSticker);
+			}
+		}
+
+		const deleteBtn = document.querySelector(".collage-tools [data-tool='delete-sticker']");
+		if (deleteBtn) {
+			deleteBtn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				deleteActiveSticker();
+			});
+		}
+
+		window.addEventListener("keydown", (e) => {
+			const isDeleteKey = e.key === "Delete" || e.key === "Backspace" || e.key === "Del" || e.code === "Delete" || e.code === "Backspace" || e.code === "NumpadDecimal";
+			if (isDeleteKey) {
+				if (e.target.tagName === "INPUT" && e.target.type !== "range") return;
+				e.preventDefault();
+				deleteActiveSticker();
+			}
+		});
+
+		// Download collage as image
+		const downloadBtn = document.querySelector(".collage-tools [data-tool='download']");
+		if (downloadBtn) {
+			downloadBtn.addEventListener("click", async (e) => {
+				e.stopPropagation();
+				if (!collageLayer || !collageLayer.children.length) {
+					alert("Add at least one sticker to the collage before downloading!");
+					return;
+				}
+				try {
+					const board = document.querySelector(".text-input2") || collageLayer;
+					const rect = board.getBoundingClientRect();
+					const canvas = document.createElement("canvas");
+					const dpr = 2;
+					canvas.width = (rect.width || 520) * dpr;
+					canvas.height = (rect.height || 480) * dpr;
+					const c = canvas.getContext("2d");
+					c.scale(dpr, dpr);
+					c.fillStyle = "#faf8f4";
+					c.fillRect(0, 0, rect.width || 520, rect.height || 480);
+
+					const stickers = [...collageLayer.querySelectorAll(".collage-sticker")];
+					for (const s of stickers) {
+						const sx = parseFloat(s.style.left) || 0;
+						const sy = parseFloat(s.style.top) || 0;
+						const sw = parseFloat(s.style.width) || s.clientWidth || 100;
+						const sh = s.clientHeight || sw;
+						await new Promise((res) => {
+							if (s.complete && s.naturalWidth) {
+								c.drawImage(s, sx, sy, sw, sh);
+								res();
+							} else {
+								const temp = new Image();
+								temp.onload = () => { c.drawImage(temp, sx, sy, sw, sh); res(); };
+								temp.onerror = res;
+								temp.src = s.src;
+							}
+						});
+					}
+					const link = document.createElement("a");
+					link.download = "bharati-collage.png";
+					link.href = canvas.toDataURL("image/png");
+					link.click();
+				} catch (err) {
+					console.error("Download failed", err);
+				}
+			});
 		}
 	</script>
 </body>

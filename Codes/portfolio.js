@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=20" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=3" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=10" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=11" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=6" }
 ];
 const spreadNavigationArtwork = [
@@ -214,7 +214,7 @@ function prepareFrame(iframe, src) {
 				else if (frameIndex === 2 && target.closest(".img2, .img3, .text-top, .text-campaigns")) action = () => openWattpadDialog();
 				else if (frameIndex === 3 && target.closest(".img2")) action = () => openDialog(resumeDialog);
 				else if (frameIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
-				else if (frameIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder")) action = addSticker;
+				else if (frameIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder, .collage-tools, .sketch-tools, .folio-canvas, canvas, .collage-sticker")) return;
 				if (action) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
@@ -443,10 +443,10 @@ function preloadNextSpread(index) {
 }
 
 function startEdgeGesture(frameDocument, event) {
-	if (event.target.closest("button, a, input, canvas, .collage-sticker, .cover-card-artwork-wrap")) return;
+	if (event.target.closest("button, a, input, canvas, .folio-canvas, .collage-sticker, .cover-card-artwork-wrap, .text-input1, .text-input2, .row-right, .sketch-wrapper, .collage-wrapper, .sketch-tools, .collage-tools, #sticker-folder, .sticker-folder, .img9")) return;
 	const isTouch = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches;
-	const side = isTouch ? (event.clientX < 640 ? "left" : "right") : (event.clientX < 90 ? "left" : event.clientX > 1190 ? "right" : null);
-	if (!side && !isTouch) return;
+	const side = isTouch ? (event.clientX < 100 ? "left" : event.clientX > 1180 ? "right" : null) : (event.clientX < 90 ? "left" : event.clientX > 1190 ? "right" : null);
+	if (!side) return;
 	gesture = { side, x: event.clientX, y: event.clientY, id: event.pointerId, isTouch };
 }
 
@@ -1132,10 +1132,6 @@ function setupSketchbook(frameDocument) {
 	};
 	resizeCanvas();
 	new ResizeObserver(resizeCanvas).observe(sketchArea);
-	try {
-		const saved = localStorage.getItem("bharati-sketch");
-		if (saved) { const image = new Image(); image.onload = () => context.drawImage(image, 0, 0, sketchArea.clientWidth, sketchArea.clientHeight); image.src = saved; }
-	} catch (error) { console.warn("Saved sketch could not be restored", error); }
 
 	const getPos = (event) => {
 		if (typeof event.offsetX === "number" && !isNaN(event.offsetX)) {
@@ -1256,20 +1252,6 @@ function setupSketchbook(frameDocument) {
 			downloadCollage();
 		});
 	}
-
-	const shareBtn = frameDocument.querySelector(".collage-tools [data-tool='share']");
-	if (shareBtn) {
-		shareBtn.addEventListener("click", (event) => {
-			event.stopPropagation();
-			shareCollage();
-		});
-	}
-
-	try {
-		JSON.parse(localStorage.getItem("bharati-collage") || "[]").forEach((sticker) => {
-			placeSticker(normalizeAssetUrl(sticker.src), sticker.x, sticker.y, sticker.size, layer);
-		});
-	} catch (error) { console.warn("Saved collage could not be restored", error); }
 }
 
 function persistSketch(canvas) {
