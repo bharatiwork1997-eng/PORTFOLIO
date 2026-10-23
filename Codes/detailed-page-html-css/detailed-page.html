@@ -321,17 +321,30 @@
 		});
 
 		const pencil = document.querySelector(".pencil-cursor");
+		let pencilTargetX = -200, pencilTargetY = -200, pencilVisible = false, pencilRaf = false;
+		function renderPencil() {
+			pencilRaf = false;
+			if (pencil) pencil.style.transform = `translate3d(${pencilTargetX}px, ${pencilTargetY}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
+		}
 		function movePencil(e) {
 			if (!pencil || matchMedia("(hover: none)").matches) return;
-			pencil.style.left = `${e.clientX}px`;
-			pencil.style.top = `${e.clientY}px`;
-			pencil.style.display = "block";
+			pencilTargetX = e.clientX;
+			pencilTargetY = e.clientY;
+			if (!pencilVisible) {
+				pencilVisible = true;
+				pencil.style.display = "block";
+			}
+			if (!pencilRaf) {
+				pencilRaf = true;
+				requestAnimationFrame(renderPencil);
+			}
 		}
 		function hidePencil() {
+			pencilVisible = false;
 			if (pencil) pencil.style.display = "none";
 		}
-		document.addEventListener("pointermove", movePencil);
-		document.addEventListener("pointerenter", movePencil);
+		document.addEventListener("pointermove", movePencil, { passive: true });
+		document.addEventListener("pointerenter", movePencil, { passive: true });
 		document.addEventListener("pointerleave", hidePencil);
 	</script>
 </body>

@@ -90,12 +90,29 @@ let activeFrameDocument = null;
 let stickerBank = [];
 let gesture = null;
 
+let cachedBookRect = null;
+let cachedCoverRect = null;
+
+function updateFrameRects() {
+	if (coverFrame && (!cover || !cover.hidden)) {
+		cachedCoverRect = coverFrame.getBoundingClientRect();
+	}
+	const frameToMeasure = activeFrame || document.querySelector(".spread-frame.is-active") || spreadFrame1 || spreadFrame2;
+	if (frameToMeasure && (!portfolio || !portfolio.hidden)) {
+		cachedBookRect = frameToMeasure.getBoundingClientRect();
+	}
+}
+
+window.addEventListener("resize", updateFrameRects, { passive: true });
+window.addEventListener("scroll", updateFrameRects, { passive: true });
+
 function fitCanvas(iframe, width, height, parent) {
 	const resize = () => {
 		const scale = Math.min(parent.clientWidth / width, parent.clientHeight / height);
 		iframe.style.transform = `scale(${scale})`;
 		iframe.style.left = `${Math.max(0, (parent.clientWidth - width * scale) / 2)}px`;
 		iframe.style.top = `${Math.max(0, (parent.clientHeight - height * scale) / 2)}px`;
+		updateFrameRects();
 	};
 	resize();
 	new ResizeObserver(resize).observe(parent);
@@ -105,6 +122,7 @@ fitCanvas(coverFrame, 1920, 1080, document.querySelector(".cover-art"));
 
 function fitBookScene() {
 	bookScene.style.setProperty("--book-scale", String(bookStage.clientWidth / 1280));
+	updateFrameRects();
 }
 
 new ResizeObserver(fitBookScene).observe(bookStage);
@@ -179,6 +197,7 @@ function prepareFrame(iframe, src) {
 			frameDocument.body.style.padding = "28px 24px";
 			frameDocument.body.style.overflow = "hidden";
 			frameDocument.documentElement.style.overflow = "hidden";
+			frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event));
 			frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event));
 			frameDocument.addEventListener("pointerdown", (event) => startEdgeGesture(frameDocument, event), { passive: true });
 			frameDocument.addEventListener("pointerup", (event) => finishGesture(event));
@@ -248,33 +267,42 @@ function prepareFrame(iframe, src) {
 }
 
 function handleFramePointer(iframe, event) {
-	if (iframe !== activeFrame) return;
 	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
-	const rect = iframe.getBoundingClientRect();
-	const iframeX = event.clientX;
-	const isSketch = (pageIndex === 4) && (
-		iframeX < 640 ||
-		Boolean(event.target && event.target.closest && event.target.closest(".sketch-wrapper, .text-input1, .sketch-tools, .text1, .text2, .draw-btn, .clear-btn, .folio-canvas"))
-	);
-	const pageX = rect.left + event.clientX * rect.width / 1280;
-	const pageY = rect.top + event.clientY * rect.height / 900;
-	movePencil(pageX, pageY, isSketch);
+	const rect = cachedBookRect || (iframe ? (cachedBookRect = iframe.getBoundingClientRect()) : null);
+	if (!rect || rect.width === 0) return;
+	const pageX = rect.left + (event.clientX * rect.width) / 1280;
+	const pageY = rect.top + (event.clientY * rect.height) / 900;
+	movePencil(pageX, pageY);
+}
+
+let targetPencilX = -200;
+let targetPencilY = -200;
+let pencilRafPending = false;
+let pencilVisible = false;
+
+function renderPencilCursor() {
+	pencilRafPending = false;
+	if (!pencil) return;
+	pencil.style.transform = `translate3d(${targetPencilX}px, ${targetPencilY}px, 0)`;
 }
 
 function movePencil(x, y) {
 	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches) return;
-	document.body.classList.add("pencil-active");
-	if (arrowCursor) arrowCursor.style.display = "none";
-	if (pencil) {
-		pencil.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
-		pencil.style.display = "block";
+	targetPencilX = x;
+	targetPencilY = y;
+	if (!pencilVisible) {
+		pencilVisible = true;
+		if (pencil) pencil.classList.add("is-visible");
+	}
+	if (!pencilRafPending) {
+		pencilRafPending = true;
+		requestAnimationFrame(renderPencilCursor);
 	}
 }
 
 function hidePencil() {
-	document.body.classList.remove("pencil-active");
-	if (pencil) pencil.style.display = "none";
-	if (arrowCursor) arrowCursor.style.display = "none";
+	pencilVisible = false;
+	if (pencil) pencil.classList.remove("is-visible");
 }
 
 function setupCover() {
@@ -284,7 +312,10 @@ function setupCover() {
 			if (!frameDocument || !frameDocument.body) return;
 			const style = frameDocument.createElement("style");
 			style.textContent = `
-				html, body, *, *::before, *::after { cursor:none !important; user-select:none !important; }
+				@media (hover: hover) and (pointer: fine) {
+					html, body, *, *::before, *::after, input, button, textarea, select, a { cursor:none !important; }
+				}
+				html, body, *, *::before, *::after { user-select:none !important; }
 				html, body { width:1920px !important; height:1080px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
 			`;
 			frameDocument.head.append(style);
@@ -297,9 +328,17 @@ function setupCover() {
 			frameDocument.body.style.overflow = "hidden";
 			frameDocument.body.style.scrollbarWidth = "none";
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
+			frameDocument.addEventListener("pointerenter", (event) => {
+				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
+				if (!rect || rect.width === 0) return;
+				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
+			});
 			frameDocument.addEventListener("pointermove", (event) => {
-				const rect = coverFrame.getBoundingClientRect();
-				movePencil(rect.left + event.clientX * rect.width / 1920, rect.top + event.clientY * rect.height / 1080);
+				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
+				if (!rect || rect.width === 0) return;
+				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
 			});
 			frameDocument.addEventListener("click", () => {
 				openBook();
@@ -340,6 +379,7 @@ function openBook() {
 		portfolio.hidden = false;
 		fitBookScene();
 		updateBookControls();
+		updateFrameRects();
 		bookStage.scrollIntoView({ behavior: "smooth", block: "center" });
 		openingBook = false;
 		setTimeout(() => { wheelLocked = false; }, 300);
@@ -360,6 +400,7 @@ function returnHome() {
 	gesture = null;
 	updateBookControls();
 	window.scrollTo({ top: 0, behavior: "smooth" });
+	updateFrameRects();
 	setTimeout(() => { wheelLocked = false; }, 350);
 }
 
@@ -416,6 +457,7 @@ async function turnPage(direction) {
 	activeFrame = standbyFrame;
 	standbyFrame = previousActive;
 	activeFrameDocument = activeFrame.contentDocument;
+	updateFrameRects();
 
 	await new Promise((resolve) => setTimeout(resolve, 220));
 	turnBusy = false;
@@ -479,6 +521,7 @@ function openDialog(dialog) {
 	if (!dialog.open) {
 		dialog.showModal();
 	}
+	updateFrameRects();
 }
 
 function handleDialogClose(dialog) {
@@ -486,6 +529,7 @@ function handleDialogClose(dialog) {
 		document.body.appendChild(pencil);
 	}
 	if (arrowCursor) arrowCursor.style.display = "none";
+	updateFrameRects();
 }
 
 function openLostVideo() {
@@ -821,12 +865,10 @@ function openClustrDialog() {
 	openDialog(clustrDialog);
 	if (iframe && !iframe.dataset.pencilHooked) {
 		iframe.dataset.pencilHooked = "true";
-		iframe.addEventListener("pointerenter", () => {
-			if (pencil) pencil.style.display = "none";
-		});
-		iframe.addEventListener("mouseenter", () => {
-			if (pencil) pencil.style.display = "none";
-		});
+		iframe.addEventListener("pointerenter", hidePencil);
+		iframe.addEventListener("mouseenter", hidePencil);
+		iframe.addEventListener("pointerleave", (e) => movePencil(e.clientX, e.clientY));
+		iframe.addEventListener("mouseleave", (e) => movePencil(e.clientX, e.clientY));
 	}
 }
 window.openClustrDialog = openClustrDialog;
@@ -1146,18 +1188,20 @@ function setupSketchbook(frameDocument) {
 	canvas.addEventListener("pointerdown", (event) => {
 		drawing = true;
 		canvas.setPointerCapture(event.pointerId);
-		const iframe = frameDocument.defaultView?.frameElement || activeFrame;
-		const rect = iframe.getBoundingClientRect();
-		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900, true);
+		const rect = cachedBookRect || (frameDocument.defaultView?.frameElement || activeFrame).getBoundingClientRect();
+		if (rect && rect.width > 0) {
+			movePencil(rect.left + (event.clientX * rect.width) / 1280, rect.top + (event.clientY * rect.height) / 900);
+		}
 		const pos = getPos(event);
 		lastX = pos.x;
 		lastY = pos.y;
 		renderPencilDot(context, lastX, lastY);
 	});
 	canvas.addEventListener("pointermove", (event) => {
-		const iframe = frameDocument.defaultView?.frameElement || activeFrame;
-		const rect = iframe.getBoundingClientRect();
-		movePencil(rect.left + event.clientX * rect.width / 1280, rect.top + event.clientY * rect.height / 900, true);
+		const rect = cachedBookRect || (frameDocument.defaultView?.frameElement || activeFrame).getBoundingClientRect();
+		if (rect && rect.width > 0) {
+			movePencil(rect.left + (event.clientX * rect.width) / 1280, rect.top + (event.clientY * rect.height) / 900);
+		}
 		if (!drawing) return;
 		const pos = getPos(event);
 		renderPencilSegment(context, lastX, lastY, pos.x, pos.y);
@@ -1555,9 +1599,28 @@ if (stickerSize) {
 		persistStickers(activeFrameDocument?.querySelector(".collage-layer"));
 	});
 }
-document.addEventListener("pointerenter", (event) => movePencil(event.clientX, event.clientY));
-document.addEventListener("pointermove", (event) => movePencil(event.clientX, event.clientY));
-document.addEventListener("pointerleave", hidePencil);
+document.addEventListener("pointerenter", (event) => {
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+	movePencil(event.clientX, event.clientY);
+}, { passive: true });
+document.addEventListener("pointermove", (event) => {
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+	movePencil(event.clientX, event.clientY);
+}, { passive: true });
+document.addEventListener("pointerdown", (event) => {
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+	movePencil(event.clientX, event.clientY);
+}, { passive: true });
+window.addEventListener("pointerleave", (event) => {
+	if (!event.relatedTarget && !event.toElement) {
+		hidePencil();
+	}
+});
+document.addEventListener("mouseleave", (event) => {
+	if (!event.relatedTarget && !event.toElement) {
+		hidePencil();
+	}
+});
 document.addEventListener("keydown", (event) => {
 	if (event.key === "f" || event.key === "F") {
 		const tag = event.target?.tagName?.toLowerCase();

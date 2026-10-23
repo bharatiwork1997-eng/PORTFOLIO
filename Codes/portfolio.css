@@ -130,17 +130,48 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 	line-height: 1;
 }
 
-.pencil-cursor { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 26px; height: 180px; pointer-events: none; transform-origin: 12.9px 3.3px; transform: translate(-12.9px, -3.3px) rotate(-26deg); will-change: transform; }
-.pencil-cursor img { display: block; width: 100%; height: 100%; object-fit: fill; filter: drop-shadow(2px 6px 6px rgba(0, 0, 0, 0.25)); }
-.arrow-cursor { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 17px; height: 25px; pointer-events: none; transform-origin: 0 0; will-change: transform; filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.45)); }
-.arrow-cursor img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.pencil-cursor {
+	display: block;
+	position: fixed;
+	z-index: 2147483647;
+	top: 0;
+	left: 0;
+	width: 26px;
+	height: 180px;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 120ms ease;
+	will-change: transform;
+	transform: translate3d(-200px, -200px, 0);
+}
+.pencil-cursor img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+	transform-origin: 12.9px 3.3px;
+	transform: translate(-12.9px, -3.3px) rotate(-26deg);
+	filter: drop-shadow(2px 6px 6px rgba(0, 0, 0, 0.25));
+}
+.pencil-cursor.is-visible {
+	opacity: 1;
+}
+.arrow-cursor {
+	display: none !important;
+}
 
 @media (hover: hover) and (pointer: fine) {
-	*, *::before, *::after, html, body { cursor: none !important; }
+	*, *::before, *::after, html, body, input, button, textarea, select, a, dialog, iframe {
+		cursor: none !important;
+	}
 }
 @media (hover: none), (pointer: coarse) {
-	*, *::before, *::after, html, body { cursor: auto !important; }
-	.pencil-cursor, .arrow-cursor { display: none !important; }
+	*, *::before, *::after, html, body, input, button, textarea, select, a {
+		cursor: auto !important;
+	}
+	.pencil-cursor, .arrow-cursor {
+		display: none !important;
+	}
 }
 
 .toast { position: fixed; z-index: 25; right: 20px; bottom: 20px; padding: 10px 14px; border: 1px solid rgba(255,255,255,.2); background: #211f1b; color: white; font-size: 11px; opacity: 0; transform: translateY(8px); transition: opacity 180ms ease, transform 180ms ease; pointer-events: none; }
@@ -1295,7 +1326,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	border-radius: 6px;
 	border: 1px solid rgba(40, 36, 30, 0.28);
 	box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
-	cursor: grab;
+	cursor: none !important;
 	user-select: none;
 	-webkit-user-select: none;
 	outline: none;
@@ -1304,7 +1335,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 }
 
 .pdf-scroll-viewport.is-dragging {
-	cursor: grabbing !important;
+	cursor: none !important;
 	scroll-behavior: auto;
 }
 
