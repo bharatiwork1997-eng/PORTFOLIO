@@ -682,6 +682,11 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 @media print {
 	body * { visibility: hidden !important; }
 	#resume-dialog, #resume-dialog * { visibility: visible !important; }
+	.pencil-cursor, .pencil-cursor *, .arrow-cursor, .arrow-cursor * {
+		display: none !important;
+		visibility: hidden !important;
+		opacity: 0 !important;
+	}
 	#resume-dialog { position: absolute; inset: 0; width: 100%; max-width: none; max-height: none; margin: 0; padding: 0; background: #fff !important; }
 	.resume-sheet { min-height: 0; box-shadow: none !important; border: none !important; padding: 20px !important; background: #fff !important; }
 	.resume-scroll-container { max-width: none !important; overflow: visible !important; padding: 0 !important; }

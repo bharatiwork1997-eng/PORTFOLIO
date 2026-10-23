@@ -1575,7 +1575,21 @@ document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addE
 		handleDialogClose(dialog);
 	});
 });
-document.querySelector("#print-resume").addEventListener("click", () => window.print());
+const printResumeBtn = document.querySelector("#print-resume");
+if (printResumeBtn) {
+	printResumeBtn.addEventListener("click", () => {
+		hidePencil();
+		if (pencil && resumeDialog && resumeDialog.contains(pencil)) {
+			document.body.appendChild(pencil);
+		}
+		window.print();
+	});
+}
+window.addEventListener("afterprint", () => {
+	if (resumeDialog && resumeDialog.open && pencil && !resumeDialog.contains(pencil)) {
+		resumeDialog.appendChild(pencil);
+	}
+});
 document.querySelectorAll("[data-tool]").forEach((button) => button.addEventListener("click", () => {
 	switch (button.dataset.tool) {
 		case "draw": showToast("Draw in the open space on the left page."); break;
