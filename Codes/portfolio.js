@@ -991,7 +991,7 @@ function openClustrDialog() {
 	if (!clustrDialog) return;
 	const iframe = clustrDialog.querySelector("#clustr-frame");
 	if (iframe && (!iframe.src || iframe.src === "about:blank" || iframe.src.endsWith("about:blank"))) {
-		iframe.src = iframe.dataset.src || "clustr/index.html";
+		iframe.src = iframe.dataset.src || "clustr/index.html?v=3";
 	}
 	openDialog(clustrDialog);
 	if (iframe && !iframe.dataset.pencilHooked) {

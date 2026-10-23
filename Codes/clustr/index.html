@@ -210,7 +210,7 @@
       color: var(--text-mute);
       max-width: 880px;
       line-height: 1.55;
-      margin-bottom: 38px;
+      margin-bottom: 24px;
     }
 
     .clustr-logo {
@@ -275,6 +275,18 @@
     }
     .nav-brand:hover .brand-case-study-img {
       transform: scale(1.04);
+    }
+    .logo-dark {
+      display: none !important;
+    }
+    .logo-light {
+      display: block !important;
+    }
+    [data-theme="dark"] .logo-dark {
+      display: block !important;
+    }
+    [data-theme="dark"] .logo-light {
+      display: none !important;
     }
     .brand-logo-img {
       width: 36px;
@@ -410,7 +422,7 @@
        ========================================================================== */
     .hero-section {
       position: relative;
-      padding: 32px 0 72px;
+      padding: 24px 0 32px;
       overflow: hidden;
     }
 
@@ -447,7 +459,7 @@
       position: relative;
       z-index: 1;
       max-width: 920px;
-      margin: 0 auto 36px;
+      margin: 0 auto 20px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -512,7 +524,7 @@
       z-index: 1;
       width: 100%;
       max-width: 1140px;
-      margin: 0 auto 48px;
+      margin: 0 auto 24px;
       display: flex;
       justify-content: center;
     }
@@ -683,7 +695,7 @@
        SECTION 01: THE PROBLEM SPACE & ROOT INSIGHT
        ========================================================================== */
     .section-padding {
-      padding: 100px 0;
+      padding: 44px 0;
       position: relative;
     }
 
@@ -2164,7 +2176,7 @@
                   radial-gradient(circle at 80% 80%, rgba(169, 138, 230, 0.18) 0%, transparent 60%),
                   var(--bg-dark);
       color: #FFFFFF;
-      padding: 110px 0;
+      padding: 48px 0;
       position: relative;
     }
     .prototype-section .section-title {
@@ -3034,8 +3046,8 @@
     .site-footer {
       background: var(--bg-card);
       border-top: 1px solid var(--border-line);
-      padding: 60px 0 40px;
-      margin-top: 80px;
+      padding: 36px 0 28px;
+      margin-top: 32px;
     }
     .footer-inner {
       display: flex;
@@ -3111,13 +3123,22 @@
     }
 
     @media (max-width: 640px) {
-      .container { padding: 0 18px; }
+      .container { padding: 0 16px; }
+      .section-padding { padding: 26px 0 !important; }
+      .hero-section { padding: 14px 0 18px !important; }
+      .prototype-section { padding: 30px 0 !important; }
+      .site-footer { padding: 22px 0 18px !important; margin-top: 20px !important; }
+      .section-title { font-size: 22px !important; margin-bottom: 8px !important; }
+      .section-subtitle { margin-bottom: 16px !important; font-size: 14px !important; }
       .meta-strip-spacious {
         grid-template-columns: 1fr;
-        padding: 16px 20px;
+        padding: 12px 14px !important;
+        gap: 10px !important;
       }
+      .meta-strip-spacious .meta-item { gap: 2px !important; }
+      .meta-strip-spacious .meta-value { font-size: 13px !important; }
       .tldr-card-spacious {
-        padding: 20px 18px;
+        padding: 18px 16px !important;
       }
       .hero-cover-frame {
         border-radius: 16px;
@@ -3169,7 +3190,8 @@
     <div class="nav-inner">
       <!-- Left: Logo from Logo folder + Brand -->
       <a href="#hero" class="nav-brand" title="CLUSTR Home">
-        <img src="assets/logo/logo_case_study.png" onerror="this.src='Logo/logo case study.png'" alt="CLUSTR Case Study" class="brand-case-study-img" />
+        <img src="assets/logo/logo_case_study.png" onerror="this.src='Logo/logo case study.png'" alt="CLUSTR Case Study" class="brand-case-study-img logo-light" />
+        <img src="assets/logo/dark_mode_logo.png" onerror="this.src='Logo/Dark mode logo clustr.png'" alt="CLUSTR Case Study" class="brand-case-study-img logo-dark" />
       </a>
 
       <!-- Center: Single-Line Unbroken Nav Links -->
@@ -4248,7 +4270,8 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-brand">
-        <img src="Logo/logo.png" onerror="this.src='assets/logo/logo.png'" alt="CLUSTR Logo" style="width: 28px; height: 28px; object-fit: contain;" />
+        <img src="assets/logo/logo_case_study.png" onerror="this.src='Logo/logo case study.png'" alt="CLUSTR Logo" class="footer-logo logo-light" style="height: 28px; width: auto; object-fit: contain;" />
+        <img src="assets/logo/dark_mode_logo.png" onerror="this.src='Logo/Dark mode logo clustr.png'" alt="CLUSTR Logo" class="footer-logo logo-dark" style="height: 28px; width: auto; object-fit: contain;" />
         <span>CLUSTR &bull; Case Study by Bharati Kamble</span>
       </div>
 
@@ -4361,12 +4384,19 @@
     /* --------------------------------------------------------------------------
        2. THEME TOGGLE
        -------------------------------------------------------------------------- */
+    function syncLogos() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.querySelectorAll('.logo-dark').forEach(img => { img.style.setProperty('display', isDark ? 'block' : 'none', 'important'); });
+      document.querySelectorAll('.logo-light').forEach(img => { img.style.setProperty('display', isDark ? 'none' : 'block', 'important'); });
+    }
+
     function toggleTheme() {
       const html = document.documentElement;
       const current = html.getAttribute('data-theme');
       const next = current === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       localStorage.setItem('clustr-theme', next);
+      syncLogos();
       playTapSound();
       showToast(next === 'dark' ? 'Dark Mode Activated' : 'Light Mode Activated');
     }
@@ -4376,6 +4406,7 @@
     if (savedTheme) {
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
+    syncLogos();
 
     /* --------------------------------------------------------------------------
        3. TOAST NOTIFICATIONS & CLIPBOARD
