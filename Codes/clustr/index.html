@@ -28,24 +28,24 @@
       --coral-hover: #FF5252;
       --coral-soft: rgba(255, 106, 106, 0.12);
       --coral-glow: rgba(255, 106, 106, 0.35);
-      --lavender: #A98AE6;
-      --lavender-soft: rgba(169, 138, 230, 0.12);
-      --lavender-glow: rgba(169, 138, 230, 0.35);
-      --emerald: #10B981;
-      --emerald-soft: rgba(16, 185, 129, 0.12);
+      --lavender: #7C4DFF;
+      --lavender-soft: rgba(124, 77, 255, 0.12);
+      --lavender-glow: rgba(124, 77, 255, 0.35);
+      --emerald: #059669;
+      --emerald-soft: rgba(5, 150, 105, 0.12);
       --cream-warm: #FFF8ED;
       
-      /* Surface & Typography Tokens (Default Light Mode) */
+      /* Surface & Typography Tokens (Default Light Mode - Accessible Contrast) */
       --primary-deep: #241A4D;
       --bg-base: #F8F5FC;
       --bg-card: #FFFFFF;
       --bg-card-subtle: #F2ECF9;
       --bg-dark: #140E29;
-      --text-main: #241A4D;
-      --text-mute: #463E63;
-      --text-faint: #585175;
-      --border-line: #E8E2F2;
-      --border-subtle: rgba(169, 138, 230, 0.2);
+      --text-main: #1D153E;
+      --text-mute: #483E6A;
+      --text-faint: #625885;
+      --border-line: #E2DAED;
+      --border-subtle: rgba(124, 77, 255, 0.18);
       --frame-device: #1B1530;
       
       /* Shadows */
@@ -63,15 +63,24 @@
       --nav-height: 72px;
     }
 
-    /* Dark Mode Theme */
+    /* Dark Mode Theme - Accessible Contrast */
     [data-theme="dark"] {
+      --coral: #FF7575;
+      --coral-hover: #FF5C5C;
+      --coral-soft: rgba(255, 106, 106, 0.2);
+      --coral-glow: rgba(255, 106, 106, 0.4);
+      --lavender: #C3AAFF;
+      --lavender-soft: rgba(169, 138, 230, 0.2);
+      --lavender-glow: rgba(169, 138, 230, 0.4);
+      --emerald: #34D399;
+      --emerald-soft: rgba(16, 185, 129, 0.2);
       --bg-base: #110C24;
       --bg-card: #1A1333;
       --bg-card-subtle: #241B44;
       --text-main: #F4EFFC;
       --text-mute: #C8C3E6;
       --text-faint: #ABA4D1;
-      --border-line: #2B2150;
+      --border-line: #2E2356;
       --border-subtle: rgba(169, 138, 230, 0.25);
       --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.4);
       --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5);
@@ -499,7 +508,7 @@
     .secondary-btn {
       background: var(--bg-card);
       color: var(--text-main);
-      border: 1px solid var(--border-line);
+      border: 1.5px solid var(--border-line);
       font-size: 13.5px;
       font-weight: 700;
       padding: 10px 20px;
@@ -514,6 +523,19 @@
     .secondary-btn:hover {
       background: var(--bg-card-subtle);
       border-color: var(--lavender);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(124, 77, 255, 0.2);
+    }
+    [data-theme="dark"] .secondary-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border-color: rgba(195, 170, 255, 0.35);
+    }
+    [data-theme="dark"] .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--lavender);
+      box-shadow: 0 6px 18px rgba(195, 170, 255, 0.25);
+    }
       transform: translateY(-2px);
       box-shadow: 0 6px 18px rgba(169, 138, 230, 0.25);
     }
@@ -1637,7 +1659,7 @@
       font-size: 12px;
       font-weight: 800;
       color: var(--text-main);
-      background: #FFF;
+      background: var(--bg-card);
       border: 1px solid var(--border-line);
       padding: 5px 12px;
       border-radius: 999px;
@@ -1645,9 +1667,9 @@
     .pulse-dot {
       width: 8px;
       height: 8px;
-      background: #10B981;
+      background: var(--emerald);
       border-radius: 50%;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 0 0 2px var(--emerald-soft);
       animation: pulse 2s infinite;
     }
     .miro-pan-tip {
@@ -1662,7 +1684,7 @@
       gap: 8px;
     }
     .miro-tool-btn {
-      background: #FFF;
+      background: var(--bg-card);
       border: 1px solid var(--border-line);
       border-radius: 8px;
       padding: 6px 13px;
@@ -1678,8 +1700,22 @@
     .miro-tool-btn:hover {
       border-color: var(--coral);
       color: var(--coral);
-      background: #FFF5F5;
+      background: var(--bg-card-subtle);
       transform: translateY(-1px);
+    }
+    [data-theme="dark"] .miro-tool-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(195, 170, 255, 0.3);
+      color: var(--text-main);
+    }
+    [data-theme="dark"] .miro-tool-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--coral);
+    }
+    [data-theme="dark"] .miro-canvas-status-badge {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(195, 170, 255, 0.3);
+      color: var(--text-main);
     }
     .miro-zoom-level {
       font-size: 12px;
@@ -2751,16 +2787,34 @@
       white-space: nowrap;
     }
     .badge-status.val {
-      background: var(--emerald-soft);
-      color: var(--emerald);
+      background: #E8F8F0;
+      color: #065F46;
+      border: 1px solid rgba(5, 150, 105, 0.25);
     }
     .badge-status.hyp {
-      background: var(--coral-soft);
-      color: var(--coral);
+      background: #FEF2F2;
+      color: #991B1B;
+      border: 1px solid rgba(220, 38, 38, 0.25);
     }
     .badge-status.gap {
-      background: var(--lavender-soft);
-      color: var(--lavender);
+      background: #F3EFFC;
+      color: #5B21B6;
+      border: 1px solid rgba(109, 40, 217, 0.25);
+    }
+    [data-theme="dark"] .badge-status.val {
+      background: rgba(16, 185, 129, 0.16);
+      color: #34D399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    [data-theme="dark"] .badge-status.hyp {
+      background: rgba(255, 106, 106, 0.16);
+      color: #FFA1A1;
+      border-color: rgba(255, 161, 161, 0.35);
+    }
+    [data-theme="dark"] .badge-status.gap {
+      background: rgba(169, 138, 230, 0.16);
+      color: #C3AAFF;
+      border-color: rgba(195, 170, 255, 0.35);
     }
 
     /* Designer Quote Retrospective */
@@ -3124,12 +3178,80 @@
 
     @media (max-width: 640px) {
       .container { padding: 0 16px; }
-      .section-padding { padding: 26px 0 !important; }
+      .section-padding { padding: 24px 0 !important; }
       .hero-section { padding: 14px 0 18px !important; }
-      .prototype-section { padding: 30px 0 !important; }
-      .site-footer { padding: 22px 0 18px !important; margin-top: 20px !important; }
-      .section-title { font-size: 22px !important; margin-bottom: 8px !important; }
-      .section-subtitle { margin-bottom: 16px !important; font-size: 14px !important; }
+      .prototype-section { padding: 26px 0 !important; }
+      .site-footer { padding: 20px 0 16px !important; margin-top: 20px !important; }
+      .section-title { font-size: 21px !important; line-height: 1.25 !important; margin-bottom: 6px !important; }
+      .section-subtitle { margin-bottom: 14px !important; font-size: 13.5px !important; line-height: 1.5 !important; }
+      
+      /* Scroll Margins so headers never obscure content */
+      section[id], .flow-master-card, .matrix-table-card {
+        scroll-margin-top: 62px !important;
+      }
+
+      /* Logo Size & Header Elements */
+      .brand-case-study-img {
+        height: 24px !important;
+        width: auto !important;
+        max-width: 100px !important;
+      }
+      .nav-brand {
+        gap: 6px !important;
+        font-size: 15px !important;
+      }
+      .nav-center { display: none; }
+      .top-nav { padding: 8px 12px !important; min-height: 48px !important; }
+      .nav-inner { gap: 6px !important; }
+      .nav-actions { gap: 6px !important; align-items: center !important; }
+      .icon-btn { width: 32px !important; height: 32px !important; font-size: 13px !important; border-radius: 50% !important; }
+      .cta-btn { padding: 6px 11px !important; font-size: 11px !important; font-weight: 700 !important; white-space: nowrap; border-radius: 20px !important; }
+      .cta-btn span { font-size: 11px; }
+      .back-portfolio-btn { display: none !important; }
+
+      /* Hero Section Text & Buttons */
+      .hero-title {
+        font-size: clamp(23px, 6.8vw, 30px) !important;
+        line-height: 1.18 !important;
+        letter-spacing: -0.025em !important;
+        margin-bottom: 12px !important;
+      }
+      .hero-lead-text {
+        font-size: 13.5px !important;
+        line-height: 1.55 !important;
+        margin: 0 auto 16px !important;
+        max-width: 100% !important;
+      }
+      .hero-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 340px !important;
+        margin: 14px auto 0 !important;
+        gap: 9px !important;
+      }
+      .hero-actions .cta-btn,
+      .hero-actions .secondary-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 11px 16px !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        border-radius: 999px !important;
+      }
+
+      /* Hero Cover Frame */
+      .hero-cover-frame {
+        border-radius: 14px;
+      }
+      .hero-cover-badge {
+        font-size: 10.5px;
+        padding: 5px 10px;
+        bottom: 10px;
+        right: 10px;
+      }
+
+      /* Metadata & TL;DR Cards */
       .meta-strip-spacious {
         grid-template-columns: 1fr;
         padding: 12px 14px !important;
@@ -3138,45 +3260,134 @@
       .meta-strip-spacious .meta-item { gap: 2px !important; }
       .meta-strip-spacious .meta-value { font-size: 13px !important; }
       .tldr-card-spacious {
-        padding: 18px 16px !important;
+        padding: 16px 14px !important;
       }
-      .hero-cover-frame {
-        border-radius: 16px;
+
+      /* User Flows Top Bar & Properly Arranged Buttons */
+      .flow-card-top-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding-bottom: 12px !important;
       }
-      .hero-cover-badge {
-        font-size: 11px;
-        padding: 6px 12px;
-        bottom: 12px;
-        right: 12px;
+      .flow-title-group {
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
       }
-      .hero-actions {
-        flex-direction: column;
-        width: 100%;
+      .flow-id-badge {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+        flex-shrink: 0 !important;
       }
-      .hero-actions .cta-btn,
-      .hero-actions .secondary-btn {
-        width: 100%;
-        justify-content: center;
+      .flow-card-title {
+        font-size: 16px !important;
+        line-height: 1.25 !important;
+        margin: 0 0 3px 0 !important;
       }
+      .flow-persona-context {
+        font-size: 11.5px !important;
+        line-height: 1.4 !important;
+      }
+      .flow-view-controls {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+        width: 100% !important;
+        margin-top: 4px !important;
+      }
+      .flow-view-toggle,
+      .flow-zoom-cta {
+        padding: 7px 4px !important;
+        font-size: 11px !important;
+        white-space: nowrap !important;
+        justify-content: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        border-radius: 20px !important;
+      }
+      .flow-card-desc {
+        font-size: 13px !important;
+        line-height: 1.55 !important;
+        margin: 10px 0 14px !important;
+      }
+
+      /* Miro Board Canvas Toolbar & Zoom Controls */
+      .horizontal-flow-master-card { padding: 16px 14px; border-radius: var(--radius-lg); }
+      .flow-node-card { width: 170px; min-height: 155px; padding: 14px 12px; }
+      .miro-viewport { height: 420px; }
+      .miro-canvas-inner { padding: 16px; }
+      .miro-canvas-inner img { width: 560px !important; }
+      .miro-canvas-toolbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
+      }
+      .miro-toolbar-left {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 5px !important;
+      }
+      .miro-canvas-status-badge {
+        font-size: 11px !important;
+        padding: 4px 10px !important;
+      }
+      .miro-pan-tip {
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+      }
+      .miro-toolbar-right {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 4px !important;
+        width: 100% !important;
+      }
+      .miro-tool-btn {
+        padding: 5px 8px !important;
+        font-size: 11.5px !important;
+        flex: 0 0 auto !important;
+      }
+      .miro-zoom-level {
+        min-width: 36px !important;
+        font-size: 11px !important;
+      }
+      .miro-fullscreen-btn {
+        padding: 5px 10px !important;
+        font-size: 11px !important;
+        margin-left: auto !important;
+      }
+
+      /* Verification Matrix Table (Swipeable on Mobile) */
+      .matrix-table-card {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: var(--radius-md) !important;
+        margin-bottom: 24px !important;
+      }
+      .custom-table {
+        min-width: 480px !important;
+      }
+      .custom-table th {
+        padding: 10px 12px !important;
+        font-size: 11px !important;
+        white-space: nowrap !important;
+      }
+      .custom-table td {
+        padding: 12px 12px !important;
+        font-size: 12.5px !important;
+        line-height: 1.4 !important;
+      }
+
+      /* Grids */
       .palette-grid { grid-template-columns: repeat(2, 1fr); }
       .screens-showcase-grid { grid-template-columns: 1fr; }
       .meta-card { grid-template-columns: 1fr; }
       .designer-quote-card { grid-template-columns: 1fr; text-align: center; }
       .designer-avatar-huge { margin: 0 auto; }
-      .nav-center { display: none; }
-      .top-nav { padding: 6px 10px; }
-      .nav-inner { gap: 6px; }
-      .icon-btn { width: 30px; height: 30px; font-size: 12px; }
-      .cta-btn { padding: 6px 10px; font-size: 11px; white-space: nowrap; }
-      .cta-btn span { font-size: 11px; }
-      .back-portfolio-btn { display: none !important; }
-      .horizontal-flow-master-card { padding: 20px 16px; border-radius: var(--radius-lg); }
-      .flow-node-card { width: 170px; min-height: 155px; padding: 14px 12px; }
-      .miro-viewport { height: 440px; }
-      .miro-canvas-inner { padding: 20px; }
-      .miro-canvas-inner img { width: 560px !important; }
-      .miro-canvas-toolbar { flex-direction: column; align-items: stretch; gap: 8px; }
-      .miro-toolbar-right { justify-content: space-between; }
     }
   </style>
 </head>
