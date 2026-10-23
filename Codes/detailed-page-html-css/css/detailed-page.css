@@ -57,7 +57,7 @@ body {
 .assessment-sheet {
 	position: relative;
 	min-height: auto;
-	padding: clamp(38px, 4.5vw, 48px) clamp(36px, 5vw, 54px) clamp(36px, 4.5vw, 48px);
+	padding: clamp(16px, 2.2vw, 24px) clamp(24px, 3.5vw, 36px) clamp(16px, 2vw, 22px);
 	background: #faf8f4 url("../assets/pure-paper.png") repeat center / 900px auto;
 	border-radius: 6px;
 	border: 1px solid rgba(40, 36, 30, 0.14);
@@ -275,27 +275,19 @@ body.is-fullscreen .assessment-footer {
 }
 
 .dialog-kicker {
-	margin: 0 0 8px;
-	color: #9b514f;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 1px;
+	display: none !important;
 }
 
 .assessment-sheet h1 {
 	max-width: 750px;
-	margin: 0;
-	font-size: clamp(30px, 5.5vw, 58px);
-	line-height: 1.04;
+	margin: 0 0 4px;
+	font-size: clamp(24px, 3.2vw, 36px);
+	line-height: 1.08;
 	font-weight: 400;
 }
 
 .assessment-intro {
-	margin: 10px 0 16px;
-	max-width: 700px;
-	color: #504b43;
-	font-size: 14.5px;
-	line-height: 1.55;
+	display: none !important;
 }
 
 /* Tab Navigation */
@@ -304,8 +296,8 @@ body.is-fullscreen .assessment-footer {
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
-	margin-bottom: 16px;
-	padding-bottom: 12px;
+	margin-bottom: 10px;
+	padding-bottom: 8px;
 	border-bottom: 1px solid rgba(30, 27, 22, 0.18);
 }
 
@@ -450,10 +442,15 @@ body.is-fullscreen .assessment-footer {
 	color: #ffffff;
 }
 
+.pdf-scroll-header-bar {
+	display: none !important;
+}
+
 .pdf-scroll-viewport {
 	position: relative;
 	width: 100%;
-	max-height: min(58vh, 520px);
+	height: min(72vh, 740px);
+	max-height: min(72vh, 740px);
 	overflow-y: scroll;
 	overflow-x: hidden;
 	scroll-behavior: smooth;

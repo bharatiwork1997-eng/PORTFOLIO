@@ -841,7 +841,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.story-sheet,
 	.resume-sheet,
 	.contact-sheet {
-		padding: 14px 14px 12px !important;
+		padding: 10px 12px 10px !important;
 		max-height: 100% !important;
 		height: 100% !important;
 		box-sizing: border-box !important;
@@ -854,16 +854,16 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	/* Top Action Buttons - Compact icon buttons with NO text collision */
 	.dialog-top-actions {
 		position: absolute !important;
-		top: 10px !important;
-		right: 12px !important;
+		top: 8px !important;
+		right: 10px !important;
 		display: inline-flex !important;
 		align-items: center !important;
 		gap: 6px !important;
 		z-index: 30 !important;
 	}
 	.dialog-action-btn {
-		height: 30px !important;
-		min-width: 30px !important;
+		height: 28px !important;
+		min-width: 28px !important;
 		padding: 0 8px !important;
 		font-size: 11px !important;
 		gap: 4px !important;
@@ -879,8 +879,8 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	}
 	.dialog-top-actions .dialog-close,
 	.dialog-close {
-		width: 30px !important;
-		height: 30px !important;
+		width: 28px !important;
+		height: 28px !important;
 		padding: 0 !important;
 		display: inline-grid !important;
 		place-items: center !important;
@@ -892,36 +892,30 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.video-header,
 	.story-header,
 	.resume-header {
-		padding-right: 110px !important; /* Space reserved so text NEVER overlaps buttons! */
-		margin-bottom: 8px !important;
+		padding-right: 80px !important; /* Space reserved so text NEVER overlaps buttons! */
+		margin-bottom: 4px !important;
 		flex-shrink: 0 !important;
 	}
 	.clustr-header .dialog-kicker,
 	.assessment-header .dialog-kicker,
-	.dialog-kicker {
-		font-size: 10px !important;
-		letter-spacing: 0.5px !important;
-		margin-bottom: 2px !important;
-		white-space: nowrap !important;
-		overflow: hidden !important;
-		text-overflow: ellipsis !important;
-		display: block !important;
+	.dialog-kicker,
+	.clustr-intro,
+	.assessment-intro {
+		display: none !important;
 	}
 	.clustr-sheet h1,
 	.assessment-sheet h1,
 	.video-sheet h1,
 	.story-sheet h1,
 	.resume-sheet h1 {
-		font-size: clamp(20px, 5.5vw, 24px) !important;
+		font-size: clamp(18px, 5vw, 22px) !important;
 		line-height: 1.1 !important;
-		margin: 1px 0 3px !important;
+		margin: 0 !important;
 		letter-spacing: -0.3px !important;
 		white-space: nowrap !important;
 		overflow: hidden !important;
 		text-overflow: ellipsis !important;
 	}
-	.clustr-intro,
-	.assessment-intro,
 	.story-intro {
 		font-size: 11px !important;
 		line-height: 1.35 !important;
@@ -954,25 +948,47 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 
 	/* Assessment & Agency Tab Panels on Mobile */
 	.assessment-nav {
-		margin-bottom: 8px !important;
+		margin-bottom: 6px !important;
+		padding-bottom: 4px !important;
 		gap: 6px !important;
 		flex-shrink: 0 !important;
 	}
 	.assessment-tab {
-		padding: 5px 8px !important;
-		font-size: 11px !important;
+		padding: 4px 8px !important;
+		font-size: 10.5px !important;
 	}
 	.assessment-panel {
 		flex: 1 1 auto !important;
 		min-height: 0 !important;
-		overflow: auto !important;
+		overflow: hidden !important;
+		display: none;
+	}
+	.assessment-panel.is-active {
+		display: flex !important;
+		flex-direction: column !important;
 	}
 	.pdf-scroll-container {
 		height: 100% !important;
+		flex: 1 1 auto !important;
+		min-height: 0 !important;
+		gap: 0 !important;
+	}
+	.pdf-scroll-viewport {
+		flex: 1 1 auto !important;
+		min-height: 0 !important;
+		height: 100% !important;
+		max-height: none !important;
+	}
+	.pdf-embed-wrapper {
+		height: 100% !important;
+		min-height: 0 !important;
 	}
 	.pdf-scroll-pages img {
 		width: 100% !important;
 		height: auto !important;
+	}
+	.pdf-scroll-header-bar {
+		display: none !important;
 	}
 	.assessment-footer {
 		padding-top: 6px !important;
@@ -1031,7 +1047,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	position: relative;
 	width: 100%;
 	height: 100%;
-	padding: 24px 28px 20px;
+	padding: 16px 24px 14px;
 	background: #faf8f4 url("assets/pure-paper.png") repeat center / 900px auto;
 	border-radius: 6px;
 	border: 1px solid rgba(40, 36, 30, 0.14);
@@ -1042,21 +1058,18 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	overflow: hidden;
 }
 .clustr-header {
-	margin-bottom: 12px;
+	margin-bottom: 6px;
 	flex-shrink: 0;
 }
 .clustr-sheet h1 {
-	margin: 0 0 6px;
-	font-size: clamp(26px, 3.8vw, 42px);
+	margin: 0 0 2px;
+	font-size: clamp(24px, 3.2vw, 36px);
 	line-height: 1.05;
 	font-weight: 400;
 	letter-spacing: -0.5px;
 }
 .clustr-intro {
-	margin: 0;
-	max-width: 780px;
-	color: #554f46;
-	font: 13px/1.5 var(--pixel);
+	display: none !important;
 }
 .clustr-frame-wrap {
 	flex: 1 1 auto;
@@ -1310,7 +1323,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 .assessment-sheet {
 	position: relative;
 	min-height: auto;
-	padding: clamp(38px, 4.5vw, 48px) clamp(36px, 5vw, 54px) clamp(36px, 4.5vw, 48px);
+	padding: clamp(16px, 2.2vw, 24px) clamp(24px, 3.5vw, 36px) clamp(16px, 2vw, 22px);
 	background: #faf8f4 url("assets/pure-paper.png") repeat center / 900px auto;
 	border-radius: 6px;
 	border: 1px solid rgba(40, 36, 30, 0.14);
@@ -1321,21 +1334,21 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	overflow: hidden;
 }
 .assessment-header {
-	margin-bottom: 14px;
+	margin-bottom: 8px;
 }
 .assessment-sheet h1 {
 	max-width: 780px;
-	margin: 0 0 10px;
-	font-size: clamp(30px, 4.8vw, 50px);
-	line-height: 1.05;
+	margin: 0 0 4px;
+	font-size: clamp(24px, 3.2vw, 36px);
+	line-height: 1.08;
 	font-weight: 400;
 	letter-spacing: -0.5px;
 }
-.assessment-intro {
-	margin: 0 0 18px;
-	max-width: 720px;
-	color: #554f46;
-	font: 14px/1.6 var(--pixel);
+.assessment-sheet .dialog-kicker,
+.clustr-sheet .dialog-kicker,
+.assessment-intro,
+.clustr-intro {
+	display: none !important;
 }
 
 /* Tab Navigation */
@@ -1344,8 +1357,8 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
-	margin-bottom: 16px;
-	padding-bottom: 12px;
+	margin-bottom: 10px;
+	padding-bottom: 8px;
 	border-bottom: 1px solid rgba(30, 27, 22, 0.15);
 }
 .assessment-tab {
@@ -1397,96 +1410,18 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
 }
 
 .pdf-scroll-header-bar {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	padding: 8px 12px;
-	background: rgba(30, 27, 22, 0.05);
-	border: 1px solid rgba(40, 36, 30, 0.12);
-	border-radius: 4px;
-	font: 11px/1.2 var(--pixel, sans-serif);
-}
-
-.pdf-scroll-status {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	color: #555047;
-}
-
-.pdf-live-dot {
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: #9b514f;
-	box-shadow: 0 0 0 3px rgba(155, 81, 79, 0.2);
-	animation: pulseLive 2s infinite ease-in-out;
-}
-
-@keyframes pulseLive {
-	0%, 100% { opacity: 1; transform: scale(1); }
-	50% { opacity: 0.5; transform: scale(0.85); }
-}
-
-.pdf-scroll-hint {
-	font-weight: 500;
-}
-
-.pdf-scroll-meta {
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.pdf-progress-track {
-	width: 90px;
-	height: 5px;
-	background: rgba(40, 36, 30, 0.14);
-	border-radius: 3px;
-	overflow: hidden;
-}
-
-.pdf-progress-fill {
-	width: 0%;
-	height: 100%;
-	background: #9b514f;
-	border-radius: 3px;
-	transition: width 80ms ease-out;
-}
-
-.pdf-percent-badge {
-	font-weight: 700;
-	color: #9b514f;
-	min-width: 30px;
-	text-align: right;
-	font-size: 11px;
-}
-
-.pdf-top-btn {
-	padding: 4px 10px;
-	border: 1px solid rgba(40, 36, 30, 0.22);
-	background: rgba(255, 255, 255, 0.75);
-	border-radius: 3px;
-	color: #211f1b;
-	font: 10.5px/1 var(--pixel, sans-serif);
-	cursor: none !important;
-	transition: all 160ms ease;
-}
-
-.pdf-top-btn:hover {
-	background: #211f1b;
-	color: #ffffff;
+	display: none !important;
 }
 
 .pdf-scroll-viewport {
 	position: relative;
 	width: 100%;
-	max-height: min(58vh, 520px);
+	height: min(72vh, 740px);
+	max-height: min(72vh, 740px);
 	overflow-y: scroll;
 	overflow-x: hidden;
 	scroll-behavior: smooth;
