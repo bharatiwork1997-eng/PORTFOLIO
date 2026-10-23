@@ -63,6 +63,11 @@ body {
 	transition: color 250ms ease, transform 250ms ease;
 }
 
+.thank-line1,
+.thank-line2 {
+	display: inline;
+}
+
 .thankyou-stage:hover .title-thankyou {
 	color: #383838;
 }
@@ -219,4 +224,81 @@ body {
 	.link-separator {
 		display: none;
 	}
+}
+
+/* Mobile Version Only (Detected via parent window or viewport <= 768px) */
+body.is-mobile-view,
+body.is-mobile-view * {
+	cursor: auto !important;
+}
+
+body.is-mobile-view .thankyou-wrapper {
+	gap: 32px !important;
+	padding-top: 0 !important;
+	max-width: 580px !important;
+}
+
+body.is-mobile-view .thankyou-stage {
+	padding: 24px 30px 10px !important;
+	position: relative !important;
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+
+body.is-mobile-view .title-thankyou {
+	font-size: 116px !important;
+	line-height: 0.9 !important;
+	letter-spacing: 3px !important;
+	text-align: center !important;
+	white-space: normal !important;
+}
+
+body.is-mobile-view .thank-line1,
+body.is-mobile-view .thank-line2 {
+	display: block !important;
+}
+
+body.is-mobile-view .shaving-deco {
+	position: absolute !important;
+	top: -10px !important;
+	left: 4px !important;
+	width: 120px !important;
+	height: auto !important;
+}
+
+body.is-mobile-view .slider {
+	position: absolute !important;
+	top: 105px !important;
+	right: -24px !important;
+	width: 130px !important;
+	height: 220px !important;
+	transform-origin: 35px 35px !important;
+	transform: rotate(26deg) !important;
+}
+
+body.is-mobile-view .thankyou-links {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: center !important;
+	justify-content: center !important;
+	gap: 16px !important;
+	margin-top: 16px !important;
+	width: 100% !important;
+}
+
+body.is-mobile-view .link-separator {
+	display: none !important;
+}
+
+body.is-mobile-view .thankyou-link {
+	display: flex !important;
+	justify-content: space-between !important;
+	align-items: center !important;
+	width: 270px !important;
+	padding: 14px 22px !important;
+	font-size: 20px !important;
+	border-radius: 8px !important;
+	box-sizing: border-box !important;
 }

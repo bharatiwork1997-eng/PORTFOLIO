@@ -4,7 +4,7 @@ const spreads = [
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=3" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=12" },
-	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=6" }
+	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=7" }
 ];
 
 const singlePages = [
@@ -191,6 +191,15 @@ function updateBookControls() {
 
 	if (workspaceTools) workspaceTools.hidden = true;
 	if (arrowCursor) arrowCursor.style.display = "none";
+
+	const activeDoc = activeFrame?.contentDocument;
+	if (activeDoc?.body && activeFrame?.dataset?.src?.includes("last-group")) {
+		activeDoc.body.classList.toggle("is-mobile-view", isMobile);
+	}
+	const standbyDoc = standbyFrame?.contentDocument;
+	if (standbyDoc?.body && standbyFrame?.dataset?.src?.includes("last-group")) {
+		standbyDoc.body.classList.toggle("is-mobile-view", isMobile);
+	}
 }
 
 function prepareFrame(iframe, src) {
@@ -247,6 +256,9 @@ function prepareFrame(iframe, src) {
 			frameDocument.body.style.padding = "28px 24px";
 			frameDocument.body.style.overflow = "hidden";
 			frameDocument.documentElement.style.overflow = "hidden";
+			if (frameIndex === 5) {
+				frameDocument.body.classList.toggle("is-mobile-view", isMobileSinglePage());
+			}
 			frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event));
 			frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event));
 			frameDocument.addEventListener("pointerdown", (event) => startEdgeGesture(frameDocument, event), { passive: true });
@@ -379,6 +391,9 @@ function setupCover() {
 			`;
 			frameDocument.head.append(style);
 			frameDocument.documentElement.style.overflow = "hidden";
+			if (frameIndex === 5) {
+				frameDocument.body.classList.toggle("is-mobile-view", isMobileSinglePage());
+			}
 			frameDocument.documentElement.style.scrollbarWidth = "none";
 			frameDocument.body.style.width = "1920px";
 			frameDocument.body.style.height = "1080px";
