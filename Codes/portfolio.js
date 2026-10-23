@@ -120,32 +120,24 @@ function updateFrameRects() {
 
 window.addEventListener("resize", () => {
 	updateFrameRects();
-	fitCoverCanvas();
 	fitBookScene();
 	updateBookControls();
 }, { passive: true });
 window.addEventListener("scroll", updateFrameRects, { passive: true });
 
-function fitCoverCanvas() {
-	const parent = document.querySelector(".cover-art");
-	if (!parent || !coverFrame) return;
-	const isMobile = window.innerWidth <= 768;
-	const width = isMobile ? 720 : 1920;
-	const height = isMobile ? 1280 : 1080;
-	const scale = Math.min(parent.clientWidth / width, parent.clientHeight / height);
-	coverFrame.style.width = `${width}px`;
-	coverFrame.style.height = `${height}px`;
-	coverFrame.style.transform = `scale(${scale})`;
-	coverFrame.style.left = `${Math.max(0, (parent.clientWidth - width * scale) / 2)}px`;
-	coverFrame.style.top = `${Math.max(0, (parent.clientHeight - height * scale) / 2)}px`;
-	updateFrameRects();
+function fitCanvas(iframe, width, height, parent) {
+	const resize = () => {
+		const scale = Math.min(parent.clientWidth / width, parent.clientHeight / height);
+		iframe.style.transform = `scale(${scale})`;
+		iframe.style.left = `${Math.max(0, (parent.clientWidth - width * scale) / 2)}px`;
+		iframe.style.top = `${Math.max(0, (parent.clientHeight - height * scale) / 2)}px`;
+		updateFrameRects();
+	};
+	resize();
+	new ResizeObserver(resize).observe(parent);
 }
 
-const coverArtContainer = document.querySelector(".cover-art");
-if (coverArtContainer) {
-	new ResizeObserver(fitCoverCanvas).observe(coverArtContainer);
-}
-fitCoverCanvas();
+fitCanvas(coverFrame, 1920, 1080, document.querySelector(".cover-art"));
 
 function fitBookScene() {
 	if (isMobileSinglePage()) {
@@ -185,7 +177,7 @@ function updateBookControls() {
 		pageName.textContent = singlePages[mobilePageIndex].title;
 		if (prevBtn) prevBtn.disabled = mobilePageIndex === 0 || turnBusy;
 		if (nextBtn) nextBtn.disabled = mobilePageIndex === total - 1 || turnBusy;
-		if (coverIndicator) coverIndicator.textContent = `${String(curr).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+		if (coverIndicator) coverIndicator.textContent = "01 / 06";
 	} else {
 		const curr = pageIndex + 1;
 		const total = spreads.length;
@@ -194,7 +186,7 @@ function updateBookControls() {
 		pageName.textContent = spreads[pageIndex].title;
 		if (prevBtn) prevBtn.disabled = pageIndex === 0 || turnBusy;
 		if (nextBtn) nextBtn.disabled = pageIndex === total - 1 || turnBusy;
-		if (coverIndicator) coverIndicator.textContent = `${String(curr).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+		if (coverIndicator) coverIndicator.textContent = "01 / 06";
 	}
 
 	if (workspaceTools) workspaceTools.hidden = true;
@@ -374,26 +366,24 @@ function setupCover() {
 		try {
 			const frameDocument = coverFrame.contentDocument;
 			if (!frameDocument || !frameDocument.body) return;
-			const isMobile = window.innerWidth <= 768;
-			const w = isMobile ? 720 : 1920;
-			const h = isMobile ? 1280 : 1080;
 			const style = frameDocument.createElement("style");
 			style.textContent = `
 				@media (hover: hover) and (pointer: fine) {
 					html, body, *, *::before, *::after, input, button, textarea, select, a { cursor:none !important; }
 				}
-				@media (hover: none), (pointer: coarse), (max-width: 768px) {
+				@media (hover: none), (pointer: coarse) {
 					html, body, *, *::before, *::after, input, button, textarea, select, a { cursor:auto !important; }
 				}
 				html, body, *, *::before, *::after { user-select:none !important; }
-				html, body { width:${w}px !important; height:${h}px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
+				html, body { width:1920px !important; height:1080px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
 			`;
 			frameDocument.head.append(style);
 			frameDocument.documentElement.style.overflow = "hidden";
 			frameDocument.documentElement.style.scrollbarWidth = "none";
-			frameDocument.body.style.width = `${w}px`;
-			frameDocument.body.style.height = `${h}px`;
+			frameDocument.body.style.width = "1920px";
+			frameDocument.body.style.height = "1080px";
 			frameDocument.body.style.minHeight = "0";
+			frameDocument.body.style.padding = "103px 24px 0";
 			frameDocument.body.style.overflow = "hidden";
 			frameDocument.body.style.scrollbarWidth = "none";
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
@@ -401,13 +391,13 @@ function setupCover() {
 				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
 				if (!rect || rect.width === 0) return;
-				movePencil(rect.left + (event.clientX * rect.width) / w, rect.top + (event.clientY * rect.height) / h);
+				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
 			});
 			frameDocument.addEventListener("pointermove", (event) => {
 				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
 				if (!rect || rect.width === 0) return;
-				movePencil(rect.left + (event.clientX * rect.width) / w, rect.top + (event.clientY * rect.height) / h);
+				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
 			});
 			frameDocument.addEventListener("click", () => {
 				openBook();
