@@ -8,7 +8,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="portfolio.css?v=61">
+	<link rel="stylesheet" href="portfolio.css?v=62">
 </head>
 <body>
 	<header class="site-header">
@@ -289,49 +289,81 @@
 				<h1 id="agency-title">Beauty Brands</h1>
 			</div>
 
-			<!-- Interactive Tab Navigation -->
-			<div class="assessment-nav" role="tablist">
-				<button class="assessment-tab is-active" type="button" data-agency-tab="campaigns" role="tab" aria-selected="true">
-					<span class="tab-icon">✨</span> Campaigns
+			<!-- Interactive Category Navigation -->
+			<div class="assessment-nav agency-nav" role="tablist">
+				<button class="assessment-tab is-active" type="button" data-agency-nav="all" role="tab" aria-selected="true">
+					<span class="tab-icon">✨</span> All
 				</button>
-				<button class="assessment-tab" type="button" data-agency-tab="brands" role="tab" aria-selected="false">
-					<span class="tab-icon">💄</span> Featured Brands &amp; Scope
+				<button class="assessment-tab" type="button" data-agency-nav="pitches" role="tab" aria-selected="false">
+					<span class="tab-icon">🎯</span> Pitches
 				</button>
-			</div>
-
-			<!-- Tab Panel 1: Seamless Long-Scroll View -->
-			<div class="assessment-panel is-active" id="agency-panel-campaigns" role="tabpanel">
-				<div class="pdf-scroll-container">
-					<div class="pdf-scroll-viewport" id="agency-scroll-viewport" tabindex="0" role="region" aria-label="Seamless agency campaigns document">
-						<div class="pdf-scroll-track" id="agency-scroll-track">
-							<img src="assets/agency/agency-slice-1.jpg" alt="Pitches &amp; Key Visuals - Tira &amp; MAC" loading="eager" draggable="false">
-							<img src="assets/agency/agency-slice-2.jpg" alt="Smashbox x Nykaaland - Photo Finish Primer" loading="eager" draggable="false">
-							<img src="assets/agency/agency-slice-3.jpg" alt="Smashbox Halo Franchise &amp; Festive Diwali" loading="lazy" draggable="false">
-							<img src="assets/agency/agency-slice-4.jpg" alt="Tira Launches - Christmas, 14 Days of Beauty &amp; Hyderabad Flagship" loading="lazy" draggable="false">
-							<img src="assets/agency/agency-slice-5.jpg" alt="Multi-Brand Moodboards &amp; Editorial Beauty Collages" loading="lazy" draggable="false">
-							<img src="assets/agency/agency-slice-6.jpg" alt="Bobbi Brown - Vitamin Enriched &amp; Extra Plump Lip Serum" loading="lazy" draggable="false">
-						</div>
-					</div>
+				<div class="agency-subnav-group">
+					<button class="assessment-tab" type="button" data-agency-nav="social-media" role="tab" aria-selected="false">
+						<span class="tab-icon">📱</span> Social Media
+					</button>
+					<span class="agency-nav-sep" aria-hidden="true">:</span>
+					<button class="agency-subtab" type="button" data-agency-nav="smashbox" title="View Smashbox">Smashbox</button>
+					<button class="agency-subtab" type="button" data-agency-nav="tira" title="View Tira">Tira</button>
+					<button class="agency-subtab" type="button" data-agency-nav="bobbi-brown" title="View Bobbi Brown">Bobbi Brown</button>
 				</div>
 			</div>
 
-			<!-- Tab Panel 2: Featured Brands & Scope -->
-			<div class="assessment-panel" id="agency-panel-brands" role="tabpanel">
-				<div class="overview-grid">
-					<div class="overview-card">
-						<span class="card-num">01</span>
-						<h3>Tira Beauty</h3>
-						<p>Conceptual social-first campaign pitches, flagship Hyderabad store launch collateral, 'A Very Tira Christmas', and digital extensions of Tira's Powder Room.</p>
-					</div>
-					<div class="overview-card">
-						<span class="card-num">02</span>
-						<h3>Smashbox &amp; Nykaaland</h3>
-						<p>Photo Finish Primer 'One Iconic Drop' launch, Smashbox casting call rollouts, Halo Lip &amp; Cheek Tint, and high-impact Diwali 'Glow into Focus' festive campaigns.</p>
-					</div>
-					<div class="overview-card">
-						<span class="card-num">03</span>
-						<h3>Bobbi Brown &amp; M·A·C</h3>
-						<p>Multi-channel campaigns for Bobbi Brown Vitamin Enriched franchise, Extra Plump Lip Serum storytelling, and M·A·C hero product digital showcases.</p>
+			<!-- Seamless Long-Scroll View -->
+			<div class="assessment-panel is-active" id="agency-panel-campaigns" role="tabpanel">
+				<div class="pdf-scroll-container">
+					<div class="pdf-scroll-viewport" id="agency-scroll-viewport" tabindex="0" role="region" aria-label="Beauty Brands Work Document">
+						<div class="pdf-scroll-track" id="agency-scroll-track">
+							<!-- 1. Pitches -->
+							<section class="agency-category-section" id="pitches" data-section-name="pitches">
+								<div class="agency-section-banner">
+									<div class="agency-badge">Category 01</div>
+									<h2 class="agency-section-title">Pitches</h2>
+								</div>
+								<div class="agency-image-group">
+									<img src="assets/agency/Pitches.jpg" alt="Beauty Brands - Pitches &amp; Key Visuals" loading="eager" draggable="false">
+								</div>
+							</section>
+
+							<!-- 2. Social Media -->
+							<section class="agency-category-section" id="social-media" data-section-name="social-media">
+								<div class="agency-section-banner">
+									<div class="agency-badge">Category 02</div>
+									<h2 class="agency-section-title">Social Media</h2>
+								</div>
+
+								<!-- Sub-section: Smashbox -->
+								<div class="agency-brand-section" id="smashbox" data-section-name="smashbox">
+									<div class="agency-brand-header">
+										<span class="brand-tag-line">Smashbox</span>
+									</div>
+									<div class="agency-image-group">
+										<img src="assets/agency/Social Media - Smashbox 1.jpg" alt="Smashbox x Nykaaland - Photo Finish Primer" loading="eager" draggable="false">
+										<img src="assets/agency/Social Media - Smashbox 2.jpg" alt="Smashbox Halo Franchise &amp; Festive Diwali" loading="lazy" draggable="false">
+									</div>
+								</div>
+
+								<!-- Sub-section: Tira -->
+								<div class="agency-brand-section" id="tira" data-section-name="tira">
+									<div class="agency-brand-header">
+										<span class="brand-tag-line">Tira</span>
+									</div>
+									<div class="agency-image-group">
+										<img src="assets/agency/Social Media - Tira 1.jpg" alt="Tira Launches - Christmas &amp; Flagship" loading="lazy" draggable="false">
+										<img src="assets/agency/Social Media - Tira 2.jpg" alt="Tira Moodboards &amp; Editorial Collages" loading="lazy" draggable="false">
+									</div>
+								</div>
+
+								<!-- Sub-section: Bobbi Brown -->
+								<div class="agency-brand-section" id="bobbi-brown" data-section-name="bobbi-brown">
+									<div class="agency-brand-header">
+										<span class="brand-tag-line">Bobbi Brown</span>
+									</div>
+									<div class="agency-image-group">
+										<img src="assets/agency/Social Media - Bobbi brown.jpg" alt="Bobbi Brown - Vitamin Enriched &amp; Lip Serum" loading="lazy" draggable="false">
+									</div>
+								</div>
+							</section>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -554,6 +586,6 @@
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=84"></script>
+	<script src="portfolio.js?v=85"></script>
 </body>
 </html>

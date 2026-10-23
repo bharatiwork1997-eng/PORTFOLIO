@@ -877,22 +877,65 @@ function initAgencyScrollViewer() {
 			viewport.scrollTop = initialScroll - walk;
 		});
 
-		// Tab switching
-		document.querySelectorAll("#agency-dialog .assessment-tab[data-agency-tab]").forEach((tabBtn) => {
-			tabBtn.addEventListener("click", () => {
-				const tab = tabBtn.dataset.agencyTab;
-				document.querySelectorAll("#agency-dialog .assessment-tab[data-agency-tab]").forEach((b) => {
-					b.classList.toggle("is-active", b === tabBtn);
-					b.setAttribute("aria-selected", b === tabBtn ? "true" : "false");
-				});
-				document.querySelectorAll("#agency-dialog .assessment-panel").forEach((panel) => {
-					panel.classList.toggle("is-active", panel.id === `agency-panel-${tab}`);
-				});
-				if (tab === "campaigns") {
-					setTimeout(updateProgress, 50);
+		// Agency category & brand navigation
+		const agencyNavBtns = document.querySelectorAll("#agency-dialog [data-agency-nav]");
+
+		function setAgencyActiveNav(target) {
+			agencyNavBtns.forEach((btn) => {
+				const isTarget = btn.dataset.agencyNav === target;
+				btn.classList.toggle("is-active", isTarget);
+				btn.setAttribute("aria-selected", isTarget ? "true" : "false");
+			});
+			if (["smashbox", "tira", "bobbi-brown"].includes(target)) {
+				const smTab = document.querySelector('#agency-dialog [data-agency-nav="social-media"]');
+				if (smTab) smTab.classList.add("is-active");
+			}
+		}
+
+		agencyNavBtns.forEach((btn) => {
+			btn.addEventListener("click", (e) => {
+				e.preventDefault();
+				const target = btn.dataset.agencyNav;
+				setAgencyActiveNav(target);
+
+				if (target === "all") {
+					viewport.scrollTo({ top: 0, behavior: "smooth" });
+					return;
+				}
+
+				const targetEl = document.getElementById(target);
+				if (targetEl) {
+					const offset = targetEl.offsetTop;
+					viewport.scrollTo({ top: Math.max(0, offset - 6), behavior: "smooth" });
 				}
 			});
 		});
+
+		// Dynamic active indicator on scroll
+		function updateAgencyActiveOnScroll() {
+			if (viewport.scrollTop < 60) {
+				setAgencyActiveNav("all");
+				return;
+			}
+			const currentPos = viewport.scrollTop + 80;
+			const checkTargets = [
+				{ id: "bobbi-brown", key: "bobbi-brown" },
+				{ id: "tira", key: "tira" },
+				{ id: "smashbox", key: "smashbox" },
+				{ id: "social-media", key: "social-media" },
+				{ id: "pitches", key: "pitches" }
+			];
+			for (const item of checkTargets) {
+				const el = document.getElementById(item.id);
+				if (el && el.offsetTop <= currentPos) {
+					setAgencyActiveNav(item.key);
+					return;
+				}
+			}
+			setAgencyActiveNav("all");
+		}
+
+		viewport.addEventListener("scroll", updateAgencyActiveOnScroll, { passive: true });
 	}
 
 	viewport.scrollTop = 0;

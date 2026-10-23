@@ -341,6 +341,136 @@ body.is-fullscreen .assessment-footer {
 	color: #fff;
 }
 
+/* Agency Categories Navigation & Subtabs */
+.agency-nav {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+.agency-subnav-group {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: rgba(30, 27, 22, 0.05);
+	padding: 2px 6px 2px 3px;
+	border-radius: 20px;
+	border: 1px solid rgba(30, 27, 22, 0.16);
+}
+.agency-subnav-group .assessment-tab {
+	border: none;
+	background: transparent;
+	padding: 5px 10px;
+}
+.agency-subnav-group .assessment-tab.is-active {
+	background: #211f1b;
+	color: #f7f4ef;
+}
+.agency-nav-sep {
+	font-size: 11px;
+	color: rgba(30, 27, 22, 0.35);
+	margin: 0 1px;
+	user-select: none;
+}
+.agency-subtab {
+	padding: 4px 10px;
+	border: 1px solid transparent;
+	background: transparent;
+	color: #554f46;
+	font: 11px/1.2 var(--pixel, sans-serif);
+	border-radius: 14px;
+	cursor: pointer;
+	transition: all 160ms ease;
+}
+.agency-subtab:hover {
+	background: rgba(255, 255, 255, 0.85);
+	color: #211f1b;
+	transform: translateY(-1px);
+}
+.agency-subtab.is-active {
+	background: #9b514f;
+	color: #ffffff;
+	border-color: #9b514f;
+}
+
+/* Agency Category Sections & Brand Sub-sections */
+.agency-category-section {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 24px;
+}
+.agency-category-section:last-child {
+	margin-bottom: 0;
+}
+.agency-section-banner {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 16px;
+	background: #191614;
+	border-left: 3px solid #9b514f;
+	margin: 0;
+	box-sizing: border-box;
+}
+.agency-badge {
+	font: 10px/1 var(--pixel, sans-serif);
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+	color: #e07a78;
+	background: rgba(155, 81, 79, 0.22);
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-weight: 600;
+}
+.agency-section-title {
+	font: 13px/1.2 var(--pixel, sans-serif);
+	color: #f7f4ef;
+	letter-spacing: -0.2px;
+	margin: 0;
+	font-weight: 500;
+}
+.agency-brand-section {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 14px;
+}
+.agency-brand-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 16px;
+	background: rgba(255, 255, 255, 0.05);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.brand-tag-line {
+	font: 11.5px/1 var(--pixel, sans-serif);
+	color: #e2dbd0;
+	font-weight: 500;
+	letter-spacing: 0.3px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+.brand-tag-line::before {
+	content: "▸";
+	color: #9b514f;
+	font-size: 11px;
+}
+.agency-image-group {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+.agency-image-group img {
+	width: 100%;
+	height: auto;
+	display: block;
+	margin: 0;
+	pointer-events: none;
+}
+
 /* Panels */
 .assessment-panel {
 	display: none;
