@@ -239,7 +239,7 @@ body.is-mobile-view .thankyou-wrapper {
 }
 
 body.is-mobile-view .thankyou-stage {
-	padding: 24px 30px 10px !important;
+	padding: 24px 60px 10px !important;
 	position: relative !important;
 	display: flex !important;
 	flex-direction: column !important;
@@ -248,11 +248,13 @@ body.is-mobile-view .thankyou-stage {
 }
 
 body.is-mobile-view .title-thankyou {
-	font-size: 116px !important;
-	line-height: 0.9 !important;
-	letter-spacing: 3px !important;
+	font-size: 110px !important;
+	line-height: 0.92 !important;
+	letter-spacing: 2.5px !important;
 	text-align: center !important;
 	white-space: normal !important;
+	position: relative !important;
+	z-index: 2 !important;
 }
 
 body.is-mobile-view .thank-line1,
@@ -262,20 +264,23 @@ body.is-mobile-view .thank-line2 {
 
 body.is-mobile-view .shaving-deco {
 	position: absolute !important;
-	top: -10px !important;
-	left: 4px !important;
-	width: 120px !important;
+	top: 6px !important;
+	left: -20px !important;
+	width: 105px !important;
 	height: auto !important;
+	z-index: 1 !important;
+	transform: rotate(-4deg) !important;
 }
 
 body.is-mobile-view .slider {
 	position: absolute !important;
-	top: 105px !important;
-	right: -24px !important;
-	width: 130px !important;
-	height: 220px !important;
+	top: 85px !important;
+	right: -15px !important;
+	width: 115px !important;
+	height: 195px !important;
 	transform-origin: 35px 35px !important;
-	transform: rotate(26deg) !important;
+	transform: rotate(24deg) !important;
+	z-index: 1 !important;
 }
 
 body.is-mobile-view .thankyou-links {
@@ -283,9 +288,11 @@ body.is-mobile-view .thankyou-links {
 	flex-direction: column !important;
 	align-items: center !important;
 	justify-content: center !important;
-	gap: 16px !important;
-	margin-top: 16px !important;
+	gap: 14px !important;
+	margin-top: 24px !important;
 	width: 100% !important;
+	position: relative !important;
+	z-index: 10 !important;
 }
 
 body.is-mobile-view .link-separator {

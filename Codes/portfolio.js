@@ -4,7 +4,7 @@ const spreads = [
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=3" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=12" },
-	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=7" }
+	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=8" }
 ];
 
 const singlePages = [
