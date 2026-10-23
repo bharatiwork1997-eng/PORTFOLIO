@@ -1,7 +1,7 @@
 const spreads = [
 	{ title: "About me", src: "sketchbook-frame 1-html-css/sketchbook-group.html?v=3" },
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=20" },
-	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=9" },
+	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=3" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=10" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=6" }
@@ -65,6 +65,7 @@ const assessmentVideo = document.querySelector("#assessment-video");
 const assessmentReelVideo = document.querySelector("#assessment-reel-video");
 const agencyDialog = document.querySelector("#agency-dialog");
 const clustrDialog = document.querySelector("#clustr-dialog");
+const wattpadDialog = document.querySelector("#wattpad-dialog");
 const toast = document.querySelector("#toast");
 const pencil = document.querySelector(".pencil-cursor");
 const arrowCursor = document.querySelector(".arrow-cursor");
@@ -210,7 +211,7 @@ function prepareFrame(iframe, src) {
 				};
 				else if (frameIndex === 2 && target.closest(".img6")) action = () => openLostVideo();
 				else if (frameIndex === 2 && target.closest(".text-input, .text1, .text2, .col-left")) action = () => openAgencyDialog();
-				else if (frameIndex === 2 && target.closest(".text-top, .text-campaigns")) action = () => openStory("college");
+				else if (frameIndex === 2 && target.closest(".img2, .img3, .text-top, .text-campaigns")) action = () => openWattpadDialog();
 				else if (frameIndex === 3 && target.closest(".img2")) action = () => openDialog(resumeDialog);
 				else if (frameIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
 				else if (frameIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder")) action = addSticker;
@@ -369,7 +370,7 @@ function returnHome() {
 }
 
 function handleWheelNavigation(event) {
-	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open || videoDialog?.open || assessmentDialog?.open) return;
+	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open || videoDialog?.open || assessmentDialog?.open || agencyDialog?.open || clustrDialog?.open || wattpadDialog?.open) return;
 
 	// Pick dominant delta (supports vertical wheel and horizontal swipe)
 	const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
@@ -733,6 +734,93 @@ function openAgencyDialog() {
 }
 window.openAgencyDialog = openAgencyDialog;
 
+let wattpadScrollInitialized = false;
+
+function initWattpadScrollViewer() {
+	const viewport = document.querySelector("#wattpad-scroll-viewport");
+	if (!viewport) return;
+
+	const progressBar = document.querySelector("#wattpad-progress-bar");
+	const percentText = document.querySelector("#wattpad-percent-text");
+	const topBtn = document.querySelector("#wattpad-scroll-top-btn");
+
+	function updateProgress() {
+		const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+		if (maxScroll <= 0) {
+			if (progressBar) progressBar.style.width = "0%";
+			if (percentText) percentText.textContent = "0%";
+			return;
+		}
+		const pct = Math.min(100, Math.max(0, Math.round((viewport.scrollTop / maxScroll) * 100)));
+		if (progressBar) progressBar.style.width = `${pct}%`;
+		if (percentText) percentText.textContent = `${pct}%`;
+	}
+
+	if (!wattpadScrollInitialized) {
+		wattpadScrollInitialized = true;
+
+		viewport.addEventListener("scroll", updateProgress, { passive: true });
+
+		if (topBtn) {
+			topBtn.addEventListener("click", () => {
+				viewport.scrollTo({ top: 0, behavior: "smooth" });
+			});
+		}
+
+		// Mouse grab-and-drag interaction
+		let isDown = false;
+		let startY = 0;
+		let initialScroll = 0;
+
+		viewport.addEventListener("mousedown", (e) => {
+			isDown = true;
+			viewport.classList.add("is-dragging");
+			startY = e.pageY;
+			initialScroll = viewport.scrollTop;
+		});
+
+		window.addEventListener("mouseup", () => {
+			if (!isDown) return;
+			isDown = false;
+			viewport.classList.remove("is-dragging");
+		});
+
+		window.addEventListener("mousemove", (e) => {
+			if (!isDown) return;
+			e.preventDefault();
+			const walk = (e.pageY - startY) * 1.5;
+			viewport.scrollTop = initialScroll - walk;
+		});
+
+		// Tab switching
+		document.querySelectorAll("#wattpad-dialog .assessment-tab[data-wattpad-tab]").forEach((tabBtn) => {
+			tabBtn.addEventListener("click", () => {
+				const tab = tabBtn.dataset.wattpadTab;
+				document.querySelectorAll("#wattpad-dialog .assessment-tab[data-wattpad-tab]").forEach((b) => {
+					b.classList.toggle("is-active", b === tabBtn);
+					b.setAttribute("aria-selected", b === tabBtn ? "true" : "false");
+				});
+				document.querySelectorAll("#wattpad-dialog .assessment-panel").forEach((panel) => {
+					panel.classList.toggle("is-active", panel.id === `wattpad-panel-${tab}`);
+				});
+				if (tab === "presentation") {
+					setTimeout(updateProgress, 50);
+				}
+			});
+		});
+	}
+
+	viewport.scrollTop = 0;
+	updateProgress();
+}
+
+function openWattpadDialog() {
+	if (!wattpadDialog) return;
+	openDialog(wattpadDialog);
+	initWattpadScrollViewer();
+}
+window.openWattpadDialog = openWattpadDialog;
+
 function openClustrDialog() {
 	if (!clustrDialog) return;
 	const iframe = clustrDialog.querySelector("#clustr-frame");
@@ -819,6 +907,9 @@ function updateDialogFullscreenUI(dialog) {
 		} else if (dialog === assessmentDialog) {
 			const vp = document.querySelector("#assessment-scroll-viewport");
 			if (vp) vp.dispatchEvent(new Event("scroll"));
+		} else if (dialog === wattpadDialog) {
+			const vp = document.querySelector("#wattpad-scroll-viewport");
+			if (vp) vp.dispatchEvent(new Event("scroll"));
 		}
 	}, 120);
 }
@@ -827,7 +918,8 @@ function updateDialogFullscreenUI(dialog) {
 [
 	{ dialog: clustrDialog, toggles: ["#clustr-fullscreen-toggle"] },
 	{ dialog: agencyDialog, toggles: ["#agency-fullscreen-toggle", "#agency-toolbar-fullscreen-btn"] },
-	{ dialog: assessmentDialog, toggles: ["#assessment-fullscreen-toggle", "#assessment-toolbar-fullscreen-btn"] }
+	{ dialog: assessmentDialog, toggles: ["#assessment-fullscreen-toggle", "#assessment-toolbar-fullscreen-btn"] },
+	{ dialog: wattpadDialog, toggles: ["#wattpad-fullscreen-toggle", "#wattpad-toolbar-fullscreen-btn"] }
 ].forEach(({ dialog, toggles }) => {
 	if (!dialog) return;
 	toggles.forEach((sel) => {
@@ -1440,10 +1532,10 @@ window.resumeDialog = resumeDialog;
 document.querySelectorAll("[data-open-contact]").forEach((button) => button.addEventListener("click", () => openDialog(contactDialog)));
 document.querySelectorAll("[data-open-resume]").forEach((button) => button.addEventListener("click", openResumeDialog));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog").close()));
-[storyDialog, resumeDialog, contactDialog, videoDialog, assessmentDialog, agencyDialog, clustrDialog].forEach((dialog) => {
+[storyDialog, resumeDialog, contactDialog, videoDialog, assessmentDialog, agencyDialog, clustrDialog, wattpadDialog].forEach((dialog) => {
 	if (!dialog) return;
 	dialog.addEventListener("click", (event) => {
-		const sheet = dialog.querySelector(".story-sheet, .resume-sheet, .contact-sheet, .video-sheet, .assessment-sheet, .clustr-sheet");
+		const sheet = dialog.querySelector(".story-sheet, .resume-sheet, .contact-sheet, .video-sheet, .assessment-sheet, .clustr-sheet, .wattpad-sheet");
 		if (sheet && !sheet.contains(event.target)) {
 			dialog.close();
 		}
@@ -1502,7 +1594,7 @@ document.addEventListener("keydown", (event) => {
 			return;
 		}
 	}
-	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open && !videoDialog?.open && !assessmentDialog?.open && !agencyDialog?.open && !clustrDialog?.open) {
+	if (cover.hidden && !storyDialog.open && !resumeDialog.open && !contactDialog.open && !videoDialog?.open && !assessmentDialog?.open && !agencyDialog?.open && !clustrDialog?.open && !wattpadDialog?.open) {
 		const isDeleteKey = event.key === "Delete" || event.key === "Backspace" || event.key === "Del" || event.code === "Delete" || event.code === "Backspace" || event.code === "NumpadDecimal" || event.keyCode === 46 || event.keyCode === 8;
 		if (pageIndex === 4 && isDeleteKey) {
 			if (event.target.tagName === "INPUT" && event.target.type !== "range") return;
