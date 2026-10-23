@@ -74,15 +74,11 @@ const pageCount = document.querySelector("#page-count");
 const workspaceTools = document.querySelector("#workspace-tools");
 const stickerSize = document.querySelector("#sticker-size");
 const siteFullscreenToggle = document.querySelector("#site-fullscreen-toggle");
-const orientationPrompt = document.querySelector("#orientation-prompt");
-const orientationFullscreenBtn = document.querySelector("#orientation-fullscreen-btn");
-const orientationDismissBtn = document.querySelector("#orientation-dismiss-btn");
 
 let pageIndex = 0;
 let turnBusy = false;
 let openingBook = false;
 let wheelLocked = false;
-let orientationDismissed = false;
 let wheelUnlockTimer;
 let toastTimer;
 let activeSticker = null;
@@ -1727,44 +1723,8 @@ if (siteFullscreenToggle) {
 	siteFullscreenToggle.addEventListener("click", toggleFullscreen);
 }
 
-// Orientation Helper
-function checkOrientationPrompt() {
-	if (!orientationPrompt || orientationDismissed) return;
-	const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window || window.innerWidth <= 900;
-	const isPortrait = window.matchMedia("(orientation: portrait)").matches || window.innerHeight > window.innerWidth;
-	
-	if (isTouch && isPortrait && window.innerWidth <= 900) {
-		orientationPrompt.hidden = false;
-		requestAnimationFrame(() => orientationPrompt.classList.add("is-visible"));
-	} else {
-		orientationPrompt.classList.remove("is-visible");
-		setTimeout(() => {
-			if (!orientationPrompt.classList.contains("is-visible")) {
-				orientationPrompt.hidden = true;
-			}
-		}, 320);
-	}
-}
-
-window.addEventListener("resize", checkOrientationPrompt);
-window.addEventListener("orientationchange", checkOrientationPrompt);
-if (orientationFullscreenBtn) {
-	orientationFullscreenBtn.addEventListener("click", () => {
-		orientationDismissed = true;
-		checkOrientationPrompt();
-		requestFullscreenSafe();
-	});
-}
-if (orientationDismissBtn) {
-	orientationDismissBtn.addEventListener("click", () => {
-		orientationDismissed = true;
-		checkOrientationPrompt();
-	});
-}
-
 setupCover();
 updateBookControls();
-checkOrientationPrompt();
 
 // Preload Spread 0 immediately in background so opening sketchbook has 0ms wait!
 prepareFrame(activeFrame, spreads[0].src);
