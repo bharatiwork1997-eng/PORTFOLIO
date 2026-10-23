@@ -64,14 +64,88 @@ button { color: inherit; }
 button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 [hidden] { display: none !important; }
 
-.site-header { position: absolute; z-index: 5; top: 0; left: 0; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 20px; padding: 24px clamp(40px, 8vw, 104px); color: rgba(246, 241, 229, .78); font-size: 16px; }
-.wordmark { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-size: 16px; letter-spacing: 0.5px; text-decoration: none; white-space: nowrap; }
-.site-role { justify-self: center; margin: 0; color: var(--muted); font-size: 16px; letter-spacing: 0.3px; white-space: nowrap; }
-.site-role i { display: inline-block; width: 4px; height: 4px; margin: 0 8px 2px; border-radius: 50%; background: var(--accent); }
-.header-actions { display: flex; align-items: center; justify-self: end; gap: 24px; font-size: 16px; }
-.contact-link { border: 0; border-bottom: 1px solid var(--line); padding: 5px 0; background: transparent; color: var(--ink); font-size: 16px; letter-spacing: 0.3px; cursor: none !important; transition: color 180ms ease, border-color 180ms ease; }
-.contact-link:hover { color: #ffffff; border-bottom-color: var(--accent); }
-.contact-link span { color: var(--accent); margin-left: 3px; font-size: 16px; }
+.site-header {
+	position: absolute;
+	z-index: 5;
+	top: 0;
+	left: 0;
+	width: 100%;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	align-items: center;
+	gap: 20px;
+	padding: 20px clamp(32px, 6vw, 84px);
+	color: rgba(246, 241, 229, .78);
+	font-size: 15px;
+}
+.wordmark {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--ink);
+	font-size: 15px;
+	font-weight: 500;
+	letter-spacing: 0.6px;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: color 180ms ease;
+}
+.wordmark:hover {
+	color: #ffffff;
+}
+.site-role {
+	justify-self: center;
+	margin: 0;
+	color: var(--muted);
+	font-size: 14.5px;
+	letter-spacing: 0.3px;
+	white-space: nowrap;
+}
+.site-role i {
+	display: inline-block;
+	width: 4px;
+	height: 4px;
+	margin: 0 8px 2px;
+	border-radius: 50%;
+	background: var(--accent);
+}
+.header-actions {
+	display: flex;
+	align-items: center;
+	justify-self: end;
+	gap: 22px;
+	font-size: 15px;
+}
+.contact-link,
+.fullscreen-site-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	border: 0;
+	border-bottom: 1px solid var(--line);
+	padding: 3px 0 2px;
+	background: transparent;
+	color: var(--ink);
+	font: inherit;
+	font-size: 15px;
+	letter-spacing: 0.3px;
+	cursor: none !important;
+	text-decoration: none;
+	line-height: 1.2;
+	transition: color 180ms ease, border-color 180ms ease;
+}
+.contact-link:hover,
+.fullscreen-site-btn:hover {
+	color: #ffffff;
+	border-bottom-color: var(--accent);
+}
+.contact-link span,
+.fullscreen-site-btn .fs-icon {
+	color: var(--accent);
+	font-size: 13.5px;
+	line-height: 1;
+	display: inline-block;
+}
 
 .cover-screen { position: relative; width: 100%; height: 100vh; height: 100svh; overflow: hidden; cursor: none !important; }
 .cover-screen, .cover-screen * { cursor: none !important; }
@@ -106,29 +180,6 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .workspace-tools button:hover { border-color: var(--accent); }
 .size-control { display: inline-flex; align-items: center; gap: 9px; cursor: none !important; }
 .size-control input { width: 82px; accent-color: var(--accent); cursor: none !important; }
-
-.fullscreen-site-btn {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	background: transparent;
-	border: 0;
-	border-bottom: 1px solid var(--line);
-	color: var(--ink);
-	font: inherit;
-	cursor: pointer;
-	padding: 0 0 2px;
-	transition: color 180ms ease, border-color 180ms ease;
-}
-.fullscreen-site-btn:hover {
-	color: #ffffff;
-	border-bottom-color: var(--accent);
-}
-.fullscreen-site-btn .fs-icon {
-	color: var(--accent);
-	font-size: 14px;
-	line-height: 1;
-}
 
 .pencil-cursor {
 	display: block;
