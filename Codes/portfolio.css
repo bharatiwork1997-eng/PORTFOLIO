@@ -723,24 +723,25 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		box-sizing: border-box !important;
 	}
 	.book-stage {
-		width: min(96vw, calc((100svh - 130px) * 1.422222)) !important;
+		width: min(94vw, 420px, calc((100svh - 130px) * 0.7111)) !important;
 		min-width: 0 !important;
-		aspect-ratio: 1280 / 900 !important;
+		aspect-ratio: 640 / 900 !important;
 		margin: 0 auto !important;
-		border-radius: 6px !important;
+		border-radius: 0 !important;
 		overflow: hidden !important;
-		filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.75)) !important;
+		background: #000 !important;
+		filter: none !important;
 	}
 	.book-scene {
 		width: 1280px !important;
 		height: 900px !important;
-		transform: scale(var(--book-scale, 0.3)) translate3d(0, 0, 0) !important;
+		transform: scale(var(--book-scale, 0.55)) translate3d(var(--book-offset-x, -40px), 0, 0) !important;
 		transform-origin: top left !important;
-		border-radius: 6px !important;
+		border-radius: 0 !important;
 		transition: transform 260ms cubic-bezier(0.2, 0.8, 0.25, 1) !important;
 	}
 	.book-controls {
-		width: min(96vw, calc((100svh - 130px) * 1.422222)) !important;
+		width: min(94vw, 420px, calc((100svh - 130px) * 0.7111)) !important;
 		margin-top: 14px !important;
 		font-size: 13px !important;
 		display: flex !important;
