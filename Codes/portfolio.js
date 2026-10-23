@@ -334,42 +334,32 @@ function handleFramePointer(iframe, event) {
 		hidePencil();
 		return;
 	}
-	const rect = cachedBookRect || (iframe ? (cachedBookRect = iframe.getBoundingClientRect()) : null);
+	const targetIframe = iframe || activeFrame;
+	if (!targetIframe) return;
+	const rect = targetIframe.getBoundingClientRect();
 	if (!rect || rect.width === 0) return;
 	const pageX = rect.left + (event.clientX * rect.width) / 1280;
 	const pageY = rect.top + (event.clientY * rect.height) / 900;
 	movePencil(pageX, pageY);
 }
 
-let targetPencilX = -200;
-let targetPencilY = -200;
-let pencilRafPending = false;
 let pencilVisible = false;
-
-function renderPencilCursor() {
-	pencilRafPending = false;
-	if (!pencil) return;
-	pencil.style.transform = `translate3d(${targetPencilX}px, ${targetPencilY}px, 0)`;
-}
 
 function movePencil(x, y) {
 	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
 		hidePencil();
 		return;
 	}
-	targetPencilX = x;
-	targetPencilY = y;
+	if (!pencil) return;
+	pencil.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 	if (!pencilVisible) {
 		pencilVisible = true;
-		if (pencil) pencil.classList.add("is-visible");
-	}
-	if (!pencilRafPending) {
-		pencilRafPending = true;
-		requestAnimationFrame(renderPencilCursor);
+		pencil.classList.add("is-visible");
 	}
 }
 
 function hidePencil() {
+	if (!pencilVisible) return;
 	pencilVisible = false;
 	if (pencil) pencil.classList.remove("is-visible");
 }
@@ -405,13 +395,13 @@ function setupCover() {
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("pointerenter", (event) => {
 				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
-				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
+				const rect = coverFrame ? coverFrame.getBoundingClientRect() : null;
 				if (!rect || rect.width === 0) return;
 				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
 			});
 			frameDocument.addEventListener("pointermove", (event) => {
 				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
-				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
+				const rect = coverFrame ? coverFrame.getBoundingClientRect() : null;
 				if (!rect || rect.width === 0) return;
 				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
 			});
@@ -1335,7 +1325,8 @@ function setupSketchbook(frameDocument) {
 	canvas.addEventListener("pointerdown", (event) => {
 		drawing = true;
 		canvas.setPointerCapture(event.pointerId);
-		const rect = cachedBookRect || (frameDocument.defaultView?.frameElement || activeFrame).getBoundingClientRect();
+		const frame = frameDocument.defaultView?.frameElement || activeFrame;
+		const rect = frame ? frame.getBoundingClientRect() : null;
 		if (rect && rect.width > 0) {
 			movePencil(rect.left + (event.clientX * rect.width) / 1280, rect.top + (event.clientY * rect.height) / 900);
 		}
@@ -1345,7 +1336,8 @@ function setupSketchbook(frameDocument) {
 		renderPencilDot(context, lastX, lastY);
 	});
 	canvas.addEventListener("pointermove", (event) => {
-		const rect = cachedBookRect || (frameDocument.defaultView?.frameElement || activeFrame).getBoundingClientRect();
+		const frame = frameDocument.defaultView?.frameElement || activeFrame;
+		const rect = frame ? frame.getBoundingClientRect() : null;
 		if (rect && rect.width > 0) {
 			movePencil(rect.left + (event.clientX * rect.width) / 1280, rect.top + (event.clientY * rect.height) / 900);
 		}
@@ -1772,15 +1764,13 @@ document.addEventListener("pointerdown", (event) => {
 	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 	movePencil(event.clientX, event.clientY);
 }, { passive: true });
-window.addEventListener("pointerleave", (event) => {
-	if (!event.relatedTarget && !event.toElement) {
+document.addEventListener("mouseleave", (event) => {
+	if (event.clientX <= 0 || event.clientX >= window.innerWidth || event.clientY <= 0 || event.clientY >= window.innerHeight) {
 		hidePencil();
 	}
 });
-document.addEventListener("mouseleave", (event) => {
-	if (!event.relatedTarget && !event.toElement) {
-		hidePencil();
-	}
+document.addEventListener("visibilitychange", () => {
+	if (document.hidden) hidePencil();
 });
 
 if (bookStage) {
