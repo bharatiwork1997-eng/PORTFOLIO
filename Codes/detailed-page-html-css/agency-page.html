@@ -240,7 +240,7 @@
 			if (pencil) pencil.style.transform = `translate3d(${pencilTargetX}px, ${pencilTargetY}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
 		}
 		function movePencil(e) {
-			if (!pencil || matchMedia("(hover: none)").matches) return;
+			if (!pencil || matchMedia("(hover: none)").matches || matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 			pencilTargetX = e.clientX;
 			pencilTargetY = e.clientY;
 			if (!pencilVisible) {

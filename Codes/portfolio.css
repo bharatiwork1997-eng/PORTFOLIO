@@ -807,10 +807,191 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		pointer-events: none;
 		filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.75));
 	}
+
+	/* Dialogs on Mobile (Clustr, Assessment, Agency, Wattpad, Story, Resume, Contact) */
+	dialog {
+		width: min(96vw, 540px) !important;
+		max-width: min(96vw, 540px) !important;
+		height: min(94svh, 840px) !important;
+		max-height: min(94svh, 840px) !important;
+		margin: auto !important;
+		padding: 0 !important;
+		border: 0 !important;
+		background: transparent !important;
+		overflow: visible !important;
+	}
+	.clustr-dialog,
+	.assessment-dialog,
+	.story-dialog,
+	.video-dialog,
+	.resume-dialog,
+	.contact-dialog {
+		width: min(96vw, 540px) !important;
+		max-width: min(96vw, 540px) !important;
+		height: min(94svh, 840px) !important;
+		max-height: min(94svh, 840px) !important;
+	}
+	.clustr-sheet,
+	.assessment-sheet,
+	.video-sheet,
+	.story-sheet,
+	.resume-sheet,
+	.contact-sheet {
+		padding: 14px 14px 12px !important;
+		max-height: 100% !important;
+		height: 100% !important;
+		box-sizing: border-box !important;
+		position: relative !important;
+		display: flex !important;
+		flex-direction: column !important;
+		border-radius: 8px !important;
+		overflow: hidden !important;
+	}
+	/* Top Action Buttons - Compact icon buttons with NO text collision */
+	.dialog-top-actions {
+		position: absolute !important;
+		top: 10px !important;
+		right: 12px !important;
+		display: inline-flex !important;
+		align-items: center !important;
+		gap: 6px !important;
+		z-index: 30 !important;
+	}
+	.dialog-action-btn {
+		height: 30px !important;
+		min-width: 30px !important;
+		padding: 0 8px !important;
+		font-size: 11px !important;
+		gap: 4px !important;
+		border-radius: 4px !important;
+	}
+	.dialog-action-btn .action-btn-label {
+		display: none !important; /* Hide verbose labels on mobile so buttons stay compact */
+	}
+	.dialog-action-btn span:first-child,
+	.dialog-action-btn .pixel-fs-icon {
+		margin: 0 !important;
+		font-size: 13px !important;
+	}
+	.dialog-top-actions .dialog-close,
+	.dialog-close {
+		width: 30px !important;
+		height: 30px !important;
+		padding: 0 !important;
+		display: inline-grid !important;
+		place-items: center !important;
+	}
+
+	/* Dialog Headers on Mobile */
+	.clustr-header,
+	.assessment-header,
+	.video-header,
+	.story-header,
+	.resume-header {
+		padding-right: 110px !important; /* Space reserved so text NEVER overlaps buttons! */
+		margin-bottom: 8px !important;
+		flex-shrink: 0 !important;
+	}
+	.clustr-header .dialog-kicker,
+	.assessment-header .dialog-kicker,
+	.dialog-kicker {
+		font-size: 10px !important;
+		letter-spacing: 0.5px !important;
+		margin-bottom: 2px !important;
+		white-space: nowrap !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+		display: block !important;
+	}
+	.clustr-sheet h1,
+	.assessment-sheet h1,
+	.video-sheet h1,
+	.story-sheet h1,
+	.resume-sheet h1 {
+		font-size: clamp(20px, 5.5vw, 24px) !important;
+		line-height: 1.1 !important;
+		margin: 1px 0 3px !important;
+		letter-spacing: -0.3px !important;
+		white-space: nowrap !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+	}
+	.clustr-intro,
+	.assessment-intro,
+	.story-intro {
+		font-size: 11px !important;
+		line-height: 1.35 !important;
+		color: #5a544c !important;
+		margin: 0 !important;
+		display: -webkit-box !important;
+		-webkit-line-clamp: 2 !important;
+		-webkit-box-orient: vertical !important;
+		overflow: hidden !important;
+	}
+
+	/* Clustr Case Study Iframe Wrapper */
+	.clustr-frame-wrap {
+		flex: 1 1 auto !important;
+		min-height: 0 !important;
+		height: 100% !important;
+		width: 100% !important;
+		border-radius: 6px !important;
+		overflow: hidden !important;
+		border: 1px solid rgba(40, 36, 30, 0.18) !important;
+		background: #f8f5fc !important;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+	}
+	.clustr-frame-wrap iframe {
+		width: 100% !important;
+		height: 100% !important;
+		border: 0 !important;
+		display: block !important;
+	}
+
+	/* Assessment & Agency Tab Panels on Mobile */
+	.assessment-nav {
+		margin-bottom: 8px !important;
+		gap: 6px !important;
+		flex-shrink: 0 !important;
+	}
+	.assessment-tab {
+		padding: 5px 8px !important;
+		font-size: 11px !important;
+	}
+	.assessment-panel {
+		flex: 1 1 auto !important;
+		min-height: 0 !important;
+		overflow: auto !important;
+	}
+	.pdf-scroll-container {
+		height: 100% !important;
+	}
+	.pdf-scroll-pages img {
+		width: 100% !important;
+		height: auto !important;
+	}
+	.assessment-footer {
+		padding-top: 6px !important;
+		flex-shrink: 0 !important;
+	}
+	.story-back {
+		padding: 6px 12px !important;
+		font-size: 11px !important;
+	}
 }
 
-@media (hover: none), (pointer: coarse) {
-	.pencil-cursor, .arrow-cursor { display: none !important; visibility: hidden !important; opacity: 0 !important; }
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+	.pencil-cursor,
+	.pencil-cursor *,
+	.arrow-cursor,
+	.arrow-cursor *,
+	.standalone-pencil,
+	.standalone-pencil * {
+		display: none !important;
+		visibility: hidden !important;
+		opacity: 0 !important;
+		pointer-events: none !important;
+	}
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 @media print {

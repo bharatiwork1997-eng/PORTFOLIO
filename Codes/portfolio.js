@@ -641,7 +641,12 @@ function finishGesture(event) {
 
 function openDialog(dialog) {
 	if (!dialog) return;
-	if (pencil && !dialog.contains(pencil)) {
+	if (isMobileSinglePage() || window.innerWidth <= 768 || window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches) {
+		hidePencil();
+		if (pencil && pencil.parentNode) {
+			pencil.style.display = "none";
+		}
+	} else if (pencil && !dialog.contains(pencil)) {
 		dialog.appendChild(pencil);
 	}
 	if (!dialog.open) {
