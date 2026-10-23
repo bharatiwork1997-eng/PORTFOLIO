@@ -5,13 +5,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#171713">
 	<title>Bharati Kamble | Visual Designer</title>
-	<link rel="stylesheet" href="portfolio.css?v=48">
+	<link rel="stylesheet" href="portfolio.css?v=49">
 </head>
 <body>
 	<header class="site-header">
 		<a class="wordmark" href="#cover" aria-label="Bharati Kamble home">BHARATI KAMBLE</a>
-		<p class="site-role">Visualizer & UX/UI Designer</p>
+		<p class="site-role">Visualizer &amp; UX/UI Designer</p>
 		<div class="header-actions">
+			<button class="contact-link fullscreen-site-btn" id="site-fullscreen-toggle" type="button" aria-label="Toggle Fullscreen" title="Toggle Fullscreen (F)"><span class="fs-icon" aria-hidden="true">⛶</span> <span class="fs-text">Fullscreen</span></button>
 			<button class="contact-link" type="button" data-open-resume>Resume <span aria-hidden="true">↗</span></button>
 			<button class="contact-link" type="button" data-open-contact>Say hello <span aria-hidden="true">↗</span></button>
 		</div>
@@ -419,7 +420,7 @@
 							<div class="pdf-slice-wrapper reel-slice-container">
 								<img src="assets/assessment/doc-slice-5.jpg" alt="The OG Architect - Part 5" loading="lazy" draggable="false">
 								<div class="embedded-reel-player" id="embedded-reel-player" title="Click to play / pause video">
-									<video id="assessment-reel-video" autoplay loop muted playsinline preload="auto">
+									<video id="assessment-reel-video" loop muted playsinline preload="none">
 										<source src="assets/assessment/og-architect-motion.mp4" type="video/mp4">
 										Your browser does not support the video tag.
 									</video>
@@ -451,7 +452,7 @@
 			<!-- Tab Panel 2: Concept Motion Film -->
 			<div class="assessment-panel" id="panel-video" role="tabpanel">
 				<div class="assessment-video-wrap">
-					<video id="assessment-video" controls playsinline preload="metadata">
+					<video id="assessment-video" controls playsinline preload="none">
 						<source src="assets/assessment/og-architect-motion.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
@@ -494,7 +495,7 @@
 			<h1 id="video-title">LOST</h1>
 			<p class="video-intro">An animated narrative on screen dependency, contrasting digital isolation with the tactile presence of the physical world.</p>
 			<div class="video-player-wrap">
-				<video id="lost-video" controls playsinline preload="metadata">
+				<video id="lost-video" controls playsinline preload="none">
 					<source src="assets/LOST%20Video.mp4" type="video/mp4">
 					Your browser does not support the video tag.
 				</video>
@@ -504,6 +505,37 @@
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=70"></script>
+	<!-- Mobile Orientation & Fullscreen Helper -->
+	<aside class="orientation-prompt" id="orientation-prompt" aria-live="polite" hidden>
+		<div class="orientation-backdrop"></div>
+		<div class="orientation-content">
+			<div class="phone-rotate-icon" aria-hidden="true">
+				<div class="phone-frame">
+					<div class="phone-screen-art">
+						<div class="mini-spread-page left"></div>
+						<div class="mini-spread-spine"></div>
+						<div class="mini-spread-page right"></div>
+					</div>
+				</div>
+				<svg class="rotate-arrow-svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+					<path d="M 10 32 C 8 16, 22 8, 36 12" stroke="#f18b85" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 2"/>
+					<polygon points="36,6 42,14 34,18" fill="#f18b85"/>
+				</svg>
+			</div>
+			<p class="orientation-kicker">HANDMADE SKETCHBOOK</p>
+			<h2 class="orientation-title">Rotate to Landscape</h2>
+			<p class="orientation-desc">This portfolio is designed as an interactive 2-page sketchbook spread. Turn your phone sideways for the best full-screen view.</p>
+			<div class="orientation-actions">
+				<button class="orientation-btn-primary" id="orientation-fullscreen-btn" type="button">
+					<span aria-hidden="true">⛶</span> View Fullscreen
+				</button>
+				<button class="orientation-btn-secondary" id="orientation-dismiss-btn" type="button">
+					Continue in portrait
+				</button>
+			</div>
+		</div>
+	</aside>
+
+	<script src="portfolio.js?v=71"></script>
 </body>
 </html>

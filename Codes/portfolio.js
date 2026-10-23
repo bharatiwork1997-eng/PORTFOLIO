@@ -62,6 +62,7 @@ const videoDialog = document.querySelector("#video-dialog");
 const lostVideo = document.querySelector("#lost-video");
 const assessmentDialog = document.querySelector("#assessment-dialog");
 const assessmentVideo = document.querySelector("#assessment-video");
+const assessmentReelVideo = document.querySelector("#assessment-reel-video");
 const agencyDialog = document.querySelector("#agency-dialog");
 const clustrDialog = document.querySelector("#clustr-dialog");
 const toast = document.querySelector("#toast");
@@ -71,11 +72,16 @@ const pageName = document.querySelector("#page-name");
 const pageCount = document.querySelector("#page-count");
 const workspaceTools = document.querySelector("#workspace-tools");
 const stickerSize = document.querySelector("#sticker-size");
+const siteFullscreenToggle = document.querySelector("#site-fullscreen-toggle");
+const orientationPrompt = document.querySelector("#orientation-prompt");
+const orientationFullscreenBtn = document.querySelector("#orientation-fullscreen-btn");
+const orientationDismissBtn = document.querySelector("#orientation-dismiss-btn");
 
 let pageIndex = 0;
 let turnBusy = false;
 let openingBook = false;
 let wheelLocked = false;
+let orientationDismissed = false;
 let wheelUnlockTimer;
 let toastTimer;
 let activeSticker = null;
@@ -124,13 +130,23 @@ function updateBookControls() {
 
 function prepareFrame(iframe, src) {
 	return new Promise((resolve) => {
+	if (iframe.dataset.src === src && iframe.contentDocument?.body) {
+		resolve();
+		return;
+	}
+	iframe.dataset.src = src;
 	iframe.onload = () => {
 		try {
 			const frameDocument = iframe.contentDocument;
 			if (!frameDocument) { resolve(); return; }
 			const style = frameDocument.createElement("style");
 			style.textContent = `
-				html, body, *, *::before, *::after { cursor:none !important; }
+				@media (hover: hover) and (pointer: fine) {
+					html, body, *, *::before, *::after { cursor:none !important; }
+				}
+				@media (hover: none), (pointer: coarse) {
+					html, body, *, *::before, *::after { cursor:auto !important; }
+				}
 				html, body { width:1280px !important; height:900px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
 				body { padding:28px 24px !important; }
 				body img, body object { transition:transform 220ms ease, filter 220ms ease; }
@@ -228,6 +244,7 @@ function prepareFrame(iframe, src) {
 
 function handleFramePointer(iframe, event) {
 	if (iframe !== activeFrame) return;
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
 	const rect = iframe.getBoundingClientRect();
 	const iframeX = event.clientX;
 	const isSketch = (pageIndex === 4) && (
@@ -240,22 +257,20 @@ function handleFramePointer(iframe, event) {
 }
 
 function movePencil(x, y, isSketch = null) {
-	if (matchMedia("(hover: none)").matches) return;
+	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches) return;
 	document.body.classList.add("pencil-active");
 	const onSketchSide = isSketch !== null ? isSketch : (x < window.innerWidth * 0.5);
 	const useArrow = (pageIndex === 4 && cover.hidden && !onSketchSide);
 	if (useArrow) {
 		if (pencil) pencil.style.display = "none";
 		if (arrowCursor) {
-			arrowCursor.style.left = `${x}px`;
-			arrowCursor.style.top = `${y}px`;
+			arrowCursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 			arrowCursor.style.display = "block";
 		}
 	} else {
 		if (arrowCursor) arrowCursor.style.display = "none";
 		if (pencil) {
-			pencil.style.left = `${x}px`;
-			pencil.style.top = `${y}px`;
+			pencil.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
 			pencil.style.display = "block";
 		}
 	}
@@ -310,12 +325,21 @@ function openBook() {
 	openingBook = true;
 	wheelLocked = true;
 	cover.classList.add("is-opening");
-	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 620;
+
+	// Mobile / Touch: trigger fullscreen when opening the sketchbook
+	const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+	if (isTouch && !isFullscreen()) {
+		requestFullscreenSafe();
+	}
+
+	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 540;
 	setTimeout(async () => {
 		pageIndex = 0;
 		activeFrame.classList.add("is-active");
 		standbyFrame.classList.remove("is-active");
-		await prepareFrame(activeFrame, spreads[pageIndex].src);
+		if (activeFrame.dataset.src !== spreads[pageIndex].src) {
+			await prepareFrame(activeFrame, spreads[pageIndex].src);
+		}
 		cover.hidden = true;
 		cover.classList.remove("is-opening");
 		portfolio.hidden = false;
@@ -323,7 +347,10 @@ function openBook() {
 		updateBookControls();
 		bookStage.scrollIntoView({ behavior: "smooth", block: "center" });
 		openingBook = false;
-		setTimeout(() => { wheelLocked = false; }, 350);
+		setTimeout(() => { wheelLocked = false; }, 300);
+
+		// Immediately preload Spread 1 in background so user doesn't wait when clicking Next!
+		preloadNextSpread(1);
 	}, duration);
 }
 
@@ -381,8 +408,10 @@ async function turnPage(direction) {
 	pageIndex = nextIndex;
 	updateBookControls();
 
-	// Load next spread into standby frame behind active frame (no white/grey flash!)
-	await prepareFrame(standbyFrame, nextSpread.src);
+	// Check if standbyFrame already has the next spread preloaded (0ms instant wait!)
+	if (standbyFrame.dataset.src !== nextSpread.src) {
+		await prepareFrame(standbyFrame, nextSpread.src);
+	}
 
 	// Swap frames: standby becomes active on top, previous active fades out
 	standbyFrame.classList.add("is-active");
@@ -393,17 +422,31 @@ async function turnPage(direction) {
 	standbyFrame = previousActive;
 	activeFrameDocument = activeFrame.contentDocument;
 
-	await new Promise((resolve) => setTimeout(resolve, 240));
+	await new Promise((resolve) => setTimeout(resolve, 220));
 	turnBusy = false;
 	wheelLocked = false;
 	updateBookControls();
+
+	// Preload the next likely spread in idle time!
+	preloadNextSpread(pageIndex + 1);
+}
+
+function preloadNextSpread(index) {
+	if (index >= 0 && index < spreads.length) {
+		setTimeout(() => {
+			if (!turnBusy && standbyFrame.dataset.src !== spreads[index].src) {
+				prepareFrame(standbyFrame, spreads[index].src);
+			}
+		}, 260);
+	}
 }
 
 function startEdgeGesture(frameDocument, event) {
-	if (event.target.closest("button, a, input, canvas, .collage-sticker")) return;
-	const side = event.clientX < 75 ? "left" : event.clientX > 1205 ? "right" : null;
-	if (!side || (side === "left" && pageIndex === 0) || (side === "right" && pageIndex === spreads.length - 1)) return;
-	gesture = { side, x: event.clientX, y: event.clientY, id: event.pointerId };
+	if (event.target.closest("button, a, input, canvas, .collage-sticker, .cover-card-artwork-wrap")) return;
+	const isTouch = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches;
+	const side = isTouch ? (event.clientX < 640 ? "left" : "right") : (event.clientX < 90 ? "left" : event.clientX > 1190 ? "right" : null);
+	if (!side && !isTouch) return;
+	gesture = { side, x: event.clientX, y: event.clientY, id: event.pointerId, isTouch };
 }
 
 function cancelGesture() {
@@ -412,15 +455,25 @@ function cancelGesture() {
 
 function finishGesture(event) {
 	if (!gesture || event.pointerId !== gesture.id) return;
-	const delta = event.clientX - gesture.x;
-	const forward = gesture.side === "right" && delta < -42;
-	const backward = gesture.side === "left" && delta > 42;
-	const tap = Math.abs(delta) <= 42;
-	const tapForward = tap && gesture.side === "right";
-	const tapBackward = tap && gesture.side === "left";
+	const deltaX = event.clientX - gesture.x;
+	const deltaY = event.clientY - gesture.y;
+	if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+		if (deltaX < 0 && pageIndex < spreads.length - 1) {
+			cancelGesture();
+			turnPage(1);
+			return;
+		} else if (deltaX > 0 && pageIndex > 0) {
+			cancelGesture();
+			turnPage(-1);
+			return;
+		}
+	} else if (!gesture.isTouch) {
+		const tapForward = gesture.side === "right" && Math.abs(deltaX) <= 40;
+		const tapBackward = gesture.side === "left" && Math.abs(deltaX) <= 40;
+		if (tapForward && pageIndex < spreads.length - 1) turnPage(1);
+		else if (tapBackward && pageIndex > 0) turnPage(-1);
+	}
 	cancelGesture();
-	if (forward || tapForward) turnPage(1);
-	else if (backward || tapBackward) turnPage(-1);
 }
 
 function openDialog(dialog) {
@@ -586,6 +639,9 @@ function openAssessmentDialog() {
 	if (!assessmentDialog) return;
 	openDialog(assessmentDialog);
 	initAssessmentScrollViewer();
+	if (assessmentReelVideo && assessmentReelVideo.paused) {
+		assessmentReelVideo.play().catch(() => {});
+	}
 }
 window.openAssessmentDialog = openAssessmentDialog;
 
@@ -1396,8 +1452,9 @@ document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addE
 		if (dialog === videoDialog && lostVideo) {
 			lostVideo.pause();
 		}
-		if (dialog === assessmentDialog && assessmentVideo) {
-			assessmentVideo.pause();
+		if (dialog === assessmentDialog) {
+			if (assessmentVideo) assessmentVideo.pause();
+			if (assessmentReelVideo) assessmentReelVideo.pause();
 		}
 		handleDialogClose(dialog);
 	});
@@ -1426,6 +1483,13 @@ document.addEventListener("pointerenter", (event) => movePencil(event.clientX, e
 document.addEventListener("pointermove", (event) => movePencil(event.clientX, event.clientY));
 document.addEventListener("pointerleave", hidePencil);
 document.addEventListener("keydown", (event) => {
+	if (event.key === "f" || event.key === "F") {
+		const tag = event.target?.tagName?.toLowerCase();
+		if (tag === "input" || tag === "textarea") return;
+		event.preventDefault();
+		toggleFullscreen();
+		return;
+	}
 	if (assessmentDialog?.open) {
 		if (event.key === "ArrowRight") {
 			event.preventDefault();
@@ -1451,5 +1515,117 @@ document.addEventListener("keydown", (event) => {
 	}
 });
 
+// Fullscreen API Helper
+function isFullscreen() {
+	return Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+}
+
+async function requestFullscreenSafe(element = document.documentElement) {
+	try {
+		if (element.requestFullscreen) {
+			await element.requestFullscreen();
+		} else if (element.webkitRequestFullscreen) {
+			await element.webkitRequestFullscreen();
+		} else if (element.mozRequestFullScreen) {
+			await element.mozRequestFullScreen();
+		} else if (element.msRequestFullscreen) {
+			await element.msRequestFullscreen();
+		}
+		if (screen.orientation && typeof screen.orientation.lock === "function") {
+			try {
+				await screen.orientation.lock("landscape");
+			} catch (_) {}
+		}
+	} catch (err) {
+		console.log("Fullscreen request was not granted:", err);
+	}
+	updateFullscreenUI();
+}
+
+async function exitFullscreenSafe() {
+	try {
+		if (document.exitFullscreen) {
+			await document.exitFullscreen();
+		} else if (document.webkitExitFullscreen) {
+			await document.webkitExitFullscreen();
+		} else if (document.mozCancelFullScreen) {
+			await document.mozCancelFullScreen();
+		} else if (document.msExitFullscreen) {
+			await document.msExitFullscreen();
+		}
+		if (screen.orientation && typeof screen.orientation.unlock === "function") {
+			try {
+				screen.orientation.unlock();
+			} catch (_) {}
+		}
+	} catch (_) {}
+	updateFullscreenUI();
+}
+
+function toggleFullscreen() {
+	if (isFullscreen()) {
+		exitFullscreenSafe();
+	} else {
+		requestFullscreenSafe();
+	}
+}
+
+function updateFullscreenUI() {
+	const active = isFullscreen();
+	if (siteFullscreenToggle) {
+		const icon = siteFullscreenToggle.querySelector(".fs-icon");
+		const label = siteFullscreenToggle.querySelector(".fs-text");
+		if (icon) icon.textContent = active ? "✕" : "⛶";
+		if (label) label.textContent = active ? "Exit" : "Fullscreen";
+		siteFullscreenToggle.setAttribute("aria-label", active ? "Exit Fullscreen" : "Enter Fullscreen");
+	}
+	setTimeout(fitBookScene, 80);
+}
+
+document.addEventListener("fullscreenchange", updateFullscreenUI);
+document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
+if (siteFullscreenToggle) {
+	siteFullscreenToggle.addEventListener("click", toggleFullscreen);
+}
+
+// Orientation Helper
+function checkOrientationPrompt() {
+	if (!orientationPrompt || orientationDismissed) return;
+	const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window || window.innerWidth <= 900;
+	const isPortrait = window.matchMedia("(orientation: portrait)").matches || window.innerHeight > window.innerWidth;
+	
+	if (isTouch && isPortrait && window.innerWidth <= 900) {
+		orientationPrompt.hidden = false;
+		requestAnimationFrame(() => orientationPrompt.classList.add("is-visible"));
+	} else {
+		orientationPrompt.classList.remove("is-visible");
+		setTimeout(() => {
+			if (!orientationPrompt.classList.contains("is-visible")) {
+				orientationPrompt.hidden = true;
+			}
+		}, 320);
+	}
+}
+
+window.addEventListener("resize", checkOrientationPrompt);
+window.addEventListener("orientationchange", checkOrientationPrompt);
+if (orientationFullscreenBtn) {
+	orientationFullscreenBtn.addEventListener("click", () => {
+		orientationDismissed = true;
+		checkOrientationPrompt();
+		requestFullscreenSafe();
+	});
+}
+if (orientationDismissBtn) {
+	orientationDismissBtn.addEventListener("click", () => {
+		orientationDismissed = true;
+		checkOrientationPrompt();
+	});
+}
+
 setupCover();
 updateBookControls();
+checkOrientationPrompt();
+
+// Preload Spread 0 immediately in background so opening sketchbook has 0ms wait!
+prepareFrame(activeFrame, spreads[0].src);
