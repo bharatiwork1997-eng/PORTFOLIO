@@ -521,6 +521,15 @@ body {
 }
 
 /* Touch and Pointer Interaction Polish */
+@media (hover: hover) and (pointer: fine) {
+	*, *::before, *::after, html, body, button, input, label, select,
+	.sketch-btn, .collage-btn, .collage-size-control, .collage-size-control input,
+	#sticker-folder, .sticker-folder, .img9, .draw-area canvas, .folio-canvas,
+	.text-input1 canvas, .collage-sticker {
+		cursor: none !important;
+	}
+}
+
 @media (hover: none), (pointer: coarse) {
 	*, *::before, *::after, html, body {
 		cursor: auto !important;
@@ -540,7 +549,6 @@ body {
 	width: 100%;
 	height: 100%;
 	touch-action: none !important;
-	cursor: crosshair;
 }
 
 .collage-layer {
@@ -557,13 +565,8 @@ body {
 	touch-action: none !important;
 	user-select: none;
 	-webkit-user-select: none;
-	cursor: grab;
 	pointer-events: auto !important;
 	will-change: transform, left, top;
-}
-
-.collage-sticker:active {
-	cursor: grabbing;
 }
 
 .collage-sticker.is-selected {
@@ -584,7 +587,6 @@ body {
 #sticker-folder,
 .sticker-folder,
 .img9 {
-	cursor: pointer !important;
 	pointer-events: auto !important;
 	user-select: none;
 	transition: transform 180ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -606,7 +608,6 @@ body {
 .collage-btn,
 .collage-size-control,
 .collage-size-control input {
-	cursor: pointer !important;
 	pointer-events: auto !important;
 	touch-action: manipulation;
 }

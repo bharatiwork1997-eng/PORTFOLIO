@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=20" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=3" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=11" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=12" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=6" }
 ];
 const spreadNavigationArtwork = [
@@ -122,11 +122,7 @@ function updateBookControls() {
 	document.querySelector("#previous-page").disabled = pageIndex === 0 || turnBusy;
 	document.querySelector("#next-page").disabled = pageIndex === spreads.length - 1 || turnBusy;
 	if (workspaceTools) workspaceTools.hidden = true;
-	if (pageIndex === 4 && cover.hidden) {
-		if (pencil) pencil.style.display = "none";
-	} else {
-		if (arrowCursor) arrowCursor.style.display = "none";
-	}
+	if (arrowCursor) arrowCursor.style.display = "none";
 }
 
 function prepareFrame(iframe, src) {
@@ -189,6 +185,14 @@ function prepareFrame(iframe, src) {
 			frameDocument.addEventListener("pointercancel", cancelGesture);
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("keydown", (event) => {
+				const isZ = event.key === "z" || event.key === "Z" || event.code === "KeyZ";
+				if (isZ && (event.metaKey || event.ctrlKey)) {
+					if (frameIndex === 4 && typeof frameDocument.defaultView?.undoSketch === "function") {
+						event.preventDefault();
+						frameDocument.defaultView.undoSketch();
+						return;
+					}
+				}
 				const isDeleteKey = event.key === "Delete" || event.key === "Backspace" || event.key === "Del" || event.code === "Delete" || event.code === "Backspace" || event.code === "NumpadDecimal" || event.keyCode === 46 || event.keyCode === 8;
 				if (frameIndex === 4 && isDeleteKey) {
 					if (event.target.tagName === "INPUT" && event.target.type !== "range") return;
@@ -257,23 +261,13 @@ function handleFramePointer(iframe, event) {
 	movePencil(pageX, pageY, isSketch);
 }
 
-function movePencil(x, y, isSketch = null) {
+function movePencil(x, y) {
 	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches) return;
 	document.body.classList.add("pencil-active");
-	const onSketchSide = isSketch !== null ? isSketch : (x < window.innerWidth * 0.5);
-	const useArrow = (pageIndex === 4 && cover.hidden && !onSketchSide);
-	if (useArrow) {
-		if (pencil) pencil.style.display = "none";
-		if (arrowCursor) {
-			arrowCursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-			arrowCursor.style.display = "block";
-		}
-	} else {
-		if (arrowCursor) arrowCursor.style.display = "none";
-		if (pencil) {
-			pencil.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
-			pencil.style.display = "block";
-		}
+	if (arrowCursor) arrowCursor.style.display = "none";
+	if (pencil) {
+		pencil.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
+		pencil.style.display = "block";
 	}
 }
 
@@ -479,9 +473,8 @@ function finishGesture(event) {
 
 function openDialog(dialog) {
 	if (!dialog) return;
-	const activeCursor = (pageIndex === 4 && cover.hidden) ? arrowCursor : pencil;
-	if (activeCursor && !dialog.contains(activeCursor)) {
-		dialog.appendChild(activeCursor);
+	if (pencil && !dialog.contains(pencil)) {
+		dialog.appendChild(pencil);
 	}
 	if (!dialog.open) {
 		dialog.showModal();
@@ -492,9 +485,7 @@ function handleDialogClose(dialog) {
 	if (pencil && dialog.contains(pencil)) {
 		document.body.appendChild(pencil);
 	}
-	if (arrowCursor && dialog.contains(arrowCursor)) {
-		document.body.appendChild(arrowCursor);
-	}
+	if (arrowCursor) arrowCursor.style.display = "none";
 }
 
 function openLostVideo() {
@@ -948,6 +939,17 @@ document.addEventListener("fullscreenchange", () => {
 });
 
 document.addEventListener("keydown", (e) => {
+	const isZ = e.key === "z" || e.key === "Z" || e.code === "KeyZ";
+	if (isZ && (e.metaKey || e.ctrlKey)) {
+		if (pageIndex === 4) {
+			const frameDoc = activeFrameDocument || activeFrame?.contentDocument;
+			if (typeof frameDoc?.defaultView?.undoSketch === "function") {
+				e.preventDefault();
+				frameDoc.defaultView.undoSketch();
+				return;
+			}
+		}
+	}
 	if ((e.key === "f" || e.key === "F") && !e.ctrlKey && !e.metaKey && !e.altKey) {
 		if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
 		if (clustrDialog && clustrDialog.open) {
