@@ -47,18 +47,23 @@
 
 	<dialog class="video-dialog" id="video-dialog" aria-labelledby="video-title">
 		<div class="video-sheet">
-			<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
-			<p class="dialog-kicker">VISUAL STORYTELLING · CONCEPT & MOTION</p>
-			<h1 id="video-title">LOST</h1>
+			<div class="video-header">
+				<div class="video-title-wrap">
+					<p class="dialog-kicker">VISUAL STORYTELLING · CONCEPT & MOTION</p>
+					<h1 id="video-title">LOST</h1>
+				</div>
+				<button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button>
+			</div>
 			<p class="video-intro">An animated narrative on screen dependency, contrasting digital isolation with the tactile presence of the physical world.</p>
 			<div class="video-player-wrap">
-				<video id="lost-video" controls playsinline preload="metadata">
+				<video id="lost-video" controls playsinline webkit-playsinline x5-playsinline preload="auto">
 					<source src="assets/LOST%20Video.mp4" type="video/mp4">
 					Your browser does not support the video tag.
 				</video>
 			</div>
-			<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
-			<div class="sheet-corner-fold" aria-hidden="true"></div>
+			<div class="video-footer">
+				<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			</div>
 		</div>
 	</dialog>
 
@@ -66,7 +71,11 @@
 		const localVideoDialog = document.querySelector("#video-dialog");
 		const localLostVideo = document.querySelector("#lost-video");
 
-		function openVideo() {
+		function openVideo(e) {
+			if (e) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
 			if (window.parent && window.parent !== window && typeof window.parent.openLostVideo === "function") {
 				window.parent.openLostVideo();
 				return;
@@ -74,6 +83,8 @@
 			if (localVideoDialog) {
 				localVideoDialog.showModal();
 				if (localLostVideo) {
+					localLostVideo.muted = false;
+					localLostVideo.volume = 1.0;
 					localLostVideo.currentTime = 0;
 					localLostVideo.play().catch(() => {});
 				}
@@ -95,7 +106,7 @@
 		document.querySelector(".text-input")?.addEventListener("click", openAgency);
 		document.querySelector(".col-left")?.addEventListener("click", openAgency);
 
-		document.querySelector(".img6")?.addEventListener("click", openVideo);
+		document.querySelector(".img6")?.addEventListener("click", (e) => openVideo(e));
 		document.querySelectorAll("[data-close-dialog]").forEach((btn) => {
 			btn.addEventListener("click", () => {
 				if (localLostVideo) localLostVideo.pause();

@@ -280,37 +280,135 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	pointer-events: none;
 }
 .dialog-kicker { margin: 0 0 10px; color: #9b514f; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
-.story-sheet h1, .resume-sheet h1, .contact-sheet h1, .video-sheet h1 { max-width: 650px; margin: 0; font-size: clamp(30px,6vw,66px); line-height: 1.04; font-weight: 400; }
-.story-intro, .resume-summary, .video-intro { max-width: 580px; margin: 14px 0 22px; color: #504b43; font: 15px/1.6 var(--pixel); }
-.video-dialog { max-width: min(940px, calc(100vw - 28px)); max-height: min(92svh, 920px); }
+.story-sheet h1, .resume-sheet h1, .contact-sheet h1 { max-width: 650px; margin: 0; font-size: clamp(30px,6vw,66px); line-height: 1.04; font-weight: 400; }
+.story-intro, .resume-summary { max-width: 580px; margin: 14px 0 22px; color: #504b43; font: 15px/1.6 var(--pixel); }
+
+/* ===== VIDEO MODAL (LOST) ===== */
+.video-dialog {
+	width: min(92vw, 640px) !important;
+	max-width: min(92vw, 640px) !important;
+	height: auto !important;
+	max-height: min(92svh, 860px) !important;
+	margin: auto !important;
+	border: 0 !important;
+	padding: 0 !important;
+	background: transparent !important;
+	overflow: visible !important;
+}
 .video-sheet {
-	min-height: auto;
-	padding: clamp(28px, 4vw, 44px) clamp(28px, 4.5vw, 52px) clamp(42px, 5.5vw, 64px);
+	width: 100% !important;
+	height: auto !important;
+	max-height: min(92svh, 860px) !important;
+	min-height: 0 !important;
+	padding: 22px 24px 18px !important;
+	background: #faf8f4 url("assets/pure-paper.png") repeat center / 900px auto !important;
+	border-radius: 8px !important;
+	border: 1px solid rgba(40, 36, 30, 0.14) !important;
+	box-shadow: 0 36px 90px -10px rgba(0, 0, 0, 0.72), 0 14px 32px -6px rgba(0, 0, 0, 0.35) !important;
+	box-sizing: border-box !important;
+	position: relative !important;
+	display: flex !important;
+	flex-direction: column !important;
+	overflow-y: auto !important;
+	overflow-x: hidden !important;
+}
+.video-header {
+	display: flex !important;
+	align-items: flex-start !important;
+	justify-content: space-between !important;
+	gap: 14px !important;
+	margin-bottom: 6px !important;
+	width: 100% !important;
+	padding-right: 0 !important;
+}
+.video-title-wrap {
+	flex: 1 1 auto !important;
+	min-width: 0 !important;
+}
+.video-sheet .dialog-close {
+	position: static !important;
+	flex-shrink: 0 !important;
+	width: 32px !important;
+	height: 32px !important;
+	margin: 0 !important;
+	display: grid !important;
+	place-items: center !important;
+	border: 1.5px solid rgba(0, 0, 0, 0.25) !important;
+	background: rgba(255, 255, 255, 0.95) !important;
+	border-radius: 4px !important;
+	color: #000000 !important;
+	cursor: pointer !important;
+	transition: background-color 180ms ease, transform 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+.video-sheet .dialog-close:hover {
+	background: #ffffff !important;
+	border-color: #1d4ed8 !important;
+	color: #1d4ed8 !important;
+	transform: scale(1.06) !important;
+}
+.video-sheet h1 {
+	font-size: clamp(24px, 4vw, 32px) !important;
+	line-height: 1.1 !important;
+	margin: 0 !important;
+	letter-spacing: -0.4px !important;
+	color: #1e1b16 !important;
+}
+.video-sheet .dialog-kicker {
+	display: block !important;
+	margin: 0 0 3px !important;
+	color: #9b514f !important;
+	font-size: 11px !important;
+	text-transform: uppercase !important;
+	letter-spacing: 1.5px !important;
+	font-weight: 600 !important;
 }
 .video-intro {
-	margin: 10px 0 18px;
-	max-width: 640px;
-	line-height: 1.6;
+	display: block !important;
+	margin: 0 0 12px !important;
+	font: 13px/1.5 var(--pixel) !important;
+	color: #504b43 !important;
+	max-width: 580px !important;
 }
 .video-player-wrap {
-	position: relative;
-	width: 100%;
-	max-height: min(56vh, 480px);
-	aspect-ratio: 16 / 9;
-	background: #000;
-	border: 1px solid rgba(30, 27, 22, 0.28);
-	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
-	border-radius: 4px;
-	overflow: hidden;
-	margin-bottom: 20px;
+	position: relative !important;
+	width: 100% !important;
+	aspect-ratio: 16 / 9 !important;
+	max-height: min(52vh, 420px) !important;
+	background: #000 !important;
+	border: 1px solid rgba(30, 27, 22, 0.28) !important;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+	border-radius: 6px !important;
+	overflow: hidden !important;
+	margin: 0 0 10px !important;
 }
 .video-player-wrap video {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: contain;
-	background: #000;
-	outline: none;
+	display: block !important;
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: contain !important;
+	background: #000 !important;
+	outline: none !important;
+}
+.video-footer {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: flex-start !important;
+	margin-top: 2px !important;
+	padding-top: 4px !important;
+}
+.video-footer .story-back {
+	margin: 0 !important;
+	padding: 0 0 4px !important;
+	border: 0 !important;
+	border-bottom: 1px solid rgba(30, 27, 22, 0.35) !important;
+	color: #29261f !important;
+	background: transparent !important;
+	font-size: 12px !important;
+	cursor: pointer !important;
+}
+.video-footer .story-back span {
+	margin-left: 6px !important;
+	color: #b55351 !important;
 }
 .story-sections { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; border-top: 1px solid rgba(30,27,22,.2); padding-top: 20px; }
 .story-sections section { min-height: 105px; }
@@ -827,7 +925,6 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.clustr-dialog,
 	.assessment-dialog,
 	.story-dialog,
-	.video-dialog,
 	.resume-dialog,
 	.contact-dialog {
 		width: min(96vw, 540px) !important;
@@ -837,7 +934,6 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	}
 	.clustr-sheet,
 	.assessment-sheet,
-	.video-sheet,
 	.story-sheet,
 	.resume-sheet,
 	.contact-sheet {
@@ -850,6 +946,32 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		flex-direction: column !important;
 		border-radius: 8px !important;
 		overflow: hidden !important;
+	}
+	/* Video Dialog (LOST) - Mobile Sizing */
+	.video-dialog {
+		width: min(94vw, 480px) !important;
+		max-width: min(94vw, 480px) !important;
+		height: auto !important;
+		max-height: 92svh !important;
+		margin: auto !important;
+		border: 0 !important;
+		padding: 0 !important;
+		background: transparent !important;
+		overflow: visible !important;
+	}
+	.video-sheet {
+		width: 100% !important;
+		height: auto !important;
+		max-height: 92svh !important;
+		min-height: 0 !important;
+		padding: 14px 14px 12px !important;
+		box-sizing: border-box !important;
+		position: relative !important;
+		display: flex !important;
+		flex-direction: column !important;
+		border-radius: 8px !important;
+		overflow-y: auto !important;
+		overflow-x: hidden !important;
 	}
 	/* Top Action Buttons - Compact icon buttons with NO text collision */
 	.dialog-top-actions {
@@ -889,7 +1011,6 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	/* Dialog Headers on Mobile */
 	.clustr-header,
 	.assessment-header,
-	.video-header,
 	.story-header,
 	.resume-header {
 		padding-right: 80px !important; /* Space reserved so text NEVER overlaps buttons! */
@@ -898,14 +1019,12 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	}
 	.clustr-header .dialog-kicker,
 	.assessment-header .dialog-kicker,
-	.dialog-kicker,
 	.clustr-intro,
 	.assessment-intro {
 		display: none !important;
 	}
 	.clustr-sheet h1,
 	.assessment-sheet h1,
-	.video-sheet h1,
 	.story-sheet h1,
 	.resume-sheet h1 {
 		font-size: clamp(18px, 5vw, 22px) !important;
@@ -915,6 +1034,43 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		white-space: nowrap !important;
 		overflow: hidden !important;
 		text-overflow: ellipsis !important;
+	}
+	/* Video Dialog Header & Elements on Mobile */
+	.video-header {
+		display: flex !important;
+		align-items: flex-start !important;
+		justify-content: space-between !important;
+		padding-right: 0 !important;
+		margin-bottom: 4px !important;
+		flex-shrink: 0 !important;
+	}
+	.video-sheet h1 {
+		font-size: 20px !important;
+		line-height: 1.1 !important;
+		margin: 0 !important;
+		white-space: normal !important;
+		overflow: visible !important;
+		text-overflow: unset !important;
+	}
+	.video-sheet .dialog-kicker {
+		display: block !important;
+		font-size: 10px !important;
+		letter-spacing: 1.2px !important;
+		margin-bottom: 2px !important;
+	}
+	.video-intro {
+		display: block !important;
+		font-size: 11px !important;
+		line-height: 1.4 !important;
+		margin: 0 0 8px !important;
+	}
+	.video-player-wrap {
+		margin: 0 0 8px !important;
+		max-height: min(44vh, 320px) !important;
+	}
+	.video-footer {
+		margin-top: 2px !important;
+		padding-top: 2px !important;
 	}
 	.story-intro {
 		font-size: 11px !important;

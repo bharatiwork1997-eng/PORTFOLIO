@@ -8,7 +8,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="portfolio.css?v=63">
+	<link rel="stylesheet" href="portfolio.css?v=64">
 </head>
 <body>
 	<header class="site-header">
@@ -531,21 +531,26 @@
 
 	<dialog class="video-dialog" id="video-dialog" aria-labelledby="video-title">
 		<div class="video-sheet">
-			<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
 			<div class="video-header">
-				<h1 id="video-title">LOST</h1>
+				<div class="video-title-wrap">
+					<p class="dialog-kicker">Visual Storytelling &bull; Concept &amp; Motion</p>
+					<h1 id="video-title">LOST</h1>
+				</div>
+				<button class="dialog-close" type="button" data-close-dialog aria-label="Close"><svg class="pixel-cross-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="2" height="2"/><rect x="12" y="0" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/><rect x="10" y="2" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="8" y="4" width="2" height="2"/><rect x="6" y="6" width="2" height="2"/><rect x="4" y="8" width="2" height="2"/><rect x="8" y="8" width="2" height="2"/><rect x="2" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="0" y="12" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/></svg></button>
 			</div>
+			<p class="video-intro">An animated narrative on screen dependency, contrasting digital isolation with the tactile presence of the physical world.</p>
 			<div class="video-player-wrap">
-				<video id="lost-video" controls playsinline preload="none">
+				<video id="lost-video" controls playsinline webkit-playsinline x5-playsinline preload="auto">
 					<source src="assets/LOST%20Video.mp4" type="video/mp4">
 					Your browser does not support the video tag.
 				</video>
 			</div>
-			<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
-			<div class="sheet-corner-fold" aria-hidden="true"></div>
+			<div class="video-footer">
+				<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
+			</div>
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=88"></script>
+	<script src="portfolio.js?v=89"></script>
 </body>
 </html>

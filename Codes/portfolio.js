@@ -673,10 +673,14 @@ function openLostVideo() {
 	if (!videoDialog) return;
 	openDialog(videoDialog);
 	if (lostVideo) {
+		lostVideo.muted = false;
+		lostVideo.volume = 1.0;
 		lostVideo.currentTime = 0;
 		const playPromise = lostVideo.play();
 		if (playPromise !== undefined) {
-			playPromise.catch(() => {});
+			playPromise.catch((err) => {
+				console.log("Autoplay unmuted blocked by browser policy, ready for user play tap:", err);
+			});
 		}
 	}
 }
@@ -1219,7 +1223,11 @@ function makeInteractive(element, label, action) {
 	element.setAttribute("role", "button");
 	element.setAttribute("tabindex", "0");
 	element.setAttribute("aria-label", label);
-	element.addEventListener("click", (event) => { event.stopPropagation(); action(); });
+	element.addEventListener("click", (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+		action();
+	});
 	element.addEventListener("keydown", (event) => {
 		if (event.key === "Enter" || event.key === " ") { event.preventDefault(); action(); }
 	});

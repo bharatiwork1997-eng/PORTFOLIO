@@ -463,9 +463,9 @@ dialog::backdrop {
 .video-sheet {
 	position: relative;
 	min-height: auto;
-	padding: clamp(38px, 4.5vw, 48px) clamp(34px, 5vw, 54px) clamp(36px, 4.5vw, 48px);
+	padding: 22px 24px 18px;
 	background: #faf8f4 url("../assets/pure-paper.png") repeat center / 900px auto;
-	border-radius: 6px;
+	border-radius: 8px;
 	border: 1px solid rgba(40, 36, 30, 0.14);
 	box-shadow: 
 		0 36px 90px -10px rgba(0, 0, 0, 0.72), 
@@ -476,31 +476,41 @@ dialog::backdrop {
 .sheet-corner-fold {
 	display: none !important;
 }
-.dialog-close {
-	position: absolute;
-	z-index: 10;
-	top: 24px;
-	right: 28px;
-	width: 36px;
-	height: 36px;
+.video-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 14px;
+	margin-bottom: 6px;
+	width: 100%;
+}
+.video-title-wrap {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.video-header .dialog-close {
+	position: static;
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
 	border: 1px solid rgba(0, 0, 0, 0.22);
-	border-radius: 50%;
+	border-radius: 4px;
 	color: #211f1b;
 	background: rgba(255, 255, 255, 0.85);
-	font: 24px/1 var(--font-primary, sans-serif);
+	font: 20px/1 var(--font-primary, sans-serif);
 	cursor: pointer;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	transition: background-color 180ms ease, transform 180ms ease, border-color 180ms ease;
 }
-.dialog-close:hover {
+.video-header .dialog-close:hover {
 	background: #ffffff;
 	border-color: #9b514f;
 	transform: scale(1.08);
 }
 .dialog-kicker {
-	margin: 0 0 10px;
+	margin: 0 0 4px;
 	color: #9b514f;
 	font-size: 11px;
 	text-transform: uppercase;
@@ -510,30 +520,30 @@ dialog::backdrop {
 .video-sheet h1 {
 	max-width: 650px;
 	margin: 0;
-	font-size: clamp(30px, 6vw, 66px);
+	font-size: clamp(24px, 4vw, 36px);
 	line-height: 1.04;
 	font-weight: 400;
 	font-family: inherit;
 }
 .video-intro {
-	margin: 10px 0 18px;
+	margin: 0 0 12px;
 	max-width: 640px;
 	color: #504b43;
-	font-size: 15px;
-	line-height: 1.6;
+	font-size: 13px;
+	line-height: 1.5;
 	font-family: inherit;
 }
 .video-player-wrap {
 	position: relative;
 	width: 100%;
-	max-height: min(56vh, 480px);
+	max-height: min(52vh, 420px);
 	aspect-ratio: 16 / 9;
 	background: #000;
 	border: 1px solid rgba(30, 27, 22, 0.28);
-	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
-	border-radius: 4px;
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+	border-radius: 6px;
 	overflow: hidden;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 .video-player-wrap video {
 	display: block;
@@ -543,11 +553,17 @@ dialog::backdrop {
 	background: #000;
 	outline: none;
 }
+.video-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	margin-top: 2px;
+}
 .story-back {
-	margin-top: 10px;
+	margin-top: 0;
 	border: 0;
 	border-bottom: 1px solid rgba(30, 27, 22, 0.35);
-	padding: 0 0 6px;
+	padding: 0 0 4px;
 	color: #29261f;
 	background: transparent;
 	font-size: 12px;
