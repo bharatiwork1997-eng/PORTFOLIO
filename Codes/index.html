@@ -24,10 +24,10 @@
 	<main>
 		<section class="cover-screen" id="cover" aria-label="Portfolio cover">
 			<div class="cover-art">
-				<iframe id="cover-frame" title="Handmade sketchbook cover" src="welcoming-screen-html-css/welcoming-screen.html?v=6" tabindex="-1" scrolling="no"></iframe>
+				<iframe id="cover-frame" title="Handmade sketchbook cover" src="welcoming-screen-html-css/welcoming-screen.html?v=8" tabindex="-1" scrolling="no"></iframe>
 				<button class="cover-hit" type="button" aria-label="Open the sketchbook"></button>
 			</div>
-			<p class="cover-note"><span>01 / 06</span> Open the sketchbook <span aria-hidden="true">↗</span></p>
+			<p class="cover-note"><span id="cover-page-indicator">01 / 06</span> Open the sketchbook <span aria-hidden="true">↗</span></p>
 		</section>
 
 		<section class="portfolio-view" id="portfolio" hidden aria-label="Interactive portfolio sketchbook">
@@ -39,7 +39,7 @@
 			</div>
 			<div class="book-controls">
 				<button class="turn-button" id="previous-page" type="button" aria-label="Previous spread"><span>Previous</span></button>
-				<div class="page-position" aria-live="polite"><span id="page-count">01</span><i></i><span>06</span><span class="page-name" id="page-name">About me</span></div>
+				<div class="page-position" aria-live="polite"><span id="page-count">01</span><i></i><span id="page-total">06</span><span class="page-name" id="page-name">About me</span></div>
 				<button class="turn-button" id="next-page" type="button" aria-label="Next spread"><span>Next</span></button>
 			</div>
 		</section>
@@ -610,6 +610,6 @@
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=74"></script>
+	<script src="portfolio.js?v=75"></script>
 </body>
 </html>

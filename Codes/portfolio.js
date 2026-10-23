@@ -6,6 +6,25 @@ const spreads = [
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=12" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=6" }
 ];
+
+const singlePages = [
+	{ title: "About me · Explorer", spreadIndex: 0, sub: 0 },
+	{ title: "About me · Human behind screen", spreadIndex: 0, sub: 1 },
+	{ title: "CLUSTR · Volunteering", spreadIndex: 1, sub: 0 },
+	{ title: "The OG Architect · Assessment", spreadIndex: 1, sub: 1 },
+	{ title: "Agency Work · Beauty Brands", spreadIndex: 2, sub: 0 },
+	{ title: "College Works · Campaigns", spreadIndex: 2, sub: 1 },
+	{ title: "Personal Work · Experimental", spreadIndex: 3, sub: 0 },
+	{ title: "Bharati Kamble · Résumé", spreadIndex: 3, sub: 1 },
+	{ title: "Fun Break · Sketch space", spreadIndex: 4, sub: 0 },
+	{ title: "Fun Break · Collage space", spreadIndex: 4, sub: 1 },
+	{ title: "Thank you", spreadIndex: 5, sub: 0.5 }
+];
+let mobilePageIndex = 0;
+
+function isMobileSinglePage() {
+	return window.innerWidth <= 768;
+}
 const spreadNavigationArtwork = [
 	".row-bottom",
 	".row-bottom",
@@ -99,25 +118,46 @@ function updateFrameRects() {
 	}
 }
 
-window.addEventListener("resize", updateFrameRects, { passive: true });
+window.addEventListener("resize", () => {
+	updateFrameRects();
+	fitCoverCanvas();
+	fitBookScene();
+	updateBookControls();
+}, { passive: true });
 window.addEventListener("scroll", updateFrameRects, { passive: true });
 
-function fitCanvas(iframe, width, height, parent) {
-	const resize = () => {
-		const scale = Math.min(parent.clientWidth / width, parent.clientHeight / height);
-		iframe.style.transform = `scale(${scale})`;
-		iframe.style.left = `${Math.max(0, (parent.clientWidth - width * scale) / 2)}px`;
-		iframe.style.top = `${Math.max(0, (parent.clientHeight - height * scale) / 2)}px`;
-		updateFrameRects();
-	};
-	resize();
-	new ResizeObserver(resize).observe(parent);
+function fitCoverCanvas() {
+	const parent = document.querySelector(".cover-art");
+	if (!parent || !coverFrame) return;
+	const isMobile = window.innerWidth <= 768;
+	const width = isMobile ? 720 : 1920;
+	const height = isMobile ? 1280 : 1080;
+	const scale = Math.min(parent.clientWidth / width, parent.clientHeight / height);
+	coverFrame.style.width = `${width}px`;
+	coverFrame.style.height = `${height}px`;
+	coverFrame.style.transform = `scale(${scale})`;
+	coverFrame.style.left = `${Math.max(0, (parent.clientWidth - width * scale) / 2)}px`;
+	coverFrame.style.top = `${Math.max(0, (parent.clientHeight - height * scale) / 2)}px`;
+	updateFrameRects();
 }
 
-fitCanvas(coverFrame, 1920, 1080, document.querySelector(".cover-art"));
+const coverArtContainer = document.querySelector(".cover-art");
+if (coverArtContainer) {
+	new ResizeObserver(fitCoverCanvas).observe(coverArtContainer);
+}
+fitCoverCanvas();
 
 function fitBookScene() {
-	bookScene.style.setProperty("--book-scale", String(bookStage.clientWidth / 1280));
+	if (isMobileSinglePage()) {
+		const scale = bookStage.clientWidth / 640;
+		bookScene.style.setProperty("--book-scale", String(scale));
+		const currentSub = singlePages[mobilePageIndex]?.sub ?? 0;
+		const offsetX = currentSub === 0.5 ? -320 : (currentSub === 1 ? -640 : 0);
+		bookScene.style.setProperty("--book-offset-x", `${offsetX}px`);
+	} else {
+		bookScene.style.setProperty("--book-scale", String(bookStage.clientWidth / 1280));
+		bookScene.style.setProperty("--book-offset-x", "0px");
+	}
 	updateFrameRects();
 }
 
@@ -131,10 +171,32 @@ function showToast(message) {
 }
 
 function updateBookControls() {
-	pageCount.textContent = String(pageIndex + 1).padStart(2, "0");
-	pageName.textContent = spreads[pageIndex].title;
-	document.querySelector("#previous-page").disabled = pageIndex === 0 || turnBusy;
-	document.querySelector("#next-page").disabled = pageIndex === spreads.length - 1 || turnBusy;
+	const isMobile = isMobileSinglePage();
+	const prevBtn = document.querySelector("#previous-page");
+	const nextBtn = document.querySelector("#next-page");
+	const pageTotal = document.querySelector("#page-total");
+	const coverIndicator = document.querySelector("#cover-page-indicator");
+
+	if (isMobile) {
+		const curr = mobilePageIndex + 1;
+		const total = singlePages.length;
+		pageCount.textContent = String(curr).padStart(2, "0");
+		if (pageTotal) pageTotal.textContent = String(total).padStart(2, "0");
+		pageName.textContent = singlePages[mobilePageIndex].title;
+		if (prevBtn) prevBtn.disabled = mobilePageIndex === 0 || turnBusy;
+		if (nextBtn) nextBtn.disabled = mobilePageIndex === total - 1 || turnBusy;
+		if (coverIndicator) coverIndicator.textContent = `${String(curr).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+	} else {
+		const curr = pageIndex + 1;
+		const total = spreads.length;
+		pageCount.textContent = String(curr).padStart(2, "0");
+		if (pageTotal) pageTotal.textContent = String(total).padStart(2, "0");
+		pageName.textContent = spreads[pageIndex].title;
+		if (prevBtn) prevBtn.disabled = pageIndex === 0 || turnBusy;
+		if (nextBtn) nextBtn.disabled = pageIndex === total - 1 || turnBusy;
+		if (coverIndicator) coverIndicator.textContent = `${String(curr).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+	}
+
 	if (workspaceTools) workspaceTools.hidden = true;
 	if (arrowCursor) arrowCursor.style.display = "none";
 }
@@ -263,7 +325,10 @@ function prepareFrame(iframe, src) {
 }
 
 function handleFramePointer(iframe, event) {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
+		hidePencil();
+		return;
+	}
 	const rect = cachedBookRect || (iframe ? (cachedBookRect = iframe.getBoundingClientRect()) : null);
 	if (!rect || rect.width === 0) return;
 	const pageX = rect.left + (event.clientX * rect.width) / 1280;
@@ -283,7 +348,10 @@ function renderPencilCursor() {
 }
 
 function movePencil(x, y) {
-	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches) return;
+	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
+		hidePencil();
+		return;
+	}
 	targetPencilX = x;
 	targetPencilY = y;
 	if (!pencilVisible) {
@@ -306,35 +374,40 @@ function setupCover() {
 		try {
 			const frameDocument = coverFrame.contentDocument;
 			if (!frameDocument || !frameDocument.body) return;
+			const isMobile = window.innerWidth <= 768;
+			const w = isMobile ? 720 : 1920;
+			const h = isMobile ? 1280 : 1080;
 			const style = frameDocument.createElement("style");
 			style.textContent = `
 				@media (hover: hover) and (pointer: fine) {
 					html, body, *, *::before, *::after, input, button, textarea, select, a { cursor:none !important; }
 				}
+				@media (hover: none), (pointer: coarse), (max-width: 768px) {
+					html, body, *, *::before, *::after, input, button, textarea, select, a { cursor:auto !important; }
+				}
 				html, body, *, *::before, *::after { user-select:none !important; }
-				html, body { width:1920px !important; height:1080px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
+				html, body { width:${w}px !important; height:${h}px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
 			`;
 			frameDocument.head.append(style);
 			frameDocument.documentElement.style.overflow = "hidden";
 			frameDocument.documentElement.style.scrollbarWidth = "none";
-			frameDocument.body.style.width = "1920px";
-			frameDocument.body.style.height = "1080px";
+			frameDocument.body.style.width = `${w}px`;
+			frameDocument.body.style.height = `${h}px`;
 			frameDocument.body.style.minHeight = "0";
-			frameDocument.body.style.padding = "103px 24px 0";
 			frameDocument.body.style.overflow = "hidden";
 			frameDocument.body.style.scrollbarWidth = "none";
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("pointerenter", (event) => {
-				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
 				if (!rect || rect.width === 0) return;
-				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
+				movePencil(rect.left + (event.clientX * rect.width) / w, rect.top + (event.clientY * rect.height) / h);
 			});
 			frameDocument.addEventListener("pointermove", (event) => {
-				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
 				if (!rect || rect.width === 0) return;
-				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
+				movePencil(rect.left + (event.clientX * rect.width) / w, rect.top + (event.clientY * rect.height) / h);
 			});
 			frameDocument.addEventListener("click", () => {
 				openBook();
@@ -365,6 +438,7 @@ function openBook() {
 	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 540;
 	setTimeout(async () => {
 		pageIndex = 0;
+		mobilePageIndex = 0;
 		activeFrame.classList.add("is-active");
 		standbyFrame.classList.remove("is-active");
 		if (activeFrame.dataset.src !== spreads[pageIndex].src) {
@@ -393,6 +467,7 @@ function returnHome() {
 	cover.hidden = false;
 	portfolio.hidden = true;
 	pageIndex = 0;
+	mobilePageIndex = 0;
 	gesture = null;
 	updateBookControls();
 	window.scrollTo({ top: 0, behavior: "smooth" });
@@ -424,20 +499,78 @@ function handleWheelNavigation(event) {
 	if (!cover.hidden) {
 		if (direction > 0) openBook();
 	} else if (!portfolio.hidden) {
-		if (pageIndex === 0 && direction < 0) {
+		const currentIdx = isMobileSinglePage() ? mobilePageIndex : pageIndex;
+		const maxPages = isMobileSinglePage() ? singlePages.length : spreads.length;
+		if (currentIdx === 0 && direction < 0) {
 			returnHome();
-		} else if (pageIndex + direction >= 0 && pageIndex + direction < spreads.length) {
+		} else if (currentIdx + direction >= 0 && currentIdx + direction < maxPages) {
 			turnPage(direction);
 		}
 	}
 }
 
+async function turnPageMobile(direction) {
+	const nextMobileIndex = mobilePageIndex + direction;
+	if (turnBusy || nextMobileIndex < 0 || nextMobileIndex >= singlePages.length) return;
+	turnBusy = true;
+
+	const currentEntry = singlePages[mobilePageIndex];
+	const nextEntry = singlePages[nextMobileIndex];
+	mobilePageIndex = nextMobileIndex;
+	pageIndex = nextEntry.spreadIndex;
+	updateBookControls();
+
+	const targetOffsetX = nextEntry.sub === 0.5 ? -320 : (nextEntry.sub === 1 ? -640 : 0);
+
+	// Case A: Moving within the SAME spread (sub 0 <-> sub 1)
+	if (currentEntry.spreadIndex === nextEntry.spreadIndex) {
+		bookScene.style.setProperty("--book-offset-x", `${targetOffsetX}px`);
+		await new Promise((r) => setTimeout(r, 260));
+		turnBusy = false;
+		wheelLocked = false;
+		updateBookControls();
+		return;
+	}
+
+	// Case B: Moving to a DIFFERENT spread
+	const nextSpread = spreads[nextEntry.spreadIndex];
+	if (standbyFrame.dataset.src !== nextSpread.src) {
+		await prepareFrame(standbyFrame, nextSpread.src);
+	}
+
+	bookScene.style.setProperty("--book-offset-x", `${targetOffsetX}px`);
+
+	standbyFrame.classList.add("is-active");
+	activeFrame.classList.remove("is-active");
+
+	const previousActive = activeFrame;
+	activeFrame = standbyFrame;
+	standbyFrame = previousActive;
+	activeFrameDocument = activeFrame.contentDocument;
+	updateFrameRects();
+
+	await new Promise((resolve) => setTimeout(resolve, 240));
+	turnBusy = false;
+	wheelLocked = false;
+	updateBookControls();
+
+	const nextPotential = singlePages[mobilePageIndex + 1];
+	if (nextPotential && nextPotential.spreadIndex !== pageIndex) {
+		preloadNextSpread(nextPotential.spreadIndex);
+	}
+}
+
 async function turnPage(direction) {
+	if (isMobileSinglePage()) {
+		return turnPageMobile(direction);
+	}
 	const nextIndex = pageIndex + direction;
 	if (turnBusy || nextIndex < 0 || nextIndex >= spreads.length) return;
 	turnBusy = true;
 	const nextSpread = spreads[nextIndex];
 	pageIndex = nextIndex;
+	mobilePageIndex = singlePages.findIndex((sp) => sp.spreadIndex === pageIndex);
+	if (mobilePageIndex === -1) mobilePageIndex = 0;
 	updateBookControls();
 
 	// Check if standbyFrame already has the next spread preloaded (0ms instant wait!)
@@ -475,11 +608,15 @@ function preloadNextSpread(index) {
 }
 
 function startEdgeGesture(frameDocument, event) {
-	if (event.target.closest("button, a, input, canvas, .folio-canvas, .collage-sticker, .cover-card-artwork-wrap, .text-input1, .text-input2, .row-right, .sketch-wrapper, .collage-wrapper, .sketch-tools, .collage-tools, #sticker-folder, .sticker-folder, .img9")) return;
-	const isTouch = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches;
-	const side = isTouch ? (event.clientX < 100 ? "left" : event.clientX > 1180 ? "right" : null) : (event.clientX < 90 ? "left" : event.clientX > 1190 ? "right" : null);
+	if (event.target.closest("button, a, input, canvas, .folio-canvas, .collage-sticker, .cover-card-artwork-wrap, .sketch-wrapper, .collage-wrapper, .sketch-tools, .collage-tools, #sticker-folder, .sticker-folder, .img9")) return;
+	const isTouch = event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || isMobileSinglePage();
+	if (isTouch) {
+		gesture = { side: "touch", x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: true };
+		return;
+	}
+	const side = event.clientX < 90 ? "left" : event.clientX > 1190 ? "right" : null;
 	if (!side) return;
-	gesture = { side, x: event.clientX, y: event.clientY, id: event.pointerId, isTouch };
+	gesture = { side, x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: false };
 }
 
 function cancelGesture() {
@@ -490,12 +627,15 @@ function finishGesture(event) {
 	if (!gesture || event.pointerId !== gesture.id) return;
 	const deltaX = event.clientX - gesture.x;
 	const deltaY = event.clientY - gesture.y;
-	if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
-		if (deltaX < 0 && pageIndex < spreads.length - 1) {
+	const maxPages = isMobileSinglePage() ? singlePages.length : spreads.length;
+	const currentIdx = isMobileSinglePage() ? mobilePageIndex : pageIndex;
+
+	if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.1) {
+		if (deltaX < 0 && currentIdx < maxPages - 1) {
 			cancelGesture();
 			turnPage(1);
 			return;
-		} else if (deltaX > 0 && pageIndex > 0) {
+		} else if (deltaX > 0 && currentIdx > 0) {
 			cancelGesture();
 			turnPage(-1);
 			return;
@@ -503,8 +643,8 @@ function finishGesture(event) {
 	} else if (!gesture.isTouch) {
 		const tapForward = gesture.side === "right" && Math.abs(deltaX) <= 40;
 		const tapBackward = gesture.side === "left" && Math.abs(deltaX) <= 40;
-		if (tapForward && pageIndex < spreads.length - 1) turnPage(1);
-		else if (tapBackward && pageIndex > 0) turnPage(-1);
+		if (tapForward && currentIdx < maxPages - 1) turnPage(1);
+		else if (tapBackward && currentIdx > 0) turnPage(-1);
 	}
 	cancelGesture();
 }
@@ -1610,15 +1750,15 @@ if (stickerSize) {
 	});
 }
 document.addEventListener("pointerenter", (event) => {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 	movePencil(event.clientX, event.clientY);
 }, { passive: true });
 document.addEventListener("pointermove", (event) => {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 	movePencil(event.clientX, event.clientY);
 }, { passive: true });
 document.addEventListener("pointerdown", (event) => {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches) return;
+	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
 	movePencil(event.clientX, event.clientY);
 }, { passive: true });
 window.addEventListener("pointerleave", (event) => {
@@ -1631,6 +1771,15 @@ document.addEventListener("mouseleave", (event) => {
 		hidePencil();
 	}
 });
+
+if (bookStage) {
+	bookStage.addEventListener("pointerdown", (event) => {
+		if (event.target.closest("button, a, input, canvas")) return;
+		gesture = { side: "touch", x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: true };
+	}, { passive: true });
+	bookStage.addEventListener("pointerup", finishGesture);
+	bookStage.addEventListener("pointercancel", cancelGesture);
+}
 document.addEventListener("keydown", (event) => {
 	if (event.key === "f" || event.key === "F") {
 		const tag = event.target?.tagName?.toLowerCase();
