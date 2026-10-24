@@ -437,12 +437,17 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 .story-intro, .resume-summary { max-width: 580px; margin: 14px 0 22px; color: #504b43; font: 15px/1.6 var(--pixel); }
 
 /* ===== VIDEO MODAL (LOST) ===== */
-.video-dialog {
+.video-dialog,
+.video-dialog[open] {
+	position: fixed !important;
+	top: 50% !important;
+	left: 50% !important;
+	transform: translate(-50%, -50%) !important;
+	margin: 0 !important;
 	width: min(92vw, 640px) !important;
 	max-width: min(92vw, 640px) !important;
 	height: auto !important;
 	max-height: min(92svh, 860px) !important;
-	margin: auto !important;
 	border: 0 !important;
 	padding: 0 !important;
 	background: transparent !important;
@@ -1156,13 +1161,18 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		border-radius: 8px !important;
 		overflow: hidden !important;
 	}
-	/* Video Dialog (LOST) - Mobile Sizing */
-	.video-dialog {
+	/* Video Dialog (LOST) - Centered in Middle of Screen */
+	.video-dialog,
+	.video-dialog[open] {
+		position: fixed !important;
+		top: 50% !important;
+		left: 50% !important;
+		transform: translate(-50%, -50%) !important;
+		margin: 0 !important;
 		width: min(94vw, 480px) !important;
 		max-width: min(94vw, 480px) !important;
 		height: auto !important;
 		max-height: 92svh !important;
-		margin: auto !important;
 		border: 0 !important;
 		padding: 0 !important;
 		background: transparent !important;
