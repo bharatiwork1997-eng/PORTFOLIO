@@ -33,8 +33,8 @@
 				<span class="link-arrow" aria-hidden="true">↗</span>
 			</a>
 			<span class="link-separator" aria-hidden="true">/</span>
-			<a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=bharatikamble697@gmail.com" target="_blank" rel="noopener noreferrer" class="thankyou-link" data-channel="email" title="Email (Gmail)">
-				<span class="link-label">Email</span>
+			<a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=bharatikamble697@gmail.com" target="_blank" rel="noopener noreferrer" class="thankyou-link" data-channel="email" title="Gmail: bharatikamble697@gmail.com">
+				<span class="link-label">Gmail</span>
 				<span class="link-arrow" aria-hidden="true">↗</span>
 			</a>
 		</nav>
@@ -56,6 +56,15 @@
 				window.parent.addEventListener("resize", checkMobile);
 			}
 		} catch (e) {}
+
+		document.querySelectorAll(".thankyou-link").forEach((link) => {
+			link.addEventListener("click", (e) => {
+				if (window.top && window.top !== window) {
+					e.preventDefault();
+					window.top.open(link.href, "_blank", "noopener,noreferrer");
+				}
+			});
+		});
 	</script>
 </body>
 
