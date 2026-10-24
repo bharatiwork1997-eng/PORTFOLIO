@@ -1860,6 +1860,14 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	display: block;
 	touch-action: pan-y;
 	overscroll-behavior-x: none;
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+}
+.clustr-frame-wrap iframe::-webkit-scrollbar {
+	display: none !important;
+	width: 0 !important;
+	height: 0 !important;
+	background: transparent !important;
 }
 .clustr-dialog.is-fullscreen {
 	position: fixed !important;

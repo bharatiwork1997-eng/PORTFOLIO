@@ -122,6 +122,18 @@
       *, *::before, *::after, html, body { cursor: auto !important; }
     }
 
+    html, body {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      background: transparent !important;
+    }
+
     html {
       scroll-behavior: smooth;
       scroll-padding-top: calc(var(--nav-height) + 20px);
