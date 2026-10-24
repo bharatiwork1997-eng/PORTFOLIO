@@ -1020,15 +1020,15 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.contact-dialog {
 		width: min(96vw, 540px) !important;
 		max-width: min(96vw, 540px) !important;
-		height: min(94svh, 840px) !important;
-		max-height: min(94svh, 840px) !important;
+		height: min(96svh, 880px) !important;
+		max-height: min(96svh, 880px) !important;
 	}
 	.clustr-sheet,
 	.assessment-sheet,
 	.story-sheet,
 	.resume-sheet,
 	.contact-sheet {
-		padding: 10px 12px 10px !important;
+		padding: 10px 12px 6px !important;
 		max-height: 100% !important;
 		height: 100% !important;
 		box-sizing: border-box !important;
@@ -1105,7 +1105,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.story-header,
 	.resume-header {
 		padding-right: 80px !important; /* Space reserved so text NEVER overlaps buttons! */
-		margin-bottom: 4px !important;
+		margin-bottom: 6px !important;
 		flex-shrink: 0 !important;
 	}
 	.clustr-header .dialog-kicker,
@@ -1176,6 +1176,8 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 
 	/* Clustr Case Study Iframe Wrapper */
 	.clustr-frame-wrap {
+		margin-top: 10px !important;
+		margin-bottom: 2px !important;
 		flex: 1 1 auto !important;
 		min-height: 0 !important;
 		height: 100% !important;
@@ -1193,17 +1195,43 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		display: block !important;
 	}
 
-	/* Assessment & Agency Tab Panels on Mobile */
+	/* Assessment & Agency Tab Panels on Mobile - Breathing space & lower alignment */
 	.assessment-nav {
-		margin-bottom: 6px !important;
-		padding-bottom: 4px !important;
-		gap: 6px !important;
+		margin-top: 4px !important;
+		margin-bottom: 12px !important;
+		padding-bottom: 2px !important;
+		gap: 8px !important;
 		flex-shrink: 0 !important;
 	}
 	.assessment-tab {
-		padding: 4px 8px !important;
-		font-size: 10.5px !important;
+		padding: 5px 10px !important;
+		font-size: 11px !important;
+		border-radius: 4px !important;
 	}
+	.agency-nav {
+		margin-top: 4px !important;
+		margin-bottom: 12px !important;
+		padding-bottom: 4px !important;
+		overflow-x: auto !important;
+		white-space: nowrap !important;
+		flex-wrap: nowrap !important;
+		-webkit-overflow-scrolling: touch !important;
+		scrollbar-width: none !important;
+		flex-shrink: 0 !important;
+	}
+	.agency-nav::-webkit-scrollbar {
+		display: none !important;
+	}
+	.agency-subnav-group {
+		flex-shrink: 0 !important;
+	}
+	.agency-subtab {
+		padding: 4px 9px !important;
+		font-size: 10.5px !important;
+		border-radius: 4px !important;
+	}
+
+	/* Showcase Area - Expanded downward to maximize presentation area */
 	.assessment-panel {
 		flex: 1 1 auto !important;
 		min-height: 0 !important;
@@ -1213,11 +1241,16 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.assessment-panel.is-active {
 		display: flex !important;
 		flex-direction: column !important;
+		flex: 1 1 auto !important;
+		min-height: 0 !important;
+		height: 100% !important;
 	}
 	.pdf-scroll-container {
 		height: 100% !important;
 		flex: 1 1 auto !important;
 		min-height: 0 !important;
+		display: flex !important;
+		flex-direction: column !important;
 		gap: 0 !important;
 	}
 	.pdf-scroll-viewport {
@@ -1225,10 +1258,25 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		min-height: 0 !important;
 		height: 100% !important;
 		max-height: none !important;
+		border-radius: 6px !important;
+		background: #0c0a09 !important;
 	}
 	.pdf-embed-wrapper {
 		height: 100% !important;
 		min-height: 0 !important;
+		flex: 1 1 auto !important;
+	}
+	.overview-grid {
+		flex: 1 1 auto !important;
+		min-height: 0 !important;
+		overflow-y: auto !important;
+		padding: 8px 4px !important;
+	}
+	.assessment-video-wrap {
+		flex: 1 1 auto !important;
+		min-height: 0 !important;
+		height: 100% !important;
+		justify-content: center !important;
 	}
 	.pdf-scroll-pages img {
 		width: 100% !important;
@@ -1237,32 +1285,40 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.pdf-scroll-header-bar {
 		display: none !important;
 	}
-	.agency-nav {
-		overflow-x: auto !important;
-		white-space: nowrap !important;
-		flex-wrap: nowrap !important;
-		-webkit-overflow-scrolling: touch !important;
-		scrollbar-width: none !important;
-		padding-bottom: 3px !important;
-		margin-bottom: 6px !important;
-	}
-	.agency-nav::-webkit-scrollbar {
-		display: none !important;
-	}
-	.agency-subnav-group {
-		flex-shrink: 0 !important;
-	}
-	.agency-subtab {
-		padding: 3px 7px !important;
-		font-size: 10px !important;
-	}
+
+	/* Dialog Footers on Mobile - Compact bottom to give space to showcase */
 	.assessment-footer {
-		padding-top: 6px !important;
+		margin-top: 6px !important;
+		padding-top: 4px !important;
+		padding-bottom: 2px !important;
 		flex-shrink: 0 !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: flex-start !important;
 	}
-	.story-back {
-		padding: 6px 12px !important;
+	.clustr-sheet .assessment-footer,
+	.assessment-sheet .assessment-footer,
+	.agency-sheet .assessment-footer,
+	.wattpad-sheet .assessment-footer {
+		margin-top: 6px !important;
+		padding-top: 4px !important;
+	}
+	.story-back,
+	.assessment-footer .story-back {
+		margin-top: 0 !important;
+		margin-bottom: 0 !important;
+		padding: 3px 0 3px !important;
 		font-size: 11px !important;
+		line-height: 1.2 !important;
+		border: 0 !important;
+		border-bottom: 1px solid rgba(30, 27, 22, 0.35) !important;
+		background: transparent !important;
+		color: #29261f !important;
+	}
+	.story-back span,
+	.assessment-footer .story-back span {
+		margin-left: 5px !important;
+		color: #b55351 !important;
 	}
 }
 
