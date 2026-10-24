@@ -260,12 +260,12 @@ body {
 }
 
 .row-top {
+	position: relative;
 	margin-left: 39px;
-	width: 100%;
-	max-width: 767px;
+	width: calc(100% - 39px);
+	max-width: 100%;
 	display: flex;
 	align-items: flex-start;
-	justify-content: space-between;
 	align-self: start;
 	transform: translateY(-28px);
 }
@@ -287,10 +287,12 @@ body {
 }
 
 .text-assessment-work {
-	margin: -7px -2px -3px 0;
+	position: absolute;
+	left: 556px;
+	top: 13px;
+	margin: 0;
 	font-size: 26px;
 	text-align: left;
-	transform: translate(40px, 20px);
 }
 
 .text-ux-ui-case-study {
