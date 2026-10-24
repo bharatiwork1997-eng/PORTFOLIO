@@ -1056,8 +1056,8 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.page-position { font-size: 13px !important; }
 	.page-name { display: inline-block !important; font-size: 13px !important; max-width: 160px !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
 	.workspace-tools { gap: 5px; }
-	.workspace-tools button, .size-control { padding: 6px 7px; font-size: 9px; }
-	.size-control input { width: 65px; }
+	.workspace-tools button { padding: 6px 7px; font-size: 9px; }
+	.size-control, .collage-size-control { display: none !important; }
 	.story-sections { grid-template-columns: 1fr; gap: 14px; }
 	.story-sections section { min-height: 0; }
 	.story-sheet, .resume-sheet, .contact-sheet { min-height: 0; padding: 36px 20px 24px; }

@@ -316,6 +316,13 @@ body::-webkit-scrollbar {
 	box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
 }
 
+body.is-mobile-view .collage-size-control,
+@media (hover: none), (pointer: coarse) {
+	.collage-size-control {
+		display: none !important;
+	}
+}
+
 .collage-size-control input {
 	width: 58px;
 	accent-color: #cb5d5b;

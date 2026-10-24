@@ -364,7 +364,92 @@
 			img.style.top = `${posY}px`;
 
 			// Draggable pointer interactions
+			let internalTouch = null;
+			img.addEventListener("touchstart", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				lastAction = "collage";
+				img.classList.remove("popping");
+				selectSticker(img);
+				img.style.zIndex = String(++maxZIndex);
+
+				if (e.touches.length === 1) {
+					const t = e.touches[0];
+					internalTouch = {
+						mode: "drag",
+						startX: t.clientX,
+						startY: t.clientY,
+						initX: parseFloat(img.style.left) || 0,
+						initY: parseFloat(img.style.top) || 0
+					};
+				} else if (e.touches.length >= 2) {
+					const t1 = e.touches[0];
+					const t2 = e.touches[1];
+					internalTouch = {
+						mode: "pinch",
+						initialDist: Math.max(10, Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY)),
+						initialWidth: parseFloat(img.style.width) || size,
+						initialLeft: parseFloat(img.style.left) || 0,
+						initialTop: parseFloat(img.style.top) || 0,
+						initialMidX: (t1.clientX + t2.clientX) / 2,
+						initialMidY: (t1.clientY + t2.clientY) / 2
+					};
+				}
+			}, { passive: false });
+
+			img.addEventListener("touchmove", (e) => {
+				if (!internalTouch) return;
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (e.touches.length >= 2) {
+					const t1 = e.touches[0];
+					const t2 = e.touches[1];
+					const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+					const midX = (t1.clientX + t2.clientX) / 2;
+					const midY = (t1.clientY + t2.clientY) / 2;
+
+					if (internalTouch.mode !== "pinch") {
+						internalTouch = {
+							mode: "pinch",
+							initialDist: Math.max(10, dist),
+							initialWidth: parseFloat(img.style.width) || size,
+							initialLeft: parseFloat(img.style.left) || 0,
+							initialTop: parseFloat(img.style.top) || 0,
+							initialMidX: midX,
+							initialMidY: midY
+						};
+						return;
+					}
+
+					const ratio = dist / internalTouch.initialDist;
+					const newW = Math.round(Math.max(40, Math.min(480, internalTouch.initialWidth * ratio)));
+					const deltaW = newW - internalTouch.initialWidth;
+					const aspect = (img.naturalHeight || 1) / (img.naturalWidth || 1);
+					const deltaH = deltaW * aspect;
+
+					const deltaMidX = midX - internalTouch.initialMidX;
+					const deltaMidY = midY - internalTouch.initialMidY;
+
+					img.style.width = `${newW}px`;
+					img.style.left = `${internalTouch.initialLeft + deltaMidX - (deltaW / 2)}px`;
+					img.style.top = `${internalTouch.initialTop + deltaMidY - (deltaH / 2)}px`;
+					if (sizeInput) sizeInput.value = newW;
+				} else if (e.touches.length === 1 && internalTouch.mode === "drag") {
+					const t = e.touches[0];
+					img.style.left = `${internalTouch.initX + (t.clientX - internalTouch.startX)}px`;
+					img.style.top = `${internalTouch.initY + (t.clientY - internalTouch.startY)}px`;
+				}
+			}, { passive: false });
+
+			img.addEventListener("touchend", (e) => {
+				if (e.touches.length === 0) {
+					internalTouch = null;
+				}
+			}, { passive: true });
+
 			img.addEventListener("pointerdown", (e) => {
+				if (e.pointerType === "touch") return;
 				e.preventDefault();
 				e.stopPropagation();
 				lastAction = "collage";

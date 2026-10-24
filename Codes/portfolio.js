@@ -3,7 +3,7 @@ const spreads = [
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=20" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=4" },
-	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=12" },
+	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=13" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=8" }
 ];
 
@@ -244,6 +244,7 @@ function prepareFrame(iframe, src) {
 				body .spread-arrow-hit-area:focus-visible { outline:2px solid #cb5d5b; outline-offset:0; }
 				body .sticker-folder-trigger { position:absolute; z-index:18; top:-8px; left:32px; width:120px; height:160px; border:0; background:transparent; }
 				@keyframes folio-cd-turn { to { transform:rotate(360deg); } }
+				body.is-mobile-view .collage-size-control, body.is-mobile-view #collage-sticker-size { display:none !important; }
 				@media (prefers-reduced-motion:reduce) { body img, body object { transition:none !important; } body .img6 { animation:none !important; } }
 			`;
 			const frameIndex = spreads.findIndex((spread) => spread.src === src);
@@ -257,9 +258,8 @@ function prepareFrame(iframe, src) {
 			frameDocument.body.style.padding = "28px 24px";
 			frameDocument.body.style.overflow = "hidden";
 			frameDocument.documentElement.style.overflow = "hidden";
-			if (frameIndex === 5) {
-				frameDocument.body.classList.toggle("is-mobile-view", window.innerWidth <= 768);
-			}
+			const isMobileSpread = window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches;
+			frameDocument.body.classList.toggle("is-mobile-view", isMobileSpread);
 			const isCoarseOrMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
 			if (!isCoarseOrMobile) {
 				frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event), { passive: true });
@@ -1501,6 +1501,65 @@ function setupSketchbook(frameDocument) {
 			downloadCollage();
 		});
 	}
+
+	// Two-finger pinch-to-zoom on collage canvas area for active sticker
+	let layerPinchState = null;
+	const touchArea = collageArea || layer;
+
+	touchArea.addEventListener("touchstart", (e) => {
+		if (e.touches.length === 2 && activeSticker) {
+			e.preventDefault();
+			const t1 = e.touches[0];
+			const t2 = e.touches[1];
+			const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+			const midX = (t1.clientX + t2.clientX) / 2;
+			const midY = (t1.clientY + t2.clientY) / 2;
+			layerPinchState = {
+				initialDist: Math.max(10, dist),
+				initialWidth: Number.parseFloat(activeSticker.style.width) || 160,
+				initialLeft: Number.parseFloat(activeSticker.style.left) || 0,
+				initialTop: Number.parseFloat(activeSticker.style.top) || 0,
+				initialMidX: midX,
+				initialMidY: midY,
+				scale: 1280 / (bookStage?.clientWidth || 1280)
+			};
+		}
+	}, { passive: false });
+
+	touchArea.addEventListener("touchmove", (e) => {
+		if (e.touches.length === 2 && activeSticker && layerPinchState) {
+			e.preventDefault();
+			const t1 = e.touches[0];
+			const t2 = e.touches[1];
+			const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+			const midX = (t1.clientX + t2.clientX) / 2;
+			const midY = (t1.clientY + t2.clientY) / 2;
+
+			const ratio = dist / layerPinchState.initialDist;
+			const newWidth = Math.round(Math.max(40, Math.min(480, layerPinchState.initialWidth * ratio)));
+			const deltaWidth = newWidth - layerPinchState.initialWidth;
+			const naturalAspect = (activeSticker.naturalHeight || 1) / (activeSticker.naturalWidth || 1);
+			const deltaHeight = deltaWidth * naturalAspect;
+
+			const deltaMidX = (midX - layerPinchState.initialMidX) * layerPinchState.scale;
+			const deltaMidY = (midY - layerPinchState.initialMidY) * layerPinchState.scale;
+
+			activeSticker.style.width = `${newWidth}px`;
+			activeSticker.style.left = `${layerPinchState.initialLeft + deltaMidX - (deltaWidth / 2)}px`;
+			activeSticker.style.top = `${layerPinchState.initialTop + deltaMidY - (deltaHeight / 2)}px`;
+
+			const frameSlider = frameDocument.querySelector("#collage-sticker-size");
+			if (frameSlider) frameSlider.value = String(newWidth);
+			if (stickerSize) stickerSize.value = String(newWidth);
+		}
+	}, { passive: false });
+
+	touchArea.addEventListener("touchend", () => {
+		if (layerPinchState) {
+			layerPinchState = null;
+			persistStickers(layer);
+		}
+	}, { passive: true });
 }
 
 function persistSketch(canvas) {
@@ -1562,7 +1621,145 @@ function placeSticker(src, x, y, size, layer, isPopping = false) {
 	});
 	sticker.style.zIndex = String(highestZ + 1);
 
+	// Multi-touch handling: 1-finger drag, 2-finger pinch-to-resize
+	let touchState = null;
+
+	sticker.addEventListener("touchstart", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		sticker.classList.remove("popping");
+		selectSticker(sticker);
+
+		let maxZ = 35;
+		frameDocument.querySelectorAll(".collage-sticker").forEach((s) => {
+			const z = parseInt(s.style.zIndex || 30, 10);
+			if (z > maxZ) maxZ = z;
+		});
+		sticker.style.zIndex = String(maxZ + 1);
+
+		const scale = 1280 / (bookStage?.clientWidth || 1280);
+
+		if (e.touches.length === 1) {
+			const t = e.touches[0];
+			touchState = {
+				mode: "drag",
+				startX: t.clientX,
+				startY: t.clientY,
+				initialLeft: Number.parseFloat(sticker.style.left) || 0,
+				initialTop: Number.parseFloat(sticker.style.top) || 0,
+				scale
+			};
+		} else if (e.touches.length >= 2) {
+			const t1 = e.touches[0];
+			const t2 = e.touches[1];
+			const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+			const midX = (t1.clientX + t2.clientX) / 2;
+			const midY = (t1.clientY + t2.clientY) / 2;
+			touchState = {
+				mode: "pinch",
+				initialDist: Math.max(10, dist),
+				initialWidth: Number.parseFloat(sticker.style.width) || size,
+				initialMidX: midX,
+				initialMidY: midY,
+				initialLeft: Number.parseFloat(sticker.style.left) || 0,
+				initialTop: Number.parseFloat(sticker.style.top) || 0,
+				scale
+			};
+		}
+	}, { passive: false });
+
+	const onTouchMove = (e) => {
+		if (!touchState) return;
+		e.preventDefault();
+		e.stopPropagation();
+
+		const scale = touchState.scale || (1280 / (bookStage?.clientWidth || 1280));
+
+		if (e.touches.length >= 2) {
+			const t1 = e.touches[0];
+			const t2 = e.touches[1];
+			const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+			const midX = (t1.clientX + t2.clientX) / 2;
+			const midY = (t1.clientY + t2.clientY) / 2;
+
+			if (touchState.mode !== "pinch") {
+				touchState = {
+					mode: "pinch",
+					initialDist: Math.max(10, dist),
+					initialWidth: Number.parseFloat(sticker.style.width) || size,
+					initialMidX: midX,
+					initialMidY: midY,
+					initialLeft: Number.parseFloat(sticker.style.left) || 0,
+					initialTop: Number.parseFloat(sticker.style.top) || 0,
+					scale
+				};
+				return;
+			}
+
+			const ratio = dist / touchState.initialDist;
+			const newWidth = Math.round(Math.max(40, Math.min(480, touchState.initialWidth * ratio)));
+			const deltaWidth = newWidth - touchState.initialWidth;
+			const naturalAspect = (sticker.naturalHeight || 1) / (sticker.naturalWidth || 1);
+			const deltaHeight = deltaWidth * naturalAspect;
+
+			const deltaMidX = (midX - touchState.initialMidX) * scale;
+			const deltaMidY = (midY - touchState.initialMidY) * scale;
+
+			const newLeft = touchState.initialLeft + deltaMidX - (deltaWidth / 2);
+			const newTop = touchState.initialTop + deltaMidY - (deltaHeight / 2);
+
+			sticker.style.width = `${newWidth}px`;
+			sticker.style.left = `${newLeft}px`;
+			sticker.style.top = `${newTop}px`;
+
+			const frameSlider = frameDocument.querySelector("#collage-sticker-size");
+			if (frameSlider) frameSlider.value = String(newWidth);
+			if (stickerSize) stickerSize.value = String(newWidth);
+		} else if (e.touches.length === 1 && touchState.mode === "drag") {
+			const t = e.touches[0];
+			const currentWidth = Number.parseFloat(sticker.style.width) || size;
+			const naturalAspect = (sticker.naturalHeight || 1) / (sticker.naturalWidth || 1);
+			const currentHeight = currentWidth * naturalAspect;
+
+			const newX = touchState.initialLeft + (t.clientX - touchState.startX) * scale;
+			const newY = touchState.initialTop + (t.clientY - touchState.startY) * scale;
+
+			const minX = -currentWidth * 0.75;
+			const maxX = layer.clientWidth - (currentWidth * 0.25);
+			const minY = -currentHeight * 0.75;
+			const maxY = layer.clientHeight - (currentHeight * 0.25);
+
+			sticker.style.left = `${Math.max(minX, Math.min(maxX, newX))}px`;
+			sticker.style.top = `${Math.max(minY, Math.min(maxY, newY))}px`;
+		}
+	};
+
+	const onTouchEnd = (e) => {
+		if (e.touches.length === 0) {
+			if (touchState) {
+				touchState = null;
+				persistStickers(layer);
+			}
+		} else if (e.touches.length === 1 && touchState?.mode === "pinch") {
+			const t = e.touches[0];
+			const scale = touchState.scale || (1280 / (bookStage?.clientWidth || 1280));
+			touchState = {
+				mode: "drag",
+				startX: t.clientX,
+				startY: t.clientY,
+				initialLeft: Number.parseFloat(sticker.style.left) || 0,
+				initialTop: Number.parseFloat(sticker.style.top) || 0,
+				scale
+			};
+		}
+	};
+
+	frameDocument.addEventListener("touchmove", onTouchMove, { passive: false });
+	frameDocument.addEventListener("touchend", onTouchEnd, { passive: false });
+	frameDocument.addEventListener("touchcancel", onTouchEnd, { passive: false });
+
 	sticker.addEventListener("pointerdown", (event) => {
+		if (event.pointerType === "touch") return; // Handled by touch events with pinch-to-resize support
 		event.preventDefault();
 		sticker.classList.remove("popping");
 		selectSticker(sticker);
