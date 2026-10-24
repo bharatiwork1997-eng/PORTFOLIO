@@ -1067,7 +1067,12 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.story-sections section { min-height: 0; }
 	.story-sheet, .resume-sheet, .contact-sheet { min-height: 0; padding: 36px 20px 24px; }
 	.story-intro, .resume-summary { font-size: 13px; }
-	.cover-note { bottom: 16px; font-size: 12px; }
+	.cover-note {
+		bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 14px)) !important;
+		font-size: 13px !important;
+		z-index: 10 !important;
+		text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 4px #000 !important;
+	}
 	.pencil-cursor, .arrow-cursor { display: none !important; visibility: hidden !important; opacity: 0 !important; }
 	.cover-art iframe { display: none !important; }
 	.mobile-cover {
@@ -1078,7 +1083,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		align-items: center;
 		justify-content: flex-start;
 		padding-top: max(14svh, 92px);
-		padding-bottom: max(9svh, 54px);
+		padding-bottom: max(10svh, 64px);
 		padding-left: 18px;
 		padding-right: 18px;
 		overflow: hidden;
@@ -1093,7 +1098,7 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		align-items: center;
 		justify-content: center;
 		font-family: var(--pixel);
-		font-size: clamp(52px, 14.5vw, 76px);
+		font-size: clamp(50px, 14vw, 72px);
 		line-height: 0.94;
 		letter-spacing: 2px;
 		color: #282828;
@@ -1109,18 +1114,19 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-top: 6px;
+		margin-top: -6px;
+		margin-bottom: 24px;
 		pointer-events: none;
 	}
 	.mobile-cover-img {
 		display: block;
-		width: min(84vw, 420px);
-		max-height: 58svh;
+		width: min(76vw, 380px);
+		max-height: 52svh;
 		height: auto;
 		object-fit: contain;
 		pointer-events: none;
 		filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.85));
-		transform: scale(1.56) translateY(6px) !important;
+		transform: scale(1.4) translateY(-24px) !important;
 		transform-origin: 47% 37% !important;
 	}
 
