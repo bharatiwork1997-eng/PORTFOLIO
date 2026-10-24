@@ -8,12 +8,15 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="portfolio.css?v=72">
+	<link rel="stylesheet" href="portfolio.css?v=73">
+	<link rel="preload" as="image" href="assets/logo-bharati.png" fetchpriority="high">
 	<link rel="preload" as="image" href="welcoming-screen-html-css/assets/img2.png" fetchpriority="high">
 </head>
 <body>
 	<header class="site-header">
-		<a class="wordmark" href="#cover" aria-label="Bharati Kamble home">BHARATI KAMBLE</a>
+		<a class="wordmark" href="#cover" aria-label="Bharati Kamble home">
+			<img src="assets/logo-bharati.png" alt="Bharati Kamble" class="site-wordmark-img" width="244" height="32" loading="eager" fetchpriority="high">
+		</a>
 		<p class="site-role">Visualizer &amp; UX/UI Designer</p>
 		<div class="header-actions">
 			<button class="contact-link fullscreen-site-btn" id="site-fullscreen-toggle" type="button" aria-label="Toggle Fullscreen" title="Toggle Fullscreen (F)"><span class="fs-text">Fullscreen</span> <span class="fs-icon" aria-hidden="true">⛶</span></button>
