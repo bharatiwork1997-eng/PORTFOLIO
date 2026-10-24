@@ -8,7 +8,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="portfolio.css?v=73">
+	<link rel="stylesheet" href="portfolio.css?v=74">
 	<link rel="preload" as="image" href="assets/logo-bharati.png" fetchpriority="high">
 	<link rel="preload" as="image" href="welcoming-screen-html-css/assets/img2.png" fetchpriority="high">
 </head>
@@ -46,8 +46,8 @@
 		<section class="portfolio-view" id="portfolio" hidden aria-label="Interactive portfolio sketchbook">
 			<div class="book-stage" id="book-stage" aria-label="Sketchbook pages">
 				<div class="book-scene" id="book-scene">
-					<iframe class="spread-frame is-active" id="frame-a" title="Portfolio spread" allowtransparency="true"></iframe>
-					<iframe class="spread-frame" id="frame-b" title="Portfolio spread" allowtransparency="true"></iframe>
+					<iframe class="spread-frame is-active" id="frame-a" title="Portfolio spread" allowtransparency="true" scrolling="no"></iframe>
+					<iframe class="spread-frame" id="frame-b" title="Portfolio spread" allowtransparency="true" scrolling="no"></iframe>
 				</div>
 			</div>
 			<div class="book-controls">
@@ -544,7 +544,7 @@
 			</div>
 			<p class="video-intro">An animated narrative on screen dependency, contrasting digital isolation with the tactile presence of the physical world.</p>
 			<div class="video-player-wrap">
-				<video id="lost-video" controls playsinline webkit-playsinline x5-playsinline preload="auto">
+				<video id="lost-video" controls playsinline webkit-playsinline x5-playsinline preload="none">
 					<source src="assets/LOST%20Video.mp4" type="video/mp4">
 					Your browser does not support the video tag.
 				</video>

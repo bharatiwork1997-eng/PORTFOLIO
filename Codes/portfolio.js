@@ -219,8 +219,8 @@ function prepareFrame(iframe, src) {
 				@media (hover: none), (pointer: coarse) {
 					html, body, *, *::before, *::after { cursor:auto !important; }
 				}
-				html, body { width:1280px !important; height:900px !important; min-height:0 !important; overflow:hidden !important; background-color:#000 !important; }
-				body { padding:28px 24px !important; }
+				html, body { width:1280px !important; height:900px !important; min-height:0 !important; max-height:900px !important; overflow:hidden !important; overscroll-behavior:none !important; touch-action:pan-x !important; background-color:#000 !important; }
+				body { padding:28px 24px !important; overflow:hidden !important; overscroll-behavior:none !important; touch-action:pan-x !important; }
 				body img, body object { transition:transform 220ms ease, filter 220ms ease; }
 				body img:not(.collage-sticker):hover { filter:drop-shadow(0 4px 5px rgba(34,25,17,.16)); }
 				body img:not(.collage-sticker):not(.img6):hover { transform:translateY(-3px) scale(1.025); }
@@ -257,11 +257,17 @@ function prepareFrame(iframe, src) {
 			if (frameIndex === 5) {
 				frameDocument.body.classList.toggle("is-mobile-view", window.innerWidth <= 768);
 			}
-			frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event), { passive: true });
-			frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event), { passive: true });
+			const isCoarseOrMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
+			if (!isCoarseOrMobile) {
+				frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event), { passive: true });
+				frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event), { passive: true });
+			}
 			frameDocument.addEventListener("pointerdown", (event) => startEdgeGesture(frameDocument, event), { passive: true });
 			frameDocument.addEventListener("pointerup", (event) => finishGesture(event));
 			frameDocument.addEventListener("pointercancel", cancelGesture);
+			frameDocument.addEventListener("touchmove", (event) => {
+				if (event.cancelable) event.preventDefault();
+			}, { passive: false });
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("keydown", (event) => {
 				const isZ = event.key === "z" || event.key === "Z" || event.code === "KeyZ";
@@ -381,9 +387,6 @@ function setupCover() {
 			`;
 			frameDocument.head.append(style);
 			frameDocument.documentElement.style.overflow = "hidden";
-			if (frameIndex === 5) {
-				frameDocument.body.classList.toggle("is-mobile-view", window.innerWidth <= 768);
-			}
 			frameDocument.documentElement.style.scrollbarWidth = "none";
 			frameDocument.body.style.width = "1920px";
 			frameDocument.body.style.height = "1080px";
@@ -422,12 +425,6 @@ function openBook() {
 	if (openingBook || !portfolio.hidden) return;
 	openingBook = true;
 	wheelLocked = true;
-
-	// Mobile / Touch: trigger fullscreen when opening the sketchbook
-	const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
-	if (isTouch && !isFullscreen()) {
-		requestFullscreenSafe();
-	}
 
 	window.scrollTo(0, 0);
 	pageIndex = 0;
@@ -1874,50 +1871,75 @@ document.addEventListener("keydown", (event) => {
 	}
 });
 
-// Fullscreen API Helper
+// Global touch scroll lock for mobile portfolio view
+window.addEventListener("touchmove", (event) => {
+	const activeDialog = document.querySelector("dialog[open]");
+	if (activeDialog) {
+		const sheet = event.target.closest(".clustr-sheet, .resume-sheet, .contact-sheet, .story-sheet, .assessment-sheet, .video-sheet");
+		if (sheet) return; // Allow internal modal scrolling
+		if (event.cancelable) event.preventDefault();
+		return;
+	}
+	if (!portfolio.hidden && event.cancelable) {
+		event.preventDefault();
+	}
+}, { passive: false });
+
+// Fullscreen API Helper with pseudo-fullscreen fallback for iOS Safari / Mobile
 function isFullscreen() {
-	return Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+	return Boolean(
+		document.fullscreenElement ||
+		document.webkitFullscreenElement ||
+		document.mozFullScreenElement ||
+		document.msFullscreenElement ||
+		document.body.classList.contains("is-fullscreen-mode")
+	);
 }
 
 async function requestFullscreenSafe(element = document.documentElement) {
+	let entered = false;
 	try {
 		if (element.requestFullscreen) {
 			await element.requestFullscreen();
+			entered = true;
 		} else if (element.webkitRequestFullscreen) {
 			await element.webkitRequestFullscreen();
+			entered = true;
 		} else if (element.mozRequestFullScreen) {
 			await element.mozRequestFullScreen();
+			entered = true;
 		} else if (element.msRequestFullscreen) {
 			await element.msRequestFullscreen();
-		}
-		if (screen.orientation && typeof screen.orientation.lock === "function") {
-			try {
-				await screen.orientation.lock("landscape");
-			} catch (_) {}
+			entered = true;
 		}
 	} catch (err) {
-		console.log("Fullscreen request was not granted:", err);
+		console.warn("Native fullscreen request not granted, falling back to pseudo-fullscreen:", err);
+	}
+
+	if (!entered || !Boolean(document.fullscreenElement || document.webkitFullscreenElement)) {
+		document.body.classList.add("is-fullscreen-mode");
+		try {
+			window.scrollTo(0, 1);
+		} catch (_) {}
 	}
 	updateFullscreenUI();
 }
 
 async function exitFullscreenSafe() {
+	document.body.classList.remove("is-fullscreen-mode");
 	try {
-		if (document.exitFullscreen) {
+		if (document.fullscreenElement && document.exitFullscreen) {
 			await document.exitFullscreen();
-		} else if (document.webkitExitFullscreen) {
+		} else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
 			await document.webkitExitFullscreen();
-		} else if (document.mozCancelFullScreen) {
+		} else if (document.mozCancelFullScreen && document.mozCancelFullScreen) {
 			await document.mozCancelFullScreen();
 		} else if (document.msExitFullscreen) {
 			await document.msExitFullscreen();
 		}
-		if (screen.orientation && typeof screen.orientation.unlock === "function") {
-			try {
-				screen.orientation.unlock();
-			} catch (_) {}
-		}
-	} catch (_) {}
+	} catch (err) {
+		console.warn("Exit fullscreen was not granted:", err);
+	}
 	updateFullscreenUI();
 }
 
@@ -1937,6 +1959,7 @@ function updateFullscreenUI() {
 		if (icon) icon.textContent = active ? "✕" : "⛶";
 		if (label) label.textContent = active ? "Exit" : "Fullscreen";
 		siteFullscreenToggle.setAttribute("aria-label", active ? "Exit Fullscreen" : "Enter Fullscreen");
+		siteFullscreenToggle.title = active ? "Exit Fullscreen (F)" : "Toggle Fullscreen (F)";
 	}
 	setTimeout(fitBookScene, 80);
 }
@@ -1950,15 +1973,17 @@ if (siteFullscreenToggle) {
 setupCover();
 updateBookControls();
 
-// Preload Spread 0 immediately in background, and Spread 1 right after during idle
+// Preload Spread 0 immediately in background; only on desktop preload Spread 1 & Clustr eagerly
+const isMobileClient = typeof window !== "undefined" && (window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches);
+
 prepareFrame(activeFrame, spreads[0].src).then(() => {
-	if (standbyFrame && spreads[1]) {
+	if (!isMobileClient && standbyFrame && spreads[1]) {
 		prepareFrame(standbyFrame, spreads[1].src);
 	}
 });
 
-// Preload Clustr Case Study in background during idle so modal opening is instant
-if (typeof window !== "undefined") {
+// Preload Clustr Case Study in background during idle on desktop only
+if (typeof window !== "undefined" && !isMobileClient) {
 	const preloadClustr = () => {
 		const clustrIframe = document.querySelector("#clustr-frame");
 		if (clustrIframe && (!clustrIframe.src || clustrIframe.src === "about:blank" || clustrIframe.src.endsWith("about:blank"))) {
@@ -1966,8 +1991,8 @@ if (typeof window !== "undefined") {
 		}
 	};
 	if ("requestIdleCallback" in window) {
-		window.requestIdleCallback(preloadClustr, { timeout: 3500 });
+		window.requestIdleCallback(preloadClustr, { timeout: 4000 });
 	} else {
-		setTimeout(preloadClustr, 2500);
+		setTimeout(preloadClustr, 3000);
 	}
 }

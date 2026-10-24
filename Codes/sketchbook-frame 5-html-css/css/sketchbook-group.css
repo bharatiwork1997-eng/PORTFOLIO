@@ -13,7 +13,9 @@ body {
 	letter-spacing: 0px;
 	background-color: #000;
 	padding: 118px 24px;
-	overflow: auto;
+	overflow: hidden !important;
+	overscroll-behavior: none !important;
+	touch-action: pan-x !important;
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 }

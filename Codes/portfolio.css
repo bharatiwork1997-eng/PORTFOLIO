@@ -829,14 +829,14 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 .email-link { display: inline-block; margin-top: 35px; border-bottom: 1px solid #333; padding-bottom: 8px; color: #29261f; font-size: clamp(14px,2.2vw,20px); text-decoration: none; }
 
 /* ===== FULLSCREEN & RESPONSIVE LAYOUT ===== */
-:fullscreen, :-webkit-full-screen {
+:fullscreen, :-webkit-full-screen, body.is-fullscreen-mode {
 	background: #000;
 }
-:fullscreen .site-header, :-webkit-full-screen .site-header {
-	opacity: 0.8;
+:fullscreen .site-header, :-webkit-full-screen .site-header, body.is-fullscreen-mode .site-header {
+	opacity: 0.85;
 	transition: opacity 200ms ease;
 }
-:fullscreen .site-header:hover, :-webkit-full-screen .site-header:hover {
+:fullscreen .site-header:hover, :-webkit-full-screen .site-header:hover, body.is-fullscreen-mode .site-header:hover {
 	opacity: 1;
 }
 
@@ -905,6 +905,16 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 
 /* Mobile Portrait & Narrow Viewports (< 768px width) */
 @media (max-width: 768px) {
+	html, body {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		height: 100dvh;
+		overflow: hidden !important;
+		overscroll-behavior: none !important;
+		touch-action: pan-x !important;
+		-webkit-overflow-scrolling: auto;
+	}
 	.site-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; font-size: 11px; }
 	.site-wordmark-img { height: 18px; max-width: 140px; }
 	.site-role { display: none !important; }
@@ -912,8 +922,16 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.contact-link, .fullscreen-site-btn { font-size: 11px; padding: 2px 0 1px; gap: 3px; white-space: nowrap; }
 	.contact-link span, .fullscreen-site-btn .fs-icon { font-size: 10px; }
 	.portfolio-view {
+		position: fixed !important;
+		inset: 0 !important;
+		width: 100vw !important;
+		height: 100svh !important;
+		height: 100dvh !important;
+		max-height: 100dvh !important;
 		padding: 42px 6px 14px !important;
-		min-height: 100svh !important;
+		overflow: hidden !important;
+		overscroll-behavior: none !important;
+		touch-action: pan-x !important;
 		display: flex !important;
 		flex-direction: column !important;
 		justify-content: center !important;
@@ -929,6 +947,8 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		overflow: hidden !important;
 		background: #000 !important;
 		filter: none !important;
+		touch-action: pan-x !important;
+		overscroll-behavior: none !important;
 	}
 	.book-scene {
 		width: 1280px !important;
@@ -937,6 +957,12 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		transform-origin: top left !important;
 		border-radius: 0 !important;
 		transition: transform 260ms cubic-bezier(0.2, 0.8, 0.25, 1) !important;
+		touch-action: pan-x !important;
+		overscroll-behavior: none !important;
+	}
+	.spread-frame {
+		touch-action: pan-x !important;
+		overscroll-behavior: none !important;
 	}
 	.book-controls {
 		width: min(98vw, 442px, calc((100svh - 76px) * 0.7111)) !important;
@@ -945,6 +971,8 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		display: flex !important;
 		align-items: center !important;
 		justify-content: space-between !important;
+		touch-action: pan-x !important;
+		overscroll-behavior: none !important;
 	}
 	.turn-button { font-size: 13px !important; padding: 6px 4px !important; }
 	.page-position { font-size: 13px !important; }
