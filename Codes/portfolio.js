@@ -257,8 +257,8 @@ function prepareFrame(iframe, src) {
 			if (frameIndex === 5) {
 				frameDocument.body.classList.toggle("is-mobile-view", window.innerWidth <= 768);
 			}
-			frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event));
-			frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event));
+			frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event), { passive: true });
+			frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event), { passive: true });
 			frameDocument.addEventListener("pointerdown", (event) => startEdgeGesture(frameDocument, event), { passive: true });
 			frameDocument.addEventListener("pointerup", (event) => finishGesture(event));
 			frameDocument.addEventListener("pointercancel", cancelGesture);
@@ -332,7 +332,7 @@ function handleFramePointer(iframe, event) {
 	}
 	const targetIframe = iframe || activeFrame;
 	if (!targetIframe) return;
-	const rect = targetIframe.getBoundingClientRect();
+	const rect = cachedBookRect || (cachedBookRect = targetIframe.getBoundingClientRect());
 	if (!rect || rect.width === 0) return;
 	const pageX = rect.left + (event.clientX * rect.width) / 1280;
 	const pageY = rect.top + (event.clientY * rect.height) / 900;
@@ -347,6 +347,9 @@ function movePencil(x, y) {
 		return;
 	}
 	if (!pencil) return;
+	if (pencil.style.display === "none") {
+		pencil.style.display = "";
+	}
 	pencil.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 	if (!pencilVisible) {
 		pencilVisible = true;
@@ -391,16 +394,16 @@ function setupCover() {
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("pointerenter", (event) => {
 				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
-				const rect = coverFrame ? coverFrame.getBoundingClientRect() : null;
+				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
 				if (!rect || rect.width === 0) return;
 				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
-			});
+			}, { passive: true });
 			frameDocument.addEventListener("pointermove", (event) => {
 				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
-				const rect = coverFrame ? coverFrame.getBoundingClientRect() : null;
+				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
 				if (!rect || rect.width === 0) return;
 				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
-			});
+			}, { passive: true });
 			frameDocument.addEventListener("click", () => {
 				openBook();
 			});
@@ -1383,7 +1386,7 @@ function setupSketchbook(frameDocument) {
 		drawing = true;
 		canvas.setPointerCapture(event.pointerId);
 		const frame = frameDocument.defaultView?.frameElement || activeFrame;
-		const rect = frame ? frame.getBoundingClientRect() : null;
+		const rect = cachedBookRect || (frame ? (cachedBookRect = frame.getBoundingClientRect()) : null);
 		if (rect && rect.width > 0) {
 			movePencil(rect.left + (event.clientX * rect.width) / 1280, rect.top + (event.clientY * rect.height) / 900);
 		}
@@ -1394,7 +1397,7 @@ function setupSketchbook(frameDocument) {
 	});
 	canvas.addEventListener("pointermove", (event) => {
 		const frame = frameDocument.defaultView?.frameElement || activeFrame;
-		const rect = frame ? frame.getBoundingClientRect() : null;
+		const rect = cachedBookRect || (frame ? (cachedBookRect = frame.getBoundingClientRect()) : null);
 		if (rect && rect.width > 0) {
 			movePencil(rect.left + (event.clientX * rect.width) / 1280, rect.top + (event.clientY * rect.height) / 900);
 		}
@@ -1947,5 +1950,24 @@ if (siteFullscreenToggle) {
 setupCover();
 updateBookControls();
 
-// Preload Spread 0 immediately in background so opening sketchbook has 0ms wait!
-prepareFrame(activeFrame, spreads[0].src);
+// Preload Spread 0 immediately in background, and Spread 1 right after during idle
+prepareFrame(activeFrame, spreads[0].src).then(() => {
+	if (standbyFrame && spreads[1]) {
+		prepareFrame(standbyFrame, spreads[1].src);
+	}
+});
+
+// Preload Clustr Case Study in background during idle so modal opening is instant
+if (typeof window !== "undefined") {
+	const preloadClustr = () => {
+		const clustrIframe = document.querySelector("#clustr-frame");
+		if (clustrIframe && (!clustrIframe.src || clustrIframe.src === "about:blank" || clustrIframe.src.endsWith("about:blank"))) {
+			clustrIframe.src = clustrIframe.dataset.src || "clustr/index.html?v=5";
+		}
+	};
+	if ("requestIdleCallback" in window) {
+		window.requestIdleCallback(preloadClustr, { timeout: 3500 });
+	} else {
+		setTimeout(preloadClustr, 2500);
+	}
+}

@@ -8,6 +8,8 @@
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
 	<link rel="stylesheet" href="css/welcoming-screen.css?v=6" />
+	<link rel="preload" as="image" href="assets/img1.png" fetchpriority="high" />
+	<link rel="preload" as="image" href="assets/img2.png" fetchpriority="high" />
 	<style>
 		.standalone-pencil {
 			display: none;
@@ -33,8 +35,8 @@
 
 <body>
 	<h1 class="title-grab-a-seat">GRAB A SEAT</h1>
-	<img src="assets/img1.png" class="img1" />
-	<div class="standalone-pencil" id="standalone-pencil" aria-hidden="true"><img src="assets/img2.png" alt=""></div>
+	<img src="assets/img1.png" class="img1" loading="eager" fetchpriority="high" decoding="sync" />
+	<div class="standalone-pencil" id="standalone-pencil" aria-hidden="true"><img src="assets/img2.png" alt="" loading="eager" fetchpriority="high" decoding="sync"></div>
 
 	<script>
 		if (window.self === window.top) {

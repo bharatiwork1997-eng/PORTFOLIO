@@ -8,11 +8,12 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/global.css" />
 	<link rel="stylesheet" href="css/detailed-page.css?v=11" />
+	<link rel="preload" as="image" href="assets/pencil-cursor.png" fetchpriority="high" />
 
 </head>
 
 <body>
-	<div class="pencil-cursor" aria-hidden="true"><img src="assets/pencil-cursor.png" alt=""></div>
+	<div class="pencil-cursor" aria-hidden="true"><img src="assets/pencil-cursor.png" alt="" loading="eager" fetchpriority="high" decoding="sync"></div>
 	<main class="page-container">
 		<div class="assessment-sheet agency-sheet">
 			<div class="dialog-top-actions">

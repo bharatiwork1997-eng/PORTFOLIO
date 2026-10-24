@@ -285,6 +285,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 	opacity: 0;
 	will-change: transform;
 	transform: translate3d(-200px, -200px, 0);
+	contain: layout style paint;
 }
 .pencil-cursor img {
 	display: block;

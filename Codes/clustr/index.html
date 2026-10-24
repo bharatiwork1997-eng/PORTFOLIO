@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/pencil-cursor.png" fetchpriority="high" />
 
   <style>
     /* ==========================================================================
@@ -3450,7 +3451,7 @@
   </style>
 </head>
 <body>
-  <div class="pencil-cursor" aria-hidden="true"><img src="assets/pencil-cursor.png" alt=""></div>
+  <div class="pencil-cursor" aria-hidden="true"><img src="assets/pencil-cursor.png" alt="" loading="eager" fetchpriority="high" decoding="sync"></div>
 
   <!-- ==========================================================================
        STICKY HEADER (WITH BRAND LOGO & CLEAN SINGLE-LINE LAYOUT)

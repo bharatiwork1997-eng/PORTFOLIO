@@ -8,7 +8,8 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="portfolio.css?v=70">
+	<link rel="stylesheet" href="portfolio.css?v=71">
+	<link rel="preload" as="image" href="welcoming-screen-html-css/assets/img2.png" fetchpriority="high">
 </head>
 <body>
 	<header class="site-header">
@@ -54,7 +55,7 @@
 		</section>
 	</main>
 
-	<div class="pencil-cursor" aria-hidden="true"><img src="welcoming-screen-html-css/assets/img2.png" alt=""></div>
+	<div class="pencil-cursor" aria-hidden="true"><img src="welcoming-screen-html-css/assets/img2.png" alt="" loading="eager" fetchpriority="high" decoding="sync"></div>
 	<div class="arrow-cursor" aria-hidden="true"><img src="assets/pixel-arrow-cursor.png" alt=""></div>
 	<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -551,6 +552,6 @@
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=93"></script>
+	<script src="portfolio.js?v=94"></script>
 </body>
 </html>
