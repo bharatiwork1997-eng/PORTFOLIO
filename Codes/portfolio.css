@@ -1023,10 +1023,10 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		display: none !important;
 	}
 	.book-stage {
-		width: min(98vw, 442px, calc((100svh - 76px) * 0.7111)) !important;
+		width: min(94vw, 410px, calc((100svh - 146px) * 0.7111)) !important;
 		min-width: 0 !important;
 		aspect-ratio: 640 / 900 !important;
-		margin: -18px auto 0 !important;
+		margin: 0 auto !important;
 		border-radius: 0 !important;
 		overflow: hidden !important;
 		background: #000 !important;

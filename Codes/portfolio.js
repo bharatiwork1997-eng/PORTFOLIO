@@ -1,6 +1,6 @@
 const spreads = [
 	{ title: "About me", src: "sketchbook-frame 1-html-css/sketchbook-group.html?v=3" },
-	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=21" },
+	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=22" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
 	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=4" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=13" },
@@ -140,15 +140,12 @@ fitCanvas(coverFrame, 1920, 1080, document.querySelector(".cover-art"));
 function getMobileOffsetX(entry) {
 	if (!entry) return -40;
 	if (entry.sub === 0.5) return -320;
-	if (entry.spreadIndex === 1) {
-		return entry.sub === 1 ? -590 : -48;
-	}
 	return entry.sub === 1 ? -600 : -40;
 }
 
 function fitBookScene() {
 	if (isMobileSinglePage()) {
-		const stageWidth = bookStage.clientWidth || Math.min(window.innerWidth * 0.98, 442, (window.innerHeight - 76) * 0.7111);
+		const stageWidth = bookStage.clientWidth || Math.min(window.innerWidth * 0.94, 410, (window.innerHeight - 146) * 0.7111);
 		const scale = stageWidth / 640;
 		bookScene.style.setProperty("--book-scale", String(scale));
 		const currentEntry = singlePages[mobilePageIndex];

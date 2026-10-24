@@ -38,7 +38,7 @@ body {
 }
 
 .text-input1 {
-	top: 225px; left: 129px; 
+	top: 205px; left: 129px; 
 	rotate: -2deg;
 	width: calc(100% - 129px);
 	max-width: 359px;
@@ -84,7 +84,7 @@ body {
 }
 
 .text-input2 {
-	top: 239px; left: 671px; 
+	top: 215px; left: 671px; 
 	rotate: 2deg;
 	width: calc(100% - 671px);
 	max-width: 359px;
@@ -205,7 +205,7 @@ body {
 
 .img1 {
 	position: absolute; 
-	top: 588px; 
+	top: 568px; 
 	left: 616px; 
 	rotate: -10deg;
 	transform-origin: 50% 50%;
@@ -239,7 +239,7 @@ body {
 
 .graphic {
 	position: absolute; 
-	top: 576px; 
+	top: 560px; 
 	left: 136px; 
 	width: 122px; 
 	height: auto;
@@ -267,7 +267,7 @@ body {
 	display: flex;
 	align-items: flex-start;
 	align-self: start;
-	transform: translateY(-28px);
+	transform: translateY(-24px);
 }
 
 .case-study-heading {
@@ -277,7 +277,7 @@ body {
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 3px;
-	transform: translateY(20px);
+	transform: translateY(16px);
 }
 
 .subtitle-clustr {
@@ -289,7 +289,7 @@ body {
 .text-assessment-work {
 	position: absolute;
 	left: 556px;
-	top: 13px;
+	top: 10px;
 	margin: 0;
 	font-size: 26px;
 	text-align: left;
@@ -832,4 +832,8 @@ body {
 		width: 100% !important;
 		box-sizing: border-box !important;
 	}
+}
+
+dialog:not([open]) {
+	display: none !important;
 }
