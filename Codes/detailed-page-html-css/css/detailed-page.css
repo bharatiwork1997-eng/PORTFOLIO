@@ -753,3 +753,15 @@ body.is-fullscreen .assessment-footer {
 	margin-left: 7px;
 	color: #b55351;
 }
+
+@media (max-width: 768px) {
+	.overview-grid {
+		display: flex !important;
+		flex-direction: column !important;
+		gap: 12px !important;
+	}
+	.overview-card {
+		width: 100% !important;
+		box-sizing: border-box !important;
+	}
+}

@@ -1266,11 +1266,45 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		min-height: 0 !important;
 		flex: 1 1 auto !important;
 	}
+	/* Overview & Strategy Cards on Mobile - Horizontal full-width card layout */
 	.overview-grid {
+		display: flex !important;
+		flex-direction: column !important;
+		grid-template-columns: 1fr !important;
+		gap: 12px !important;
 		flex: 1 1 auto !important;
 		min-height: 0 !important;
 		overflow-y: auto !important;
-		padding: 8px 4px !important;
+		padding: 6px 4px 16px !important;
+		-webkit-overflow-scrolling: touch !important;
+	}
+	.overview-card {
+		width: 100% !important;
+		box-sizing: border-box !important;
+		padding: 14px 16px !important;
+		background: rgba(255, 255, 255, 0.72) !important;
+		border: 1px solid rgba(40, 36, 30, 0.16) !important;
+		border-radius: 6px !important;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+	}
+	.overview-card .card-num {
+		font-size: 11px !important;
+		font-weight: 700 !important;
+		color: #9b514f !important;
+		margin-bottom: 4px !important;
+		display: inline-block !important;
+	}
+	.overview-card h3 {
+		margin: 0 0 8px !important;
+		font-size: 15px !important;
+		font-weight: 600 !important;
+		color: #211f1b !important;
+		line-height: 1.25 !important;
+	}
+	.overview-card p {
+		margin: 0 !important;
+		font: 12px/1.55 var(--pixel) !important;
+		color: #554f46 !important;
 	}
 	.assessment-video-wrap {
 		flex: 1 1 auto !important;
