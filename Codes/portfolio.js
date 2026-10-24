@@ -142,13 +142,16 @@ fitCanvas(coverFrame, 1920, 1080, document.querySelector(".cover-art"));
 
 function fitBookScene() {
 	if (isMobileSinglePage()) {
-		const scale = bookStage.clientWidth / 640;
+		const stageWidth = bookStage.clientWidth || Math.min(window.innerWidth * 0.94, 420, (window.innerHeight - 130) * 0.7111);
+		const scale = stageWidth / 640;
 		bookScene.style.setProperty("--book-scale", String(scale));
 		const currentSub = singlePages[mobilePageIndex]?.sub ?? 0;
 		const offsetX = currentSub === 0.5 ? -320 : (currentSub === 1 ? -600 : -40);
 		bookScene.style.setProperty("--book-offset-x", `${offsetX}px`);
 	} else {
-		bookScene.style.setProperty("--book-scale", String(bookStage.clientWidth / 1280));
+		const stageWidth = bookStage.clientWidth || Math.min(window.innerWidth * 0.97, 1408, (window.innerHeight - 96) * 1.422222);
+		const scale = stageWidth / 1280;
+		bookScene.style.setProperty("--book-scale", String(scale));
 		bookScene.style.setProperty("--book-offset-x", "0px");
 	}
 	updateFrameRects();
@@ -423,7 +426,6 @@ function openBook() {
 	if (openingBook || !portfolio.hidden) return;
 	openingBook = true;
 	wheelLocked = true;
-	cover.classList.add("is-opening");
 
 	// Mobile / Touch: trigger fullscreen when opening the sketchbook
 	const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
@@ -431,24 +433,36 @@ function openBook() {
 		requestFullscreenSafe();
 	}
 
-	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 540;
-	setTimeout(async () => {
-		pageIndex = 0;
-		mobilePageIndex = 0;
-		activeFrame.classList.add("is-active");
-		standbyFrame.classList.remove("is-active");
-		if (activeFrame.dataset.src !== spreads[pageIndex].src) {
-			await prepareFrame(activeFrame, spreads[pageIndex].src);
-		}
+	window.scrollTo(0, 0);
+	pageIndex = 0;
+	mobilePageIndex = 0;
+	activeFrame.classList.add("is-active");
+	standbyFrame.classList.remove("is-active");
+
+	if (activeFrame.dataset.src !== spreads[pageIndex].src) {
+		prepareFrame(activeFrame, spreads[pageIndex].src);
+	}
+
+	// Prepare portfolio in opening-book state (disables book-scene transition and triggers center entrance)
+	portfolio.classList.add("is-opening-book");
+	portfolio.hidden = false;
+	fitBookScene();
+	updateBookControls();
+	updateFrameRects();
+
+	// Trigger cover zoom-out simultaneously from center
+	cover.classList.add("is-opening");
+
+	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 640;
+	setTimeout(() => {
 		cover.hidden = true;
 		cover.classList.remove("is-opening");
-		portfolio.hidden = false;
+		portfolio.classList.remove("is-opening-book");
 		fitBookScene();
 		updateBookControls();
 		updateFrameRects();
-		bookStage.scrollIntoView({ behavior: "smooth", block: "center" });
 		openingBook = false;
-		setTimeout(() => { wheelLocked = false; }, 300);
+		setTimeout(() => { wheelLocked = false; }, 200);
 
 		// Immediately preload Spread 1 in background so user doesn't wait when clicking Next!
 		preloadNextSpread(1);
@@ -460,6 +474,7 @@ function returnHome() {
 	wheelLocked = true;
 	openingBook = false;
 	cover.classList.remove("is-opening");
+	portfolio.classList.remove("is-opening-book");
 	cover.hidden = false;
 	portfolio.hidden = true;
 	pageIndex = 0;

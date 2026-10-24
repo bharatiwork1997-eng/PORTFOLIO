@@ -150,18 +150,109 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .cover-screen { position: relative; width: 100%; height: 100vh; height: 100svh; overflow: hidden; cursor: none !important; }
 .cover-screen, .cover-screen * { cursor: none !important; }
 .cover-art { position: absolute; inset: 0; overflow: hidden; }
-.cover-screen.is-opening .cover-art { animation: cover-open-zoom 760ms cubic-bezier(.2,.7,.2,1) forwards; transform-origin: 50% 52%; }
-.cover-screen.is-opening .cover-note { animation: cover-note-out 460ms ease forwards; }
+.cover-screen.is-opening {
+	position: fixed !important;
+	inset: 0 !important;
+	z-index: 12 !important;
+	pointer-events: none !important;
+	animation: cover-fade-out 640ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards !important;
+}
+.cover-screen.is-opening .cover-art {
+	animation: cover-open-zoom 640ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+	transform-origin: 50% 50% !important;
+}
+.cover-screen.is-opening .cover-note {
+	animation: cover-note-out 280ms ease forwards;
+}
 .cover-art iframe { position: absolute; inset: 0 auto auto 0; width: 1920px; height: 1080px; border: 0; transform-origin: top left; pointer-events: none; }
 .mobile-cover { display: none; }
 .cover-hit { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; cursor: none !important; }
 .cover-hit:hover { background: radial-gradient(ellipse at 50% 56%, rgba(245, 235, 211, .08), transparent 58%); }
 .cover-note { position: absolute; z-index: 2; bottom: 26px; left: 50%; display: flex; align-items: center; gap: 15px; margin: 0; color: #d8d0c2; font-size: 15px; transform: translateX(-50%); white-space: nowrap; pointer-events: none; }
 .cover-note span:first-child { color: var(--accent); }
-@keyframes cover-open-zoom { 0% { transform: scale(1); opacity: 1; } 68% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1.24); opacity: 0; } }
-@keyframes cover-note-out { to { opacity: 0; transform: translate(-50%, 8px); } }
+@keyframes cover-open-zoom {
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	40% {
+		transform: scale(1.08);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1.22);
+		opacity: 0;
+	}
+}
+@keyframes cover-fade-out {
+	0%, 40% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes cover-note-out {
+	to {
+		opacity: 0;
+		transform: translate(-50%, 12px);
+	}
+}
 
-.portfolio-view { min-height: 100svh; padding: 56px 16px 8px; }
+.portfolio-view {
+	min-height: 100svh;
+	box-sizing: border-box;
+	padding: 56px 16px 12px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Center-origin entrance animation for the sketchbook */
+.portfolio-view.is-opening-book {
+	pointer-events: none !important;
+}
+
+.portfolio-view.is-opening-book .book-stage {
+	animation: book-enter-from-center 640ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+	transform-origin: 50% 50% !important;
+}
+
+.portfolio-view.is-opening-book .book-scene {
+	transition: none !important;
+}
+
+.portfolio-view.is-opening-book .book-controls {
+	animation: book-controls-fade-in 640ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+@keyframes book-enter-from-center {
+	0% {
+		opacity: 0;
+		transform: scale(0.90);
+	}
+	35% {
+		opacity: 0.15;
+		transform: scale(0.93);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes book-controls-fade-in {
+	0%, 45% {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
 .book-stage { position: relative; width: min(97vw, 1408px, calc((100svh - 96px) * 1.422222)); min-width: min(100%, 360px); margin: 0 auto; aspect-ratio: 1280 / 900; background: #000; filter: drop-shadow(0 24px 34px rgba(0,0,0,.35)); }
 .book-scene { position: absolute; left: 0; top: 0; width: 1280px; height: 900px; transform: scale(var(--book-scale, 1)) translate3d(var(--book-offset-x, 0px), 0, 0); transform-origin: top left; border-radius: 3px; background: #000; overflow: hidden; transition: transform 260ms cubic-bezier(0.2, 0.8, 0.25, 1); }
 .book-scene iframe { display: block; border: 0; background: #000; }
