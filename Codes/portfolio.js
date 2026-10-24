@@ -43,10 +43,14 @@ const stories = {
 		sections: [["The opportunity", "Add the challenge, audience, and context behind the project."], ["The process", "Add research, key flows, wireframes, and the decisions that shaped the experience."], ["The outcome", "Add final screens, prototype links, and what you learned."]]
 	},
 	assessment: {
-		kicker: "UX / UI · Assessment work",
-		title: "Assessment work",
-		intro: "A home for your selected UX / UI assessment project and its design story.",
-		sections: [["Brief", "Add the prompt, constraints, and intended audience."], ["Approach", "Show the thinking, task flows, and iterations behind the work."], ["Result", "Add the final design and any reflection or feedback."]]
+		kicker: "The Challenge · Senior Design Assessment",
+		title: "The OG Architect",
+		intro: "A senior design assessment: one festive campaign concept, carried from idea to a full creative system across Instagram and LinkedIn.",
+		sections: [
+			["The Challenge", "A senior design assessment: one festive campaign concept, carried from idea to a full creative system across Instagram and LinkedIn."],
+			["The Concept", "Ganesha as the Ultimate System Architect. Deconstructing 108 traditional attributes into scalable design systems, auto-layout component specs, and generative AI systems."],
+			["Creative System & Rollout", "Translating the narrative across Instagram Reels (Listen • Store • Protect), structured LinkedIn carousels, typographic key visuals, and motion guidelines."]
+		]
 	},
 	agency: {
 		kicker: "Visual design · Agency work",
