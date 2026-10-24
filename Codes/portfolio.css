@@ -1297,9 +1297,6 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		align-items: center !important;
 		justify-content: space-between !important;
 	}
-	.clustr-header-badge {
-		display: none !important;
-	}
 	.clustr-sheet .dialog-top-actions {
 		position: static !important;
 		top: auto !important;
@@ -1312,10 +1309,12 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	.assessment-intro {
 		display: none !important;
 	}
+	.clustr-sheet #clustr-title,
 	.clustr-sheet h1,
 	.assessment-sheet h1,
 	.story-sheet h1 {
 		font-size: clamp(18px, 5vw, 22px) !important;
+		color: #1a1815 !important;
 		line-height: 1.1 !important;
 		margin: 0 !important;
 		letter-spacing: -0.3px !important;
@@ -1815,33 +1814,16 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	border-bottom: 1px solid rgba(40, 36, 30, 0.12) !important;
 	flex-shrink: 0 !important;
 }
-.clustr-header-brand {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	min-width: 0;
-	flex: 1 1 auto;
-}
-.clustr-header-brand h1,
+#clustr-title,
 .clustr-sheet h1 {
 	margin: 0 !important;
 	font-size: clamp(22px, 2.5vw, 30px) !important;
 	line-height: 1 !important;
 	font-weight: 400 !important;
+	font-family: var(--pixel, sans-serif) !important;
+	color: #1a1815 !important;
 	letter-spacing: -0.5px !important;
 	white-space: nowrap !important;
-}
-.clustr-header-badge {
-	font-size: 11px;
-	color: #6b6357;
-	font-family: var(--pixel, sans-serif);
-	letter-spacing: 0.5px;
-	text-transform: uppercase;
-	padding: 3px 8px;
-	background: rgba(40, 36, 30, 0.06);
-	border: 1px solid rgba(40, 36, 30, 0.12);
-	border-radius: 4px;
-	display: inline-block;
 }
 .clustr-sheet .dialog-top-actions {
 	position: static !important;
@@ -1906,16 +1888,11 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 .clustr-dialog.is-fullscreen .clustr-header {
 	padding: 0 0 10px 0 !important;
 	margin-bottom: 10px !important;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+	border-bottom: 1px solid rgba(40, 36, 30, 0.14) !important;
 }
-.clustr-dialog.is-fullscreen .clustr-header-badge {
-	color: #a8a29e !important;
-	background: rgba(255, 255, 255, 0.08) !important;
-	border-color: rgba(255, 255, 255, 0.14) !important;
-}
-.clustr-dialog.is-fullscreen .clustr-header-brand h1,
+.clustr-dialog.is-fullscreen #clustr-title,
 .clustr-dialog.is-fullscreen .clustr-sheet h1 {
-	color: #ffffff !important;
+	color: #1a1815 !important;
 	font-size: 22px !important;
 	margin: 0 !important;
 }
