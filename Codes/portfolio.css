@@ -62,7 +62,18 @@ body {
 button, a, input { font: inherit; }
 button { color: inherit; }
 button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-[hidden] { display: none !important; }
+[hidden],
+[hidden] *,
+#cover[hidden],
+#cover[hidden] *,
+#portfolio[hidden],
+#portfolio[hidden] *,
+.cover-screen[hidden],
+.cover-screen[hidden] *,
+.portfolio-view[hidden],
+.portfolio-view[hidden] * {
+	display: none !important;
+}
 
 .site-header {
 	position: absolute;
@@ -993,11 +1004,17 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 		overflow: hidden !important;
 		overscroll-behavior: none !important;
 		touch-action: pan-x !important;
-		display: flex !important;
 		flex-direction: column !important;
 		justify-content: center !important;
 		align-items: center !important;
 		box-sizing: border-box !important;
+	}
+	.portfolio-view:not([hidden]) {
+		display: flex !important;
+	}
+	.portfolio-view[hidden],
+	.cover-screen[hidden] {
+		display: none !important;
 	}
 	.book-stage {
 		width: min(98vw, 442px, calc((100svh - 76px) * 0.7111)) !important;

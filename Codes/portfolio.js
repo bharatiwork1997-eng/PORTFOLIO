@@ -64,6 +64,9 @@ const stories = {
 
 const cover = document.querySelector("#cover");
 const portfolio = document.querySelector("#portfolio");
+if (portfolio && portfolio.hidden) {
+	portfolio.style.display = "none";
+}
 const coverFrame = document.querySelector("#cover-frame");
 let activeFrame = document.querySelector("#frame-a");
 let standbyFrame = document.querySelector("#frame-b");
@@ -439,6 +442,7 @@ function openBook() {
 	// Prepare portfolio in opening-book state (disables book-scene transition and triggers center entrance)
 	portfolio.classList.add("is-opening-book");
 	portfolio.hidden = false;
+	portfolio.style.display = "";
 	fitBookScene();
 	updateBookControls();
 	updateFrameRects();
@@ -449,6 +453,7 @@ function openBook() {
 	const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 640;
 	setTimeout(() => {
 		cover.hidden = true;
+		cover.style.display = "none";
 		cover.classList.remove("is-opening");
 		portfolio.classList.remove("is-opening-book");
 		fitBookScene();
@@ -469,7 +474,9 @@ function returnHome() {
 	cover.classList.remove("is-opening");
 	portfolio.classList.remove("is-opening-book");
 	cover.hidden = false;
+	cover.style.display = "";
 	portfolio.hidden = true;
+	portfolio.style.display = "none";
 	pageIndex = 0;
 	mobilePageIndex = 0;
 	gesture = null;
