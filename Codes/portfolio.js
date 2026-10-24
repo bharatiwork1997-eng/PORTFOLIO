@@ -72,8 +72,15 @@ if (portfolio && portfolio.hidden) {
 	portfolio.style.display = "none";
 }
 const coverFrame = document.querySelector("#cover-frame");
-let activeFrame = document.querySelector("#frame-a");
-let standbyFrame = document.querySelector("#frame-b");
+const spreadFrames = [
+	document.querySelector("#frame-0"),
+	document.querySelector("#frame-1"),
+	document.querySelector("#frame-2"),
+	document.querySelector("#frame-3"),
+	document.querySelector("#frame-4"),
+	document.querySelector("#frame-5")
+];
+let activeFrame = spreadFrames[0];
 const bookScene = document.querySelector("#book-scene");
 const bookStage = document.querySelector("#book-stage");
 const storyDialog = document.querySelector("#story-dialog");
@@ -114,7 +121,7 @@ function updateFrameRects() {
 	if (coverFrame && (!cover || !cover.hidden)) {
 		cachedCoverRect = coverFrame.getBoundingClientRect();
 	}
-	const frameToMeasure = activeFrame || document.querySelector(".spread-frame.is-active") || spreadFrame1 || spreadFrame2;
+	const frameToMeasure = activeFrame || document.querySelector(".spread-frame.is-active");
 	if (frameToMeasure && (!portfolio || !portfolio.hidden)) {
 		cachedBookRect = frameToMeasure.getBoundingClientRect();
 	}
@@ -203,28 +210,32 @@ function updateBookControls() {
 	if (workspaceTools) workspaceTools.hidden = true;
 	if (arrowCursor) arrowCursor.style.display = "none";
 
-	const activeDoc = activeFrame?.contentDocument;
-	if (activeDoc?.body && activeFrame?.dataset?.src?.includes("last-group")) {
-		activeDoc.body.classList.toggle("is-mobile-view", isMobile);
-	}
-	const standbyDoc = standbyFrame?.contentDocument;
-	if (standbyDoc?.body && standbyFrame?.dataset?.src?.includes("last-group")) {
-		standbyDoc.body.classList.toggle("is-mobile-view", isMobile);
+	const thankYouDoc = spreadFrames[5]?.contentDocument;
+	if (thankYouDoc?.body) {
+		thankYouDoc.body.classList.toggle("is-mobile-view", isMobile);
 	}
 }
 
+const frameLoadPromises = new Map();
+
 function prepareFrame(iframe, src) {
-	return new Promise((resolve) => {
-	if (iframe.dataset.src === src && iframe.contentDocument?.body) {
-		resolve();
-		return;
+	if (!iframe) return Promise.resolve(null);
+	if (iframe.dataset.ready === "true" && iframe.contentDocument?.body) {
+		return Promise.resolve(iframe);
 	}
-	iframe.dataset.src = src;
-	iframe.onload = () => {
-		try {
-			const frameDocument = iframe.contentDocument;
-			if (!frameDocument) { resolve(); return; }
-			const style = frameDocument.createElement("style");
+	if (frameLoadPromises.has(iframe)) {
+		return frameLoadPromises.get(iframe);
+	}
+	const framePromise = new Promise((resolve) => {
+		iframe.dataset.src = src;
+		const onFrameLoad = () => {
+			try {
+				const frameDocument = iframe.contentDocument;
+				if (!frameDocument || !frameDocument.body) {
+					resolve(iframe);
+					return;
+				}
+				const style = frameDocument.createElement("style");
 			style.textContent = `
 				@media (hover: hover) and (pointer: fine) {
 					html, body, *, *::before, *::after { cursor:none !important; }
@@ -333,15 +344,18 @@ function prepareFrame(iframe, src) {
 					}
 				}
 			});
-			activeFrameDocument = frameDocument;
-			setupSpreadInteractions(frameDocument, frameIndex);
-		} catch (error) {
-			console.error("Could not prepare portfolio spread", error);
-		}
-		resolve();
-	};
-	iframe.src = src;
+				setupSpreadInteractions(frameDocument, frameIndex);
+				iframe.dataset.ready = "true";
+			} catch (error) {
+				console.error("Could not prepare portfolio spread", error);
+			}
+			resolve(iframe);
+		};
+		iframe.onload = onFrameLoad;
+		iframe.src = src;
 	});
+	frameLoadPromises.set(iframe, framePromise);
+	return framePromise;
 }
 
 function handleFramePointer(iframe, event) {
@@ -442,11 +456,21 @@ function openBook() {
 	window.scrollTo(0, 0);
 	pageIndex = 0;
 	mobilePageIndex = 0;
-	activeFrame.classList.add("is-active");
-	standbyFrame.classList.remove("is-active");
 
-	if (activeFrame.dataset.src !== spreads[pageIndex].src) {
-		prepareFrame(activeFrame, spreads[pageIndex].src);
+	spreadFrames.forEach((frame, idx) => {
+		if (idx === 0) {
+			frame.classList.add("is-active");
+			frame.classList.remove("is-incoming");
+		} else {
+			frame.classList.remove("is-active", "is-incoming");
+			frame.style.transform = "";
+		}
+	});
+	activeFrame = spreadFrames[0];
+	activeFrameDocument = activeFrame.contentDocument;
+
+	if (activeFrame.dataset.ready !== "true") {
+		prepareFrame(activeFrame, spreads[0].src);
 	}
 
 	// Prepare portfolio in opening-book state (disables book-scene transition and triggers center entrance)
@@ -472,8 +496,8 @@ function openBook() {
 		openingBook = false;
 		setTimeout(() => { wheelLocked = false; }, 200);
 
-		// Immediately preload Spread 1 in background so user doesn't wait when clicking Next!
-		preloadNextSpread(1);
+		// Ensure all spreads are progressively loaded
+		preloadAllSpreads();
 	}, duration);
 }
 
@@ -515,7 +539,7 @@ function handleWheelNavigation(event) {
 	clearTimeout(wheelUnlockTimer);
 	wheelUnlockTimer = setTimeout(() => {
 		wheelLocked = false;
-	}, 400);
+	}, 320);
 
 	if (!cover.hidden) {
 		if (direction > 0) openBook();
@@ -550,53 +574,44 @@ async function turnPageMobile(direction) {
 		turnBusy = false;
 		wheelLocked = false;
 		updateBookControls();
-
-		// Preload adjacent spread in direction of travel
-		const targetSpreadToPreload = direction > 0 ? nextEntry.spreadIndex + 1 : nextEntry.spreadIndex - 1;
-		if (targetSpreadToPreload >= 0 && targetSpreadToPreload < spreads.length) {
-			preloadNextSpread(targetSpreadToPreload);
-		}
 		return;
 	}
 
 	// Case B: Moving to a DIFFERENT spread
-	const nextSpread = spreads[nextEntry.spreadIndex];
-	if (standbyFrame.dataset.src !== nextSpread.src) {
-		await prepareFrame(standbyFrame, nextSpread.src);
+	const prevFrame = spreadFrames[currentEntry.spreadIndex];
+	const nextFrame = spreadFrames[nextEntry.spreadIndex];
+
+	if (nextFrame.dataset.ready !== "true") {
+		await prepareFrame(nextFrame, spreads[nextEntry.spreadIndex].src);
 	}
 
-	// Instantly position bookScene at the new target offset without horizontal sliding during crossfade
+	// Seamless crossfade: counteract book-scene offset change on prevFrame so it doesn't jump during crossfade!
+	const currentOffsetX = getMobileOffsetX(currentEntry);
+	const deltaOffset = currentOffsetX - targetOffsetX;
+	prevFrame.style.transform = `translate3d(${deltaOffset}px, 0, 0)`;
+
 	bookScene.style.transition = "none";
 	bookScene.style.setProperty("--book-offset-x", `${targetOffsetX}px`);
-	void bookScene.offsetHeight; // force reflow
+	void bookScene.offsetHeight; // sync position immediately
 	bookScene.style.transition = "";
 
-	// Crossfade without black blink: standbyFrame fades in on top while activeFrame stays solid underneath
-	standbyFrame.style.zIndex = "4";
-	activeFrame.style.zIndex = "2";
-	standbyFrame.classList.add("is-active");
+	// Incoming frame fades in smoothly on top over outgoing frame
+	nextFrame.classList.add("is-incoming");
 
 	await new Promise((resolve) => setTimeout(resolve, 240));
 
-	activeFrame.classList.remove("is-active");
-	standbyFrame.style.zIndex = "";
-	activeFrame.style.zIndex = "";
+	nextFrame.classList.add("is-active");
+	nextFrame.classList.remove("is-incoming");
+	prevFrame.classList.remove("is-active");
+	prevFrame.style.transform = "";
 
-	const previousActive = activeFrame;
-	activeFrame = standbyFrame;
-	standbyFrame = previousActive;
+	activeFrame = nextFrame;
 	activeFrameDocument = activeFrame.contentDocument;
 	updateFrameRects();
 
 	turnBusy = false;
 	wheelLocked = false;
 	updateBookControls();
-
-	// Preload next spread in direction of travel
-	const targetSpreadToPreload = direction > 0 ? nextEntry.spreadIndex + 1 : nextEntry.spreadIndex - 1;
-	if (targetSpreadToPreload >= 0 && targetSpreadToPreload < spreads.length) {
-		preloadNextSpread(targetSpreadToPreload);
-	}
 }
 
 async function turnPage(direction) {
@@ -606,53 +621,47 @@ async function turnPage(direction) {
 	const nextIndex = pageIndex + direction;
 	if (turnBusy || nextIndex < 0 || nextIndex >= spreads.length) return;
 	turnBusy = true;
-	const nextSpread = spreads[nextIndex];
+
+	const prevFrame = spreadFrames[pageIndex];
+	const nextFrame = spreadFrames[nextIndex];
 	pageIndex = nextIndex;
 	mobilePageIndex = singlePages.findIndex((sp) => sp.spreadIndex === pageIndex);
 	if (mobilePageIndex === -1) mobilePageIndex = 0;
 	updateBookControls();
 
-	// Check if standbyFrame already has the next spread preloaded (0ms instant wait!)
-	if (standbyFrame.dataset.src !== nextSpread.src) {
-		await prepareFrame(standbyFrame, nextSpread.src);
+	// Ensure the target frame is ready (resolves in 0ms if already preloaded)
+	if (nextFrame.dataset.ready !== "true") {
+		await prepareFrame(nextFrame, spreads[nextIndex].src);
 	}
 
-	// Swap frames: standby becomes active on top, active remains solid underneath to eliminate black blink
-	standbyFrame.style.zIndex = "4";
-	activeFrame.style.zIndex = "2";
-	standbyFrame.classList.add("is-active");
+	// Incoming frame fades in smoothly on top over outgoing frame
+	nextFrame.classList.add("is-incoming");
 
-	await new Promise((resolve) => setTimeout(resolve, 220));
+	await new Promise((resolve) => setTimeout(resolve, 240));
 
-	activeFrame.classList.remove("is-active");
-	standbyFrame.style.zIndex = "";
-	activeFrame.style.zIndex = "";
+	nextFrame.classList.add("is-active");
+	nextFrame.classList.remove("is-incoming");
+	prevFrame.classList.remove("is-active");
 
-	const previousActive = activeFrame;
-	activeFrame = standbyFrame;
-	standbyFrame = previousActive;
+	activeFrame = nextFrame;
 	activeFrameDocument = activeFrame.contentDocument;
 	updateFrameRects();
 
 	turnBusy = false;
 	wheelLocked = false;
 	updateBookControls();
-
-	// Preload the next likely spread in idle time!
-	const nextToPreload = direction > 0 ? pageIndex + 1 : pageIndex - 1;
-	if (nextToPreload >= 0 && nextToPreload < spreads.length) {
-		preloadNextSpread(nextToPreload);
-	}
 }
 
-function preloadNextSpread(index) {
-	if (index >= 0 && index < spreads.length) {
-		setTimeout(() => {
-			if (!turnBusy && standbyFrame.dataset.src !== spreads[index].src) {
-				prepareFrame(standbyFrame, spreads[index].src);
-			}
-		}, 80);
-	}
+function preloadAllSpreads() {
+	let delay = 60;
+	spreadFrames.forEach((frame, idx) => {
+		if (idx > 0 && frame.dataset.ready !== "true") {
+			setTimeout(() => {
+				prepareFrame(frame, spreads[idx].src);
+			}, delay);
+			delay += 120;
+		}
+	});
 }
 
 function startEdgeGesture(frameDocument, event) {
@@ -2214,13 +2223,12 @@ if (siteFullscreenToggle) {
 setupCover();
 updateBookControls();
 
-// Preload Spread 0 immediately in background; only on desktop preload Spread 1 & Clustr eagerly
-const isMobileClient = typeof window !== "undefined" && (window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches);
-
-prepareFrame(activeFrame, spreads[0].src).then(() => {
-	if (!isMobileClient && standbyFrame && spreads[1]) {
-		prepareFrame(standbyFrame, spreads[1].src);
-	}
+// Preload Spread 0 immediately so it's ready before book opens
+prepareFrame(spreadFrames[0], spreads[0].src).then(() => {
+	activeFrame = spreadFrames[0];
+	activeFrameDocument = spreadFrames[0].contentDocument;
+	// Progressively preload all remaining spreads in background for 0ms instant page turns
+	preloadAllSpreads();
 });
 
 // Preload Clustr Case Study in background during idle on desktop only
