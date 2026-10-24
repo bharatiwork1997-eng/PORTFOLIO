@@ -42,13 +42,22 @@
 		if (window.self === window.top) {
 			const pencil = document.getElementById("standalone-pencil");
 			if (pencil) {
-				const move = (e) => {
-					pencil.style.left = e.clientX + "px";
-					pencil.style.top = e.clientY + "px";
+				let targetX = -200, targetY = -200, raf = false;
+				const render = () => {
+					raf = false;
+					pencil.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
 					pencil.style.display = "block";
 				};
-				window.addEventListener("pointerenter", move);
-				window.addEventListener("pointermove", move);
+				const move = (e) => {
+					targetX = e.clientX;
+					targetY = e.clientY;
+					if (!raf) {
+						raf = true;
+						requestAnimationFrame(render);
+					}
+				};
+				window.addEventListener("pointerenter", move, { passive: true });
+				window.addEventListener("pointermove", move, { passive: true });
 				window.addEventListener("pointerleave", () => { pencil.style.display = "none"; });
 			}
 		}

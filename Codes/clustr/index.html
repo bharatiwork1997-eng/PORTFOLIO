@@ -97,7 +97,7 @@
     }
 
     .pencil-cursor {
-      display: none;
+      display: block;
       position: fixed;
       z-index: 9999999;
       top: 0;
@@ -105,8 +105,10 @@
       width: 26px;
       height: 180px;
       pointer-events: none;
+      opacity: 0;
+      will-change: transform;
+      transform: translate3d(-200px, -200px, 0);
       transform-origin: 12.9px 3.3px;
-      transform: translate(-12.9px, -3.3px) rotate(-26deg);
     }
 
     .pencil-cursor img {
@@ -3744,7 +3746,7 @@
 
         <!-- Right: Generous Horizontal Artifact Display Viewport -->
         <div class="synthesis-viewport" id="researchViewport" onclick="zoomCurrentResearchArtifact()">
-          <img id="researchImageTarget" src="assets/research/survey_analysis.png" alt="Survey Analysis" />
+          <img id="researchImageTarget" src="assets/research/survey_analysis.png" alt="Survey Analysis" loading="lazy" decoding="async" />
           <div class="zoom-hint-badge">🔍 Click to inspect in Fullscreen</div>
         </div>
       </div>
@@ -3819,7 +3821,7 @@
         <!-- Right: Real Persona Design Artifacts -->
         <div class="persona-image-gallery">
           <div class="persona-sheet-card" onclick="openLightbox(currPersonaBasicSrc, 'Persona Basic Information Sheet')">
-            <img id="personaBasicImg" src="assets/personas/persona_basic_anurag.png" alt="Persona Basic Information" />
+            <img id="personaBasicImg" src="assets/personas/persona_basic_anurag.png" alt="Persona Basic Information" loading="lazy" decoding="async" />
             <div class="caption">
               <span>📄 Basic Information Sheet</span>
               <span style="color: var(--coral);">Expand ↗</span>
@@ -3827,7 +3829,7 @@
           </div>
 
           <div class="persona-sheet-card" onclick="openLightbox(currPersonaDeepSrc, 'Persona Deep Dive Sheet')">
-            <img id="personaDeepImg" src="assets/personas/persona_deep_anurag.png" alt="Persona Deep Dive" />
+            <img id="personaDeepImg" src="assets/personas/persona_deep_anurag.png" alt="Persona Deep Dive" loading="lazy" decoding="async" />
             <div class="caption">
               <span>🔬 Behavioral Deep Dive Sheet</span>
               <span style="color: var(--coral);">Expand ↗</span>
@@ -3909,7 +3911,7 @@
         </div>
 
         <div class="artifact-image-viewport" id="iaViewport">
-          <img id="iaImageTarget" src="assets/research/information_architecture.png" alt="Information Architecture" onclick="zoomCurrentIAArtifact()" />
+          <img id="iaImageTarget" src="assets/research/information_architecture.png" alt="Information Architecture" onclick="zoomCurrentIAArtifact()" loading="lazy" decoding="async" />
         </div>
         <div class="artifact-footer-bar">
           <span class="artifact-footer-note" id="iaFooterNote">📌 Information Architecture &amp; User Stories Structure</span>
@@ -4011,7 +4013,7 @@
           <!-- Canvas Viewport with Miro Grid Background -->
           <div class="miro-viewport" id="miroViewport">
             <div class="miro-canvas-inner" id="miroCanvasInner">
-              <img id="flowImageTarget" src="assets/flows/user_flow_1.png" alt="Raw Miro User Flow Diagram" />
+              <img id="flowImageTarget" src="assets/flows/user_flow_1.png" alt="Raw Miro User Flow Diagram" loading="lazy" decoding="async" />
             </div>
           </div>
 
@@ -4357,7 +4359,7 @@
           <div class="screen-device-mock">
             <div class="device-mock-island"><div class="island-lens"></div></div>
             <div class="screen-device-viewport full-viewport">
-              <img src="assets/ui/screen_1_splash.png?v=statusbar_fix" alt="Screen 1: Splash" />
+              <img src="assets/ui/screen_1_splash.png?v=statusbar_fix" alt="Screen 1: Splash" loading="lazy" decoding="async" />
             </div>
           </div>
           <div class="screen-info-meta">
@@ -4371,7 +4373,7 @@
           <div class="screen-device-mock">
             <div class="device-mock-island"><div class="island-lens"></div></div>
             <div class="screen-device-viewport full-viewport">
-              <img src="assets/ui/screen_2_homepage_1320.png?v=statusbar_fix" alt="Screen 2: Homepage & Discovery Feed" />
+              <img src="assets/ui/screen_2_homepage_1320.png?v=statusbar_fix" alt="Screen 2: Homepage & Discovery Feed" loading="lazy" decoding="async" />
             </div>
           </div>
           <div class="screen-info-meta">
@@ -4385,7 +4387,7 @@
           <div class="screen-device-mock">
             <div class="device-mock-island"><div class="island-lens"></div></div>
             <div class="screen-device-viewport">
-              <img src="assets/ui/screen_3_event_detail.png?v=statusbar_fix" alt="Screen 3: Event Detail" />
+              <img src="assets/ui/screen_3_event_detail.png?v=statusbar_fix" alt="Screen 3: Event Detail" loading="lazy" decoding="async" />
             </div>
             <div class="screen-scroll-badge">↕ Scroll Feed</div>
           </div>
@@ -4400,7 +4402,7 @@
           <div class="screen-device-mock">
             <div class="device-mock-island"><div class="island-lens"></div></div>
             <div class="screen-device-viewport full-viewport">
-              <img src="assets/ui/screen_4_timeline_modal.png?v=statusbar_fix" alt="Screen 4: Timeline Modal" />
+              <img src="assets/ui/screen_4_timeline_modal.png?v=statusbar_fix" alt="Screen 4: Timeline Modal" loading="lazy" decoding="async" />
             </div>
           </div>
           <div class="screen-info-meta">
@@ -4414,7 +4416,7 @@
           <div class="screen-device-mock">
             <div class="device-mock-island"><div class="island-lens"></div></div>
             <div class="screen-device-viewport full-viewport">
-              <img src="assets/ui/screen_5_role_clarity.png?v=statusbar_fix" alt="Screen 5: Role Clarity" />
+              <img src="assets/ui/screen_5_role_clarity.png?v=statusbar_fix" alt="Screen 5: Role Clarity" loading="lazy" decoding="async" />
             </div>
           </div>
           <div class="screen-info-meta">
@@ -4428,7 +4430,7 @@
           <div class="screen-device-mock">
             <div class="device-mock-island"><div class="island-lens"></div></div>
             <div class="screen-device-viewport full-viewport">
-              <img src="assets/ui/screen_6_spot_confirmed.png?v=statusbar_fix" alt="Screen 6: Spot Confirmed" />
+              <img src="assets/ui/screen_6_spot_confirmed.png?v=statusbar_fix" alt="Screen 6: Spot Confirmed" loading="lazy" decoding="async" />
             </div>
           </div>
           <div class="screen-info-meta">
@@ -5933,22 +5935,43 @@
       }
     }, { passive: true });
 
-    /* Pencil Cursor Engine */
+    /* Ultra-Smooth Pencil Cursor Engine (rAF + translate3d) */
     const pencil = document.querySelector(".pencil-cursor");
+    let pencilTargetX = -200;
+    let pencilTargetY = -200;
+    let pencilVisible = false;
+    let pencilRaf = false;
+
+    function renderPencil() {
+      pencilRaf = false;
+      if (!pencil) return;
+      pencil.style.transform = `translate3d(${pencilTargetX}px, ${pencilTargetY}px, 0) translate(-12.9px, -3.3px) rotate(-26deg)`;
+      if (!pencilVisible) {
+        pencilVisible = true;
+        pencil.style.opacity = "1";
+      }
+    }
+
     function movePencil(e) {
       if (!pencil || matchMedia("(hover: none)").matches || matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
-        if (pencil) pencil.style.display = "none";
+        hidePencil();
         return;
       }
-      pencil.style.left = `${e.clientX}px`;
-      pencil.style.top = `${e.clientY}px`;
-      pencil.style.display = "block";
+      pencilTargetX = e.clientX;
+      pencilTargetY = e.clientY;
+      if (!pencilRaf) {
+        pencilRaf = true;
+        requestAnimationFrame(renderPencil);
+      }
     }
+
     function hidePencil() {
-      if (pencil) pencil.style.display = "none";
+      pencilVisible = false;
+      if (pencil) pencil.style.opacity = "0";
     }
-    document.addEventListener("pointermove", movePencil);
-    document.addEventListener("pointerenter", movePencil);
+
+    document.addEventListener("pointermove", movePencil, { passive: true });
+    document.addEventListener("pointerenter", movePencil, { passive: true });
     document.addEventListener("pointerleave", hidePencil);
   </script>
 </body>

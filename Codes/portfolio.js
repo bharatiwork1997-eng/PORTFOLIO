@@ -365,32 +365,48 @@ function handleFramePointer(iframe, event) {
 	}
 	const targetIframe = iframe || activeFrame;
 	if (!targetIframe) return;
-	const rect = cachedBookRect || (cachedBookRect = targetIframe.getBoundingClientRect());
+	if (event.type === "pointerenter" || !cachedBookRect) {
+		cachedBookRect = targetIframe.getBoundingClientRect();
+	}
+	const rect = cachedBookRect;
 	if (!rect || rect.width === 0) return;
 	const pageX = rect.left + (event.clientX * rect.width) / 1280;
 	const pageY = rect.top + (event.clientY * rect.height) / 900;
 	movePencil(pageX, pageY);
 }
 
+let pencilTargetX = -200;
+let pencilTargetY = -200;
 let pencilVisible = false;
+let pencilRafId = null;
 
-function movePencil(x, y) {
-	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
-		hidePencil();
-		return;
-	}
+function renderPencil() {
+	pencilRafId = null;
 	if (!pencil) return;
-	if (pencil.style.display === "none") {
-		pencil.style.display = "";
-	}
-	pencil.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+	pencil.style.transform = `translate3d(${pencilTargetX}px, ${pencilTargetY}px, 0)`;
 	if (!pencilVisible) {
 		pencilVisible = true;
 		pencil.classList.add("is-visible");
 	}
 }
 
+function movePencil(x, y) {
+	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
+		hidePencil();
+		return;
+	}
+	pencilTargetX = x;
+	pencilTargetY = y;
+	if (!pencilRafId) {
+		pencilRafId = requestAnimationFrame(renderPencil);
+	}
+}
+
 function hidePencil() {
+	if (pencilRafId) {
+		cancelAnimationFrame(pencilRafId);
+		pencilRafId = null;
+	}
 	if (!pencilVisible) return;
 	pencilVisible = false;
 	if (pencil) pencil.classList.remove("is-visible");
@@ -424,7 +440,8 @@ function setupCover() {
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("pointerenter", (event) => {
 				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
-				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
+				if (coverFrame) cachedCoverRect = coverFrame.getBoundingClientRect();
+				const rect = cachedCoverRect;
 				if (!rect || rect.width === 0) return;
 				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
 			}, { passive: true });
@@ -1105,7 +1122,7 @@ function openClustrDialog() {
 	if (!clustrDialog) return;
 	const iframe = clustrDialog.querySelector("#clustr-frame");
 	if (iframe && (!iframe.src || iframe.src === "about:blank" || iframe.src.endsWith("about:blank"))) {
-		iframe.src = iframe.dataset.src || "clustr/index.html?v=5";
+		iframe.src = iframe.dataset.src || "clustr/index.html?v=8";
 	}
 	openDialog(clustrDialog);
 	if (iframe && !iframe.dataset.pencilHooked) {
@@ -2231,17 +2248,17 @@ prepareFrame(spreadFrames[0], spreads[0].src).then(() => {
 	preloadAllSpreads();
 });
 
-// Preload Clustr Case Study in background during idle on desktop only
-if (typeof window !== "undefined" && !isMobileClient) {
-	const preloadClustr = () => {
-		const clustrIframe = document.querySelector("#clustr-frame");
-		if (clustrIframe && (!clustrIframe.src || clustrIframe.src === "about:blank" || clustrIframe.src.endsWith("about:blank"))) {
-			clustrIframe.src = clustrIframe.dataset.src || "clustr/index.html?v=5";
-		}
-	};
+// Preload Clustr Case Study in background so clicking CLUSTR is 0ms instant!
+const preloadClustr = () => {
+	const clustrIframe = document.querySelector("#clustr-frame");
+	if (clustrIframe && (!clustrIframe.src || clustrIframe.src === "about:blank" || clustrIframe.src.endsWith("about:blank"))) {
+		clustrIframe.src = clustrIframe.dataset.src || "clustr/index.html?v=8";
+	}
+};
+if (typeof window !== "undefined") {
 	if ("requestIdleCallback" in window) {
-		window.requestIdleCallback(preloadClustr, { timeout: 4000 });
+		window.requestIdleCallback(preloadClustr, { timeout: 1000 });
 	} else {
-		setTimeout(preloadClustr, 3000);
+		setTimeout(preloadClustr, 600);
 	}
 }
