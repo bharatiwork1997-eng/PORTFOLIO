@@ -2,7 +2,7 @@ const spreads = [
 	{ title: "About me", src: "sketchbook-frame 1-html-css/sketchbook-group.html?v=3" },
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=20" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
-	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=3" },
+	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=4" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=12" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=8" }
 ];
@@ -59,12 +59,6 @@ const stories = {
 		title: "Ideas in the making",
 		intro: "A selection of fourth-year campaign concepts and experiments.",
 		sections: [["The idea", "Add the audience insight and central campaign thought."], ["The expression", "Show how the concept moved across formats and touchpoints."], ["The learning", "Add what you would carry into the next project."]]
-	},
-	personal: {
-		kicker: "Personal work · Illustration + collage",
-		title: "Outside the grid",
-		intro: "Experiments with illustration, collage, and mixed-media textures.",
-		sections: [["Materials", "Add notes about the tools, textures, and techniques you explored."], ["Inspiration", "Share what sparked each experiment."], ["More to come", "This collection can grow as you add new work."]]
 	}
 };
 
@@ -302,7 +296,6 @@ function prepareFrame(iframe, src) {
 				else if (frameIndex === 2 && target.closest(".text-input, .text1, .text2, .col-left")) action = () => openAgencyDialog();
 				else if (frameIndex === 2 && target.closest(".img2, .img3, .text-top, .text-campaigns")) action = () => openWattpadDialog();
 				else if (frameIndex === 3 && target.closest(".img2")) action = () => openDialog(resumeDialog);
-				else if (frameIndex === 3 && target.closest(".text-input, .img3")) action = () => openStory("personal");
 				else if (frameIndex === 4 && target.closest("#sticker-folder, .img9, .sticker-folder, .collage-tools, .sketch-tools, .folio-canvas, canvas, .collage-sticker")) return;
 				if (action) {
 					event.preventDefault();
@@ -1274,8 +1267,6 @@ function setupSpreadInteractions(frameDocument, index = pageIndex) {
 	}
 	if (index === 3) {
 		makeInteractive(frameDocument.querySelector(".img2"), "Open résumé", () => openDialog(resumeDialog));
-		makeInteractive(frameDocument.querySelector(".text-input"), "Open personal work", () => openStory("personal"));
-		makeInteractive(frameDocument.querySelector(".img3"), "Open personal work", () => openStory("personal"));
 	}
 	if (index === 4) setupSketchbook(frameDocument);
 }
