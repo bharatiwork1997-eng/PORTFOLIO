@@ -136,7 +136,7 @@ fitCanvas(coverFrame, 1920, 1080, document.querySelector(".cover-art"));
 
 function fitBookScene() {
 	if (isMobileSinglePage()) {
-		const stageWidth = bookStage.clientWidth || Math.min(window.innerWidth * 0.94, 420, (window.innerHeight - 130) * 0.7111);
+		const stageWidth = bookStage.clientWidth || Math.min(window.innerWidth * 0.98, 442, (window.innerHeight - 76) * 0.7111);
 		const scale = stageWidth / 640;
 		bookScene.style.setProperty("--book-scale", String(scale));
 		const currentSub = singlePages[mobilePageIndex]?.sub ?? 0;
