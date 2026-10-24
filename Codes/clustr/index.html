@@ -345,13 +345,13 @@
     .nav-center {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       flex: 1 1 auto;
       min-width: 0;
       overflow-x: auto;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      padding: 4px 0;
+      padding: 4px 6px;
     }
     .nav-center::-webkit-scrollbar {
       display: none;
@@ -360,9 +360,9 @@
     .nav-menu {
       display: flex;
       align-items: center;
-      gap: 2px;
+      gap: 3px;
       list-style: none;
-      margin: 0;
+      margin: 0 auto;
       padding: 0;
       white-space: nowrap;
       flex-wrap: nowrap;
@@ -375,7 +375,7 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--text-mute);
-      padding: 7px 11px;
+      padding: 6px 10px;
       border-radius: 999px;
       transition: all 0.2s ease;
       white-space: nowrap;
@@ -3140,6 +3140,12 @@
     /* ==========================================================================
        RESPONSIVE BREAKPOINTS
        ========================================================================== */
+    @media (max-width: 1160px) {
+      .back-portfolio-btn { display: none !important; }
+      .nav-menu a { padding: 5px 8px; font-size: 12px; }
+      .nav-inner { padding: 0 14px; gap: 8px; }
+    }
+
     @media (max-width: 1024px) {
       .persona-card-display,
       .flow-viewer-box {
