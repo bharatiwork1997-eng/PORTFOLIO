@@ -1209,36 +1209,14 @@ function updateDialogFullscreenUI(dialog) {
 	}, 120);
 }
 
-// Wire up full screen toggle buttons
-[
-	{ dialog: clustrDialog, toggles: ["#clustr-fullscreen-toggle"] },
-	{ dialog: agencyDialog, toggles: ["#agency-fullscreen-toggle", "#agency-toolbar-fullscreen-btn"] },
-	{ dialog: assessmentDialog, toggles: ["#assessment-fullscreen-toggle", "#assessment-toolbar-fullscreen-btn"] },
-	{ dialog: wattpadDialog, toggles: ["#wattpad-fullscreen-toggle", "#wattpad-toolbar-fullscreen-btn"] }
-].forEach(({ dialog, toggles }) => {
+// Dialog close cleanup
+[clustrDialog, agencyDialog, assessmentDialog, wattpadDialog].forEach((dialog) => {
 	if (!dialog) return;
-	toggles.forEach((sel) => {
-		document.querySelector(sel)?.addEventListener("click", (e) => {
-			e.stopPropagation();
-			toggleDialogFullscreen(dialog);
-		});
-	});
 	dialog.addEventListener("close", () => {
 		dialog.classList.remove("is-fullscreen");
 		if (document.fullscreenElement) {
 			document.exitFullscreen().catch(() => {});
 		}
-		updateDialogFullscreenUI(dialog);
-	});
-});
-
-document.addEventListener("fullscreenchange", () => {
-	[clustrDialog, agencyDialog, assessmentDialog].forEach((dlg) => {
-		if (!dlg) return;
-		if (!document.fullscreenElement && dlg.classList.contains("is-fullscreen")) {
-			dlg.classList.remove("is-fullscreen");
-		}
-		updateDialogFullscreenUI(dlg);
 	});
 });
 
@@ -1252,19 +1230,6 @@ document.addEventListener("keydown", (e) => {
 				frameDoc.defaultView.undoSketch();
 				return;
 			}
-		}
-	}
-	if ((e.key === "f" || e.key === "F") && !e.ctrlKey && !e.metaKey && !e.altKey) {
-		if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
-		if (clustrDialog && clustrDialog.open) {
-			e.preventDefault();
-			toggleDialogFullscreen(clustrDialog);
-		} else if (agencyDialog && agencyDialog.open) {
-			e.preventDefault();
-			toggleDialogFullscreen(agencyDialog);
-		} else if (assessmentDialog && assessmentDialog.open) {
-			e.preventDefault();
-			toggleDialogFullscreen(assessmentDialog);
 		}
 	}
 });
