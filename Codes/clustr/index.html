@@ -140,7 +140,8 @@
       scroll-behavior: smooth;
       scroll-padding-top: calc(var(--nav-height) + 20px);
       font-size: 16px;
-      overflow-x: hidden !important;
+      overflow-x: clip !important;
+      overflow-y: auto !important;
       width: 100% !important;
       max-width: 100% !important;
       position: relative !important;
@@ -154,7 +155,8 @@
       color: var(--text-main);
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden !important;
+      overflow-x: clip !important;
+      overflow-y: visible !important;
       width: 100% !important;
       max-width: 100% !important;
       position: relative !important;
@@ -261,21 +263,30 @@
        STICKY NAVIGATION BAR (PROPERLY ARRANGED & BRANDED)
        ========================================================================== */
     .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      position: -webkit-sticky !important;
+      position: sticky !important;
+      top: 0 !important;
+      left: 0;
+      right: 0;
+      z-index: 10000 !important;
       height: 68px;
-      background: rgba(248, 245, 252, 0.88);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-line);
-      display: flex;
-      align-items: center;
-      transition: background 0.3s ease, border-color 0.3s ease;
-      width: 100%;
+      background: rgba(248, 245, 252, 0.92) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border-bottom: 1px solid var(--border-line) !important;
+      display: flex !important;
+      align-items: center !important;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+      width: 100% !important;
+    }
+    .top-nav.is-stuck {
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1) !important;
     }
     [data-theme="dark"] .top-nav {
-      background: rgba(17, 12, 36, 0.92);
+      background: rgba(17, 12, 36, 0.95) !important;
+    }
+    [data-theme="dark"] .top-nav.is-stuck {
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45) !important;
     }
 
     .nav-inner {
@@ -3213,7 +3224,7 @@
 
     @media (max-width: 640px) {
       html, body {
-        overflow-x: hidden !important;
+        overflow-x: clip !important;
         width: 100% !important;
         max-width: 100% !important;
         touch-action: pan-y !important;
@@ -5911,6 +5922,18 @@
         anchor.classList.toggle('active', href === currentSection);
       });
     }
+
+    const topNavEl = document.querySelector('.top-nav');
+    function handleNavStick() {
+      if (!topNavEl) return;
+      if (window.scrollY > 4) {
+        topNavEl.classList.add('is-stuck');
+      } else {
+        topNavEl.classList.remove('is-stuck');
+      }
+    }
+    window.addEventListener('scroll', handleNavStick, { passive: true });
+    handleNavStick();
 
     window.addEventListener('scroll', updateNavScrollSpy, { passive: true });
     updateNavScrollSpy();
