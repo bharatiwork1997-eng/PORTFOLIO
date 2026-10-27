@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=11" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=12" />
 </head>
 
 <body>
@@ -297,6 +297,7 @@
 		let stickerIndex = 0;
 		let activeSticker = null;
 		let maxZIndex = 30;
+		let isDeleting = false;
 		const sizeInput = document.querySelector("#collage-sticker-size");
 
 		const collageUndoStack = [];
@@ -653,7 +654,10 @@
 		if (deleteBtn) {
 			deleteBtn.addEventListener("click", (e) => {
 				e.stopPropagation();
+				if (isDeleting) return;
+				isDeleting = true;
 				deleteActiveSticker();
+				setTimeout(() => { isDeleting = false; }, 200);
 			});
 		}
 
