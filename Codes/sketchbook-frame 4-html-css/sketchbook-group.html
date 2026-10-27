@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=6" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=7" />
 
 </head>
 
@@ -21,13 +21,26 @@
 		<div class="input number-input"></div>
 		<div class="input card"></div>
 		<p class="text-personal-work">Personal Work</p>
-		<img src="assets/img1.png" class="img1" />
+		<img src="assets/img1.png" class="img1" role="button" tabindex="0" aria-label="Open Experimental collage detail" title="Experimental collage" />
 		<img src="assets/img2.png" class="img2" alt="Bharati Kamble Résumé Booklet" role="button" tabindex="0" title="Click to view Bharati Kamble's Résumé" />
 		<img src="assets/slider.png" class="slider" />
 		<img src="assets/img3.png" class="img3" />
 		<img src="assets/img4.png" class="img4" />
 		<img src="assets/img4.png" class="img5" />
 		<p class="text-experimental">Experimental </p>
+		<dialog class="experimental-dialog" id="experimental-dialog" aria-labelledby="experimental-dialog-title">
+			<div class="dialog-sheet">
+				<div class="dialog-header">
+					<h2 id="experimental-dialog-title">Experimental: Collage to Illustration</h2>
+					<button class="dialog-close" type="button" aria-label="Close detail view">✕</button>
+				</div>
+				<div class="dialog-images">
+					<img src="assets/personal-front.jpg" class="dialog-image collage-image" alt="Original collage" />
+					<img src="assets/personal-hover.png" class="dialog-image illustration-image" alt="Illustrator version" />
+				</div>
+				<p class="dialog-caption">Collage explorations: magazine cutouts, dried flowers and card scraps, arranged into a composition. I then rebuilt the same layout as a vector illustration in Illustrator, to see what changes when texture becomes digital.</p>
+			</div>
+		</dialog>
 	</div>
 
 	<script>
@@ -49,6 +62,44 @@
 				}
 			});
 		}
+	</script>
+
+	<script>
+		/* Experimental collage detail view */
+		const experimentalCard = document.querySelector(".img1");
+		const experimentalDialog = document.getElementById("experimental-dialog");
+		const closeBtn = experimentalDialog.querySelector(".dialog-close");
+
+		let lastFocusedElement = null;
+
+		function openDialog() {
+			lastFocusedElement = document.activeElement;
+			experimentalDialog.showModal();
+		}
+
+		function closeDialog() {
+			experimentalDialog.close();
+			if (lastFocusedElement) {
+				lastFocusedElement.focus();
+			}
+		}
+
+		experimentalCard.addEventListener("click", openDialog);
+
+		experimentalCard.addEventListener("keydown", (e) => {
+			if (e.key === "Enter" || e.key === " ") {
+				e.preventDefault();
+				openDialog();
+			}
+		});
+
+		closeBtn.addEventListener("click", closeDialog);
+
+		experimentalDialog.addEventListener("keydown", (e) => {
+			if (e.key === "Escape") {
+				closeDialog();
+			}
+		});
 	</script>
 
 </body>
