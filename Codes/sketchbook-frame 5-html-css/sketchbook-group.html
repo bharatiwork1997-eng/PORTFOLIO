@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=10" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=11" />
 </head>
 
 <body>
@@ -49,6 +49,7 @@
 					</label>
 					<button type="button" class="sketch-btn collage-btn" data-tool="clear-collage">Clear collage</button>
 					<button type="button" class="sketch-btn collage-btn" data-tool="delete-sticker">Delete sticker</button>
+					<button type="button" class="sketch-btn collage-btn" data-tool="duplicate-sticker">Duplicate</button>
 					<button type="button" class="sketch-btn collage-btn" data-tool="download">Download</button>
 				</div>
 			</div>
@@ -555,11 +556,112 @@
 			}
 		}
 
+		function duplicateActiveSticker() {
+			if (!activeSticker || !activeSticker.isConnected || !collageLayer) return;
+			lastAction = "collage";
+			const original = activeSticker;
+			const clone = original.cloneNode(true);
+			clone.className = "collage-sticker";
+			clone.classList.remove("is-selected");
+			clone.style.zIndex = String(++maxZIndex);
+			const curLeft = parseFloat(original.style.left) || 0;
+			const curTop = parseFloat(original.style.top) || 0;
+			const offset = 20;
+			clone.style.left = `${Math.min(curLeft + offset, (collageArea.clientWidth || 520) - (parseFloat(original.style.width) || 160) - 16)}px`;
+			clone.style.top = `${Math.min(curTop + offset, (collageArea.clientHeight || 480) - (parseFloat(original.style.height) || 160) - 18)}px`;
+			clone.style.position = "absolute";
+			clone.style.touchAction = "none";
+			clone.style.userSelect = "none";
+			clone.style.webkitUserSelect = "none";
+			clone.style.pointerEvents = "auto";
+			clone.draggable = false;
+			clone.style.willChange = "transform, left, top";
+
+			let internalTouch = null;
+			clone.addEventListener("touchstart", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				lastAction = "collage";
+				clone.classList.remove("popping");
+				selectSticker(clone);
+				clone.style.zIndex = String(++maxZIndex);
+				if (e.touches.length === 1) {
+					const t = e.touches[0];
+					internalTouch = {
+						mode: "drag",
+						startX: t.clientX,
+						startY: t.clientY,
+						initX: parseFloat(clone.style.left) || 0,
+						initY: parseFloat(clone.style.top) || 0
+					};
+				}
+			}, { passive: false });
+
+			clone.addEventListener("touchend", (e) => {
+				if (e.touches.length === 0) internalTouch = null;
+			}, { passive: true });
+
+			clone.addEventListener("pointerdown", (e) => {
+				if (e.pointerType === "touch") return;
+				e.preventDefault();
+				e.stopPropagation();
+				lastAction = "collage";
+				clone.classList.remove("popping");
+				selectSticker(clone);
+				clone.style.zIndex = String(++maxZIndex);
+				try { clone.setPointerCapture(e.pointerId); } catch (_) {}
+				const startX = e.clientX;
+				const startY = e.clientY;
+				const initX = parseFloat(clone.style.left) || 0;
+				const initY = parseFloat(clone.style.top) || 0;
+				const onMove = (me) => {
+					me.preventDefault();
+					const curW = parseFloat(clone.style.width) || 160;
+					const curH = clone.clientHeight || curW;
+					const minX = -curW * 0.75;
+					const maxX = (collageArea.clientWidth || 520) - (curW * 0.25);
+					const minY = -curH * 0.75;
+					const maxY = (collageArea.clientHeight || 480) - (curH * 0.25);
+					const nextX = initX + (me.clientX - startX);
+					const nextY = initY + (me.clientY - startY);
+					clone.style.left = `${Math.max(minX, Math.min(maxX, nextX))}px`;
+					clone.style.top = `${Math.max(minY, Math.min(maxY, nextY))}px`;
+				};
+				const onUp = (ue) => {
+					try { clone.releasePointerCapture(ue.pointerId); } catch (_) {}
+					clone.removeEventListener("pointermove", onMove);
+					clone.removeEventListener("pointerup", onUp);
+					clone.removeEventListener("pointercancel", onUp);
+				};
+				clone.addEventListener("pointermove", onMove);
+				clone.addEventListener("pointerup", onUp);
+				clone.addEventListener("pointercancel", onUp);
+			});
+
+			clone.addEventListener("click", (e) => {
+				e.stopPropagation();
+				lastAction = "collage";
+				selectSticker(clone);
+			});
+
+			collageLayer.append(clone);
+			collageUndoStack.push({ type: "add", sticker: clone });
+			selectSticker(clone);
+		}
+
 		const deleteBtn = document.querySelector(".collage-tools [data-tool='delete-sticker']");
 		if (deleteBtn) {
 			deleteBtn.addEventListener("click", (e) => {
 				e.stopPropagation();
 				deleteActiveSticker();
+			});
+		}
+
+		const dupBtn = document.querySelector(".collage-tools [data-tool='duplicate-sticker']");
+		if (dupBtn) {
+			dupBtn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				duplicateActiveSticker();
 			});
 		}
 
