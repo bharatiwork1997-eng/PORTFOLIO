@@ -67,6 +67,26 @@ body {
 	z-index: 1;
 }
 
+/* Invisible clickable overlay on the collage image */
+.collage-open-btn {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	z-index: 10;
+	opacity: 0;
+	pointer-events: auto;
+	will-change: opacity;
+}
+
+.collage-open-btn:focus-visible {
+	outline: 2px solid #5b5b5b;
+	outline-offset: 2px;
+}
+
 .pw-hover {
 	opacity: 0;
 	z-index: 2;
