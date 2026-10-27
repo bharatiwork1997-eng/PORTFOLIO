@@ -1122,7 +1122,7 @@ function openClustrDialog() {
 	if (!clustrDialog) return;
 	const iframe = clustrDialog.querySelector("#clustr-frame");
 	if (iframe && (!iframe.src || iframe.src === "about:blank" || iframe.src.endsWith("about:blank"))) {
-		iframe.src = iframe.dataset.src || "clustr/index.html?v=11";
+		iframe.src = iframe.dataset.src || "clustr/index.html?v=13";
 	}
 	openDialog(clustrDialog);
 	if (iframe && !iframe.dataset.pencilHooked) {
@@ -2217,7 +2217,7 @@ prepareFrame(spreadFrames[0], spreads[0].src).then(() => {
 const preloadClustr = () => {
 	const clustrIframe = document.querySelector("#clustr-frame");
 	if (clustrIframe && (!clustrIframe.src || clustrIframe.src === "about:blank" || clustrIframe.src.endsWith("about:blank"))) {
-		clustrIframe.src = clustrIframe.dataset.src || "clustr/index.html?v=8";
+		clustrIframe.src = clustrIframe.dataset.src || "clustr/index.html?v=13";
 	}
 };
 if (typeof window !== "undefined") {
