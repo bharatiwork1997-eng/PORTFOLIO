@@ -7,13 +7,17 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=4" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=5" />
 
 </head>
 
 <body>
 	<div class="group">
-		<div class="input text-input"></div>
+		<!-- Middle box with hover image swap -->
+		<div class="input text-input personal-work-box">
+			<img src="assets/personal-front.jpg" class="pw-front" alt="Personal Work" />
+			<img src="assets/personal-hover.png" class="pw-hover" alt="Personal Work Hover" />
+		</div>
 		<div class="input number-input"></div>
 		<div class="input card"></div>
 		<p class="text-personal-work">Personal Work</p>
@@ -27,6 +31,14 @@
 	</div>
 
 	<script>
+		/* Preload hover image so the swap is instant with no flash */
+		(function() {
+			const preload = new Image();
+			preload.src = 'assets/personal-hover.png';
+		})();
+	</script>
+
+	<script>
 		const resumeEl = document.querySelector(".img2");
 		if (resumeEl) {
 			resumeEl.addEventListener("click", () => {
@@ -38,6 +50,7 @@
 			});
 		}
 	</script>
+
 </body>
 
 </html>
