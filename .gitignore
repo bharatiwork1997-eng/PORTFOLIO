@@ -6,4 +6,8 @@
 ehthumbs.db
 Thumbs.db
 *.log
+.agents/
+.continue/
+skills-lock.json
+
 

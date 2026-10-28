@@ -2,7 +2,7 @@ const spreads = [
 	{ title: "About me", src: "sketchbook-frame 1-html-css/sketchbook-group.html?v=3" },
 	{ title: "Clustr + assessment", src: "sketchbook-frame 2-html-css/sketchbook-group.html?v=23" },
 	{ title: "Agency + college", src: "sketchbook-frame 3-html-css/sketchbook-group.html?v=10" },
-	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=4" },
+	{ title: "Personal work + résumé", src: "sketchbook-frame 4-html-css/sketchbook-group.html?v=10" },
 	{ title: "Sketch + collage", src: "sketchbook-frame 5-html-css/sketchbook-group.html?v=13" },
 	{ title: "Thank you", src: "last-frame-html-css/last-group.html?v=9" }
 ];
@@ -94,6 +94,7 @@ const assessmentReelVideo = document.querySelector("#assessment-reel-video");
 const agencyDialog = document.querySelector("#agency-dialog");
 const clustrDialog = document.querySelector("#clustr-dialog");
 const wattpadDialog = document.querySelector("#wattpad-dialog");
+const personalDialog = document.querySelector("#personal-dialog");
 const toast = document.querySelector("#toast");
 const pencil = document.querySelector(".pencil-cursor");
 const arrowCursor = document.querySelector(".arrow-cursor");
@@ -538,7 +539,7 @@ function returnHome() {
 }
 
 function handleWheelNavigation(event) {
-	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open || videoDialog?.open || assessmentDialog?.open || agencyDialog?.open || clustrDialog?.open || wattpadDialog?.open) return;
+	if (storyDialog?.open || resumeDialog?.open || contactDialog?.open || videoDialog?.open || assessmentDialog?.open || agencyDialog?.open || clustrDialog?.open || wattpadDialog?.open || personalDialog?.open) return;
 
 	// Pick dominant delta (supports vertical wheel and horizontal swipe)
 	const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
@@ -1031,6 +1032,12 @@ function openAgencyDialog() {
 }
 window.openAgencyDialog = openAgencyDialog;
 
+function openPersonalWorkDialog() {
+	if (!personalDialog) return;
+	openDialog(personalDialog);
+}
+window.openPersonalWorkDialog = openPersonalWorkDialog;
+
 let wattpadScrollInitialized = false;
 
 function initWattpadScrollViewer() {
@@ -1210,7 +1217,7 @@ function updateDialogFullscreenUI(dialog) {
 }
 
 // Dialog close cleanup
-[clustrDialog, agencyDialog, assessmentDialog, wattpadDialog].forEach((dialog) => {
+[clustrDialog, agencyDialog, assessmentDialog, wattpadDialog, personalDialog].forEach((dialog) => {
 	if (!dialog) return;
 	dialog.addEventListener("close", () => {
 		dialog.classList.remove("is-fullscreen");
@@ -1988,7 +1995,7 @@ window.resumeDialog = resumeDialog;
 document.querySelectorAll("[data-open-contact]").forEach((button) => button.addEventListener("click", () => openDialog(contactDialog)));
 document.querySelectorAll("[data-open-resume]").forEach((button) => button.addEventListener("click", openResumeDialog));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => button.closest("dialog").close()));
-[storyDialog, resumeDialog, contactDialog, videoDialog, assessmentDialog, agencyDialog, clustrDialog, wattpadDialog].forEach((dialog) => {
+[storyDialog, resumeDialog, contactDialog, videoDialog, assessmentDialog, agencyDialog, clustrDialog, wattpadDialog, personalDialog].forEach((dialog) => {
 	if (!dialog) return;
 	dialog.addEventListener("click", (event) => {
 		const sheet = dialog.querySelector(".story-sheet, .resume-sheet, .contact-sheet, .video-sheet, .assessment-sheet, .clustr-sheet, .wattpad-sheet");
