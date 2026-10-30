@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/sketchbook-group.css?v=14" />
+	<link rel="stylesheet" href="css/sketchbook-group.css?v=15" />
 </head>
 
 <body>
@@ -288,12 +288,13 @@
 		}
 
 		const stickerBank = [
+			"IMG_20200706_172122 1.png", "Image.png",
 			"img1.png", "img2.png", "img3.png", "img4.png", "img5.png",
 			"_7cea1.png", "_7cea2.png", "img6.png", "img7.png", "img8.png",
 			"img10.png", "img11.png", "img12.png", "img13.png", "img14.png",
 			"img15.png", "img16.png",
 			"text-input.png", "rating.svg"
-		].map((f) => `assets/${f}`);
+		].map((f) => `assets/${encodeURIComponent(f)}`);
 
 		let stickerIndex = 0;
 		let activeSticker = null;
