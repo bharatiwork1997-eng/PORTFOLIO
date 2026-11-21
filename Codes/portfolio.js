@@ -203,8 +203,9 @@ function updateBookControls() {
 		pageCount.textContent = String(curr).padStart(2, "0");
 		if (pageTotal) pageTotal.textContent = String(total).padStart(2, "0");
 		pageName.textContent = spreads[pageIndex].title;
-		if (prevBtn) prevBtn.disabled = pageIndex === 0 || turnBusy;
-		if (nextBtn) nextBtn.disabled = pageIndex === total - 1 || turnBusy;
+		// Not disabled while a leaf is turning: extra clicks queue one more turn.
+		if (prevBtn) prevBtn.disabled = pageIndex === 0;
+		if (nextBtn) nextBtn.disabled = pageIndex === total - 1;
 		if (coverIndicator) coverIndicator.textContent = "01 / 06";
 	}
 
@@ -246,7 +247,7 @@ function prepareFrame(iframe, src) {
 				}
 				html, body { width:1280px !important; height:900px !important; min-height:0 !important; max-height:900px !important; overflow:hidden !important; overscroll-behavior:none !important; touch-action:pan-x !important; background-color:#000 !important; }
 				body { padding:28px 24px !important; overflow:hidden !important; overscroll-behavior:none !important; touch-action:pan-x !important; }
-				body img, body object { transition:transform 220ms ease, filter 220ms ease; }
+				body img, body object { transition:transform 220ms ease; }
 				body img:not(.collage-sticker):hover { filter:drop-shadow(0 4px 5px rgba(34,25,17,.16)); }
 				body img:not(.collage-sticker):not(.img6):hover { transform:translateY(-3px) scale(1.025); }
 				body img:not(.collage-sticker):not(.img6):active { transform:scale(.975); }
@@ -274,6 +275,8 @@ function prepareFrame(iframe, src) {
 			if (navigationArtwork) style.textContent += `body ${navigationArtwork} { display:none !important; }`;
 			if (frameIndex === 2) style.textContent += `body > .row { padding:116px 86px 65px 117px !important; } body > .row > .col { margin-left:399px !important; }`;
 			frameDocument.head.append(style);
+			// Load every image up front: lazy images in a hidden spread would pop in mid-turn.
+			frameDocument.querySelectorAll('img[loading="lazy"]').forEach((img) => { img.loading = "eager"; });
 			frameDocument.body.style.width = "1280px";
 			frameDocument.body.style.height = "900px";
 			frameDocument.body.style.minHeight = "0";
@@ -282,13 +285,15 @@ function prepareFrame(iframe, src) {
 			frameDocument.documentElement.style.overflow = "hidden";
 			const isMobileSpread = window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches;
 			frameDocument.body.classList.toggle("is-mobile-view", isMobileSpread);
-			const isCoarseOrMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
-			if (!isCoarseOrMobile) {
-				frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event), { passive: true });
-				frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event), { passive: true });
-			}
+			// Always listen: handleFramePointer checks on every move whether the pencil is allowed.
+			// (Deciding once at load left the pencil dead on the pages if they loaded in a narrow panel.)
+			frameDocument.addEventListener("pointerenter", (event) => handleFramePointer(iframe, event), { passive: true });
+			frameDocument.addEventListener("pointermove", (event) => handleFramePointer(iframe, event), { passive: true });
 			frameDocument.addEventListener("pointerdown", (event) => startEdgeGesture(frameDocument, event), { passive: true });
 			frameDocument.addEventListener("pointerup", (event) => finishGesture(event));
+			// Anything the visitor does on a spread may change it; its snapshot must be redone.
+			frameDocument.addEventListener("pointerup", () => markSpreadEdited(frameIndex), { passive: true });
+			frameDocument.addEventListener("keyup", () => markSpreadEdited(frameIndex), { passive: true });
 			frameDocument.addEventListener("pointercancel", cancelGesture);
 			frameDocument.addEventListener("touchmove", (event) => {
 				if (event.cancelable) event.preventDefault();
@@ -360,7 +365,7 @@ function prepareFrame(iframe, src) {
 }
 
 function handleFramePointer(iframe, event) {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
+	if (event.pointerType === "touch" || !pencilAllowed()) {
 		hidePencil();
 		return;
 	}
@@ -374,40 +379,35 @@ function handleFramePointer(iframe, event) {
 	const pageX = rect.left + (event.clientX * rect.width) / 1280;
 	const pageY = rect.top + (event.clientY * rect.height) / 900;
 	movePencil(pageX, pageY);
+	if (gesture?.flip && event.pointerId === gesture.id) sketchFlip.dragTo(event.clientX);
+	else if (targetIframe === activeFrame && !event.buttons) sketchFlip.hover(event.clientX, event.clientY);
 }
 
-let pencilTargetX = -200;
-let pencilTargetY = -200;
 let pencilVisible = false;
-let pencilRafId = null;
+let lastPointerActivity = 0;
 
-function renderPencil() {
-	pencilRafId = null;
-	if (!pencil) return;
-	pencil.style.transform = `translate3d(${pencilTargetX}px, ${pencilTargetY}px, 0)`;
+// Kept as live MediaQueryList objects: reading .matches is free and always current. (Creating new
+// queries or reading window.innerWidth on every move can force a layout pass; a value cached
+// at load can be wrong if the page loaded in a narrow or hidden panel, which hid the pencil.)
+const hoverNoneQuery = window.matchMedia("(hover: none)");
+const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
+const narrowViewportQuery = window.matchMedia("(max-width: 768px)");
+const pencilAllowed = () => !hoverNoneQuery.matches && !coarsePointerQuery.matches && !narrowViewportQuery.matches;
+narrowViewportQuery.addEventListener?.("change", () => { if (!pencilAllowed()) hidePencil(); });
+
+// The pencil is moved straight from the pointer event (no extra animation-frame hop, which
+// left it one frame behind the real pointer). It is its own GPU layer, so this is cheap.
+function movePencil(x, y) {
+	lastPointerActivity = performance.now();
+	if (!pencil || !pencilAllowed()) return;
+	pencil.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 	if (!pencilVisible) {
 		pencilVisible = true;
 		pencil.classList.add("is-visible");
 	}
 }
 
-function movePencil(x, y) {
-	if (window.matchMedia("(hover: none)").matches || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) {
-		hidePencil();
-		return;
-	}
-	pencilTargetX = x;
-	pencilTargetY = y;
-	if (!pencilRafId) {
-		pencilRafId = requestAnimationFrame(renderPencil);
-	}
-}
-
 function hidePencil() {
-	if (pencilRafId) {
-		cancelAnimationFrame(pencilRafId);
-		pencilRafId = null;
-	}
 	if (!pencilVisible) return;
 	pencilVisible = false;
 	if (pencil) pencil.classList.remove("is-visible");
@@ -440,14 +440,14 @@ function setupCover() {
 			frameDocument.body.style.scrollbarWidth = "none";
 			frameDocument.addEventListener("wheel", handleWheelNavigation, { passive: false });
 			frameDocument.addEventListener("pointerenter", (event) => {
-				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
+				if (event.pointerType === "touch" || !pencilAllowed()) return;
 				if (coverFrame) cachedCoverRect = coverFrame.getBoundingClientRect();
 				const rect = cachedCoverRect;
 				if (!rect || rect.width === 0) return;
 				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
 			}, { passive: true });
 			frameDocument.addEventListener("pointermove", (event) => {
-				if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
+				if (event.pointerType === "touch" || !pencilAllowed()) return;
 				const rect = cachedCoverRect || (coverFrame ? (cachedCoverRect = coverFrame.getBoundingClientRect()) : null);
 				if (!rect || rect.width === 0) return;
 				movePencil(rect.left + (event.clientX * rect.width) / 1920, rect.top + (event.clientY * rect.height) / 1080);
@@ -472,6 +472,7 @@ function openBook() {
 	wheelLocked = true;
 
 	window.scrollTo(0, 0);
+	sketchFlip.reset();
 	pageIndex = 0;
 	mobilePageIndex = 0;
 
@@ -513,6 +514,8 @@ function openBook() {
 		updateFrameRects();
 		openingBook = false;
 		setTimeout(() => { wheelLocked = false; }, 200);
+		announcePage();
+		scheduleIdleSnapshots(900);
 
 		// Ensure all spreads are progressively loaded
 		preloadAllSpreads();
@@ -523,6 +526,7 @@ function returnHome() {
 	clearTimeout(wheelUnlockTimer);
 	wheelLocked = true;
 	openingBook = false;
+	sketchFlip.reset();
 	cover.classList.remove("is-opening");
 	portfolio.classList.remove("is-opening-book");
 	cover.hidden = false;
@@ -579,7 +583,9 @@ async function turnPageMobile(direction) {
 
 	const currentEntry = singlePages[mobilePageIndex];
 	const nextEntry = singlePages[nextMobileIndex];
+	spreadVisits[currentEntry.spreadIndex]++;
 	mobilePageIndex = nextMobileIndex;
+	announcePage();
 	pageIndex = nextEntry.spreadIndex;
 	updateBookControls();
 
@@ -632,42 +638,237 @@ async function turnPageMobile(direction) {
 	updateBookControls();
 }
 
-async function turnPage(direction) {
+async function turnPage(direction, options) {
 	if (isMobileSinglePage()) {
 		return turnPageMobile(direction);
 	}
 	const nextIndex = pageIndex + direction;
-	if (turnBusy || nextIndex < 0 || nextIndex >= spreads.length) return;
-	turnBusy = true;
-
-	const prevFrame = spreadFrames[pageIndex];
+	if (nextIndex < 0 || nextIndex >= spreads.length) return;
+	// Right after the book opens the neighbouring spread may still be loading.
 	const nextFrame = spreadFrames[nextIndex];
-	pageIndex = nextIndex;
-	mobilePageIndex = singlePages.findIndex((sp) => sp.spreadIndex === pageIndex);
-	if (mobilePageIndex === -1) mobilePageIndex = 0;
-	updateBookControls();
+	if (!sketchFlip.busy && nextFrame.dataset.ready !== "true") await prepareFrame(nextFrame, spreads[nextIndex].src);
+	return sketchFlip.turn(direction, options);
+}
 
-	// Ensure the target frame is ready (resolves in 0ms if already preloaded)
-	if (nextFrame.dataset.ready !== "true") {
-		await prepareFrame(nextFrame, spreads[nextIndex].src);
+/* ---------- 3D page turn for the desktop spreads (engine: flipbook.js) ---------- */
+
+// White paper of the notebook art (col.png / row.png / group.png share the same geometry),
+// measured from the 2322×1688 image and mapped into the 1280×900 scene (image drawn at 0.5×
+// from ≈(60, 28)), inset 2px. Only this sheet turns: the brown cover and the spiral stay put.
+const NOTEBOOK_PAPER = {
+	right: { x0: 678, x1: 1153, y0: 79, y1: 823 },
+	left: { x0: 113, x1: 623, y0: 83, y1: 819 },
+	bg: "#e9e4e8",
+	radius: 14,       // rounded outer corners of the turning sheet
+	innerRadius: 4    // softer corners on the spiral side
+};
+const THANK_YOU_INDEX = spreads.length - 1;
+const EDGE_ZONE_LEFT = 128;
+const EDGE_ZONE_RIGHT = 1152;
+const spreadVisits = spreads.map(() => 0);
+const spreadEdits = spreads.map(() => 0);
+let idleSnapshotTimer = 0;
+const flipAnnouncer = document.querySelector("#flip-announcer");
+
+function spreadLeafBox(_index, face) {
+	const sheet = face === "front" ? NOTEBOOK_PAPER.right : NOTEBOOK_PAPER.left;
+	return {
+		...sheet,
+		bg: NOTEBOOK_PAPER.bg,
+		radius: NOTEBOOK_PAPER.radius,
+		innerRadius: NOTEBOOK_PAPER.innerRadius
+	};
+}
+
+// Static copy of a live spread (stickers, drawings and all) for the turning leaf.
+function snapshotSpreadHTML(frame) {
+	const doc = frame.contentDocument;
+	if (!doc?.documentElement) return null;
+	const clone = doc.documentElement.cloneNode(true);
+	const liveCanvases = doc.querySelectorAll("canvas");
+	clone.querySelectorAll("canvas").forEach((canvas, i) => {
+		const img = doc.createElement("img");
+		for (const attr of canvas.attributes) img.setAttribute(attr.name, attr.value);
+		try { img.setAttribute("src", liveCanvases[i].toDataURL()); } catch (error) { /* tainted canvas: leave blank */ }
+		canvas.replaceWith(img);
+	});
+	const liveInputs = doc.querySelectorAll("input");
+	clone.querySelectorAll("input").forEach((input, i) => {
+		if (liveInputs[i]) input.setAttribute("value", liveInputs[i].value);
+	});
+	clone.querySelectorAll("script, dialog, noscript").forEach((node) => node.remove());
+	clone.querySelectorAll("img[loading]").forEach((img) => img.removeAttribute("loading"));
+	clone.querySelectorAll("video").forEach((video) => {
+		video.removeAttribute("autoplay");
+		video.setAttribute("preload", "none");
+	});
+	clone.querySelectorAll("*").forEach((node) => {
+		for (const attr of [...node.attributes]) if (/^on/i.test(attr.name)) node.removeAttribute(attr.name);
+		node.classList.remove("popping", "is-popping");
+	});
+	let head = clone.querySelector("head");
+	if (!head) {
+		head = doc.createElement("head");
+		clone.prepend(head);
 	}
+	const base = doc.createElement("base");
+	base.setAttribute("href", doc.baseURI);
+	head.prepend(base);
+	const style = doc.createElement("style");
+	// A snapshot is a still image of the page: stop its loops (pulses, fish, spinning CD) so the
+	// hidden copies cost nothing while you browse.
+	style.textContent = "html, body { background: transparent !important; } *, *::before, *::after { animation: none !important; transition: none !important; }";
+	head.append(style);
+	return `<!doctype html>${clone.outerHTML}`;
+}
 
-	// Incoming frame fades in smoothly on top over outgoing frame
-	nextFrame.classList.add("is-incoming");
+function waitForGhost(doc) {
+	return new Promise((resolve) => {
+		const deadline = performance.now() + 700;
+		const check = () => {
+			if (doc.readyState !== "complete" && performance.now() < deadline) {
+				setTimeout(check, 16);
+				return;
+			}
+			const pending = [...doc.images].map((img) => (img.decode ? img.decode().catch(() => {}) : null));
+			if (doc.fonts?.ready) pending.push(doc.fonts.ready);
+			Promise.race([Promise.all(pending), new Promise((r) => setTimeout(r, 300))]).then(resolve);
+		};
+		check();
+	});
+}
 
-	await new Promise((resolve) => setTimeout(resolve, 240));
+function mountSpreadSnapshot(host, index) {
+	const job = (host._flipJob || Promise.resolve()).then(async () => {
+		const frame = spreadFrames[index];
+		if (!frame) return;
+		let ghost = host.querySelector("iframe");
+		if (!ghost) {
+			ghost = document.createElement("iframe");
+			ghost.className = "flip-ghost";
+			ghost.tabIndex = -1;
+			ghost.setAttribute("aria-hidden", "true");
+			ghost.setAttribute("scrolling", "no");
+			ghost.style.width = "1280px";
+			ghost.style.height = "900px";
+			host.append(ghost);
+		}
+		// Reuse a snapshot unless the spread was visited or edited (drawing, stickers) since.
+		const key = `${index}:${spreadVisits[index]}:${spreadEdits[index]}`;
+		if (ghost.dataset.key === key) return;
+		if (frame.dataset.ready !== "true") await prepareFrame(frame, spreads[index].src);
+		const html = snapshotSpreadHTML(frame);
+		if (!html) return;
+		const ghostDocument = ghost.contentDocument;
+		ghostDocument.open();
+		ghostDocument.write(html);
+		ghostDocument.close();
+		ghost.dataset.key = key;
+		await waitForGhost(ghost.contentDocument);
+	});
+	host._flipJob = job.catch(() => {});
+	return job.catch((error) => console.error("Could not snapshot spread for page turn", error));
+}
 
+function announcePage() {
+	if (!flipAnnouncer) return;
+	if (isMobileSinglePage()) {
+		flipAnnouncer.textContent = `Page ${mobilePageIndex + 1} of ${singlePages.length}: ${singlePages[mobilePageIndex].title}`;
+	} else {
+		flipAnnouncer.textContent = `Page ${pageIndex + 1} of ${spreads.length}: ${spreads[pageIndex].title}`;
+	}
+}
+
+function commitSpread(to, from) {
+	const prevFrame = spreadFrames[from];
+	const nextFrame = spreadFrames[to];
+	spreadVisits[from]++;
 	nextFrame.classList.add("is-active");
 	nextFrame.classList.remove("is-incoming");
 	prevFrame.classList.remove("is-active");
-
+	pageIndex = to;
+	mobilePageIndex = singlePages.findIndex((sp) => sp.spreadIndex === pageIndex);
+	if (mobilePageIndex === -1) mobilePageIndex = 0;
 	activeFrame = nextFrame;
 	activeFrameDocument = activeFrame.contentDocument;
 	updateFrameRects();
-
-	turnBusy = false;
-	wheelLocked = false;
 	updateBookControls();
+	announcePage();
+	scheduleIdleSnapshots(450);
+}
+
+// Snapshot the current spread and the next one while nothing is happening, so the next turn
+// starts on the very first frame instead of waiting for a copy to be made.
+function scheduleIdleSnapshots(delay) {
+	clearTimeout(idleSnapshotTimer);
+	idleSnapshotTimer = setTimeout(() => {
+		const run = () => {
+			if (portfolio.hidden || isMobileSinglePage() || turnBusy) return;
+			// Copying a page is a burst of work; wait until the pointer has been still for a while
+			// so it never lands while the visitor is moving the pencil.
+			if (performance.now() - lastPointerActivity < 1500) {
+				scheduleIdleSnapshots(800);
+				return;
+			}
+			const forward = pageIndex + 1 < spreads.length && pageIndex + 1 !== THANK_YOU_INDEX && pageIndex !== THANK_YOU_INDEX;
+			if (forward) {
+				sketchFlip.prewarm(pageIndex, "front");
+				sketchFlip.prewarm(pageIndex + 1, "back");
+			} else if (pageIndex > 0 && pageIndex !== THANK_YOU_INDEX) {
+				sketchFlip.prewarm(pageIndex, "back");
+				sketchFlip.prewarm(pageIndex - 1, "front");
+			}
+		};
+		if ("requestIdleCallback" in window) requestIdleCallback(run, { timeout: 1500 });
+		else run();
+	}, delay);
+}
+
+function markSpreadEdited(index) {
+	if (index >= 0) spreadEdits[index]++;
+}
+
+const sketchFlip = Flipbook.create({
+	scene: bookScene,
+	width: 1280,
+	height: 900,
+	duration: 860,
+	count: () => spreads.length,
+	getIndex: () => pageIndex,
+	spine: () => 640,
+	getLive: (index) => spreadFrames[index] || null,
+	isReady: (index) => spreadFrames[index]?.dataset.ready === "true",
+	box: spreadLeafBox,
+	// The thank-you spread is not a notebook page, so it crossfades in and out instead of turning.
+	flippable: (from, to) => from !== THANK_YOU_INDEX && to !== THANK_YOU_INDEX,
+	mount: mountSpreadSnapshot,
+	commit: commitSpread,
+	canTurn: () => !portfolio.hidden && !openingBook && !isMobileSinglePage() && !document.querySelector("dialog[open]"),
+	onBusy: (busy) => {
+		turnBusy = busy;
+		if (!busy) {
+			// Swallow trackpad inertia that is still arriving when the leaf lands.
+			wheelLocked = true;
+			clearTimeout(wheelUnlockTimer);
+			wheelUnlockTimer = setTimeout(() => { wheelLocked = false; }, 280);
+		}
+		updateBookControls();
+	}
+});
+
+// Pointer position in scene coordinates, for events that reach the parent document.
+function scenePoint(event) {
+	const r = bookScene.getBoundingClientRect();
+	const k = r.width / 1280 || 1;
+	return { x: (event.clientX - r.left) / k, y: (event.clientY - r.top) / k };
+}
+
+function eventScenePoint(event) {
+	return event.view === window ? scenePoint(event) : { x: event.clientX, y: event.clientY };
+}
+
+function eventSceneX(event) {
+	return eventScenePoint(event).x;
 }
 
 function preloadAllSpreads() {
@@ -689,19 +890,30 @@ function startEdgeGesture(frameDocument, event) {
 		gesture = { side: "touch", x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: true };
 		return;
 	}
-	const side = event.clientX < 90 ? "left" : event.clientX > 1190 ? "right" : null;
+	if (event.button !== 0 || event.target.closest('[role="button"], [tabindex]:not([tabindex="-1"])')) return;
+	const side = event.clientX < EDGE_ZONE_LEFT ? "left" : event.clientX > EDGE_ZONE_RIGHT ? "right" : null;
 	if (!side) return;
-	gesture = { side, x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: false };
+	gesture = { side, x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: false, flip: false };
+	// Mouse/pen on a page edge: the leaf follows the pointer (a plain click completes the turn).
+	if (!isMobileSinglePage()) gesture.flip = sketchFlip.beginDrag(side === "right" ? 1 : -1, event.clientX);
 }
 
 function cancelGesture() {
+	if (gesture?.flip) sketchFlip.cancelDrag();
 	gesture = null;
 }
 
 function finishGesture(event) {
 	if (!gesture || event.pointerId !== gesture.id) return;
-	const deltaX = event.clientX - gesture.x;
-	const deltaY = event.clientY - gesture.y;
+	if (gesture.flip) {
+		sketchFlip.endDrag(eventSceneX(event));
+		gesture = null;
+		return;
+	}
+	// Mouse gestures are tracked in scene coordinates; touch swipes in raw client coordinates.
+	const point = gesture.isTouch ? { x: event.clientX, y: event.clientY } : eventScenePoint(event);
+	const deltaX = point.x - gesture.x;
+	const deltaY = point.y - gesture.y;
 	const maxPages = isMobileSinglePage() ? singlePages.length : spreads.length;
 	const currentIdx = isMobileSinglePage() ? mobilePageIndex : pageIndex;
 
@@ -748,9 +960,30 @@ function handleDialogClose(dialog) {
 	updateFrameRects();
 }
 
+// LOST ships as MP4 (H.264/AAC) plus a WebM (VP9/Opus) copy: browsers without H.264, such as
+// VS Code's built-in one, fall through to the WebM. The note only shows if neither can play.
+function showLostVideoFallback() {
+	const note = document.querySelector("#lost-video-fallback");
+	if (note) note.hidden = false;
+}
+function lostVideoPlayable() {
+	if (!lostVideo) return false;
+	return !!(lostVideo.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') || lostVideo.canPlayType('video/webm; codecs="vp9, opus"'));
+}
+if (lostVideo) {
+	// <source> errors fire per source; only the last one failing means nothing can play.
+	const sources = lostVideo.querySelectorAll("source");
+	sources[sources.length - 1]?.addEventListener("error", showLostVideoFallback);
+	lostVideo.addEventListener("error", showLostVideoFallback);
+}
+
 function openLostVideo() {
 	if (!videoDialog) return;
 	openDialog(videoDialog);
+	if (!lostVideoPlayable()) {
+		showLostVideoFallback();
+		return;
+	}
 	if (lostVideo) {
 		lostVideo.muted = false;
 		lostVideo.volume = 1.0;
@@ -2049,15 +2282,15 @@ if (stickerSize) {
 	});
 }
 document.addEventListener("pointerenter", (event) => {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
+	if (event.pointerType === "touch" || !pencilAllowed()) return;
 	movePencil(event.clientX, event.clientY);
 }, { passive: true });
 document.addEventListener("pointermove", (event) => {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
+	if (event.pointerType === "touch" || !pencilAllowed()) return;
 	movePencil(event.clientX, event.clientY);
 }, { passive: true });
 document.addEventListener("pointerdown", (event) => {
-	if (event.pointerType === "touch" || window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768) return;
+	if (event.pointerType === "touch" || !pencilAllowed()) return;
 	movePencil(event.clientX, event.clientY);
 }, { passive: true });
 document.addEventListener("mouseleave", (event) => {
@@ -2072,8 +2305,27 @@ document.addEventListener("visibilitychange", () => {
 if (bookStage) {
 	bookStage.addEventListener("pointerdown", (event) => {
 		if (event.target.closest("button, a, input, canvas")) return;
+		if (event.pointerType === "mouse" && !isMobileSinglePage()) {
+			// Reached the parent document: the pointer is on the lifted corner or the book's margin.
+			if (event.button !== 0) return;
+			const { x, y } = scenePoint(event);
+			const side = x < EDGE_ZONE_LEFT ? "left" : x > EDGE_ZONE_RIGHT ? "right" : null;
+			if (!side) return;
+			gesture = { side, x, y, id: event.pointerId, isTouch: false, flip: sketchFlip.beginDrag(side === "right" ? 1 : -1, x) };
+			bookStage.setPointerCapture?.(event.pointerId);
+			return;
+		}
 		gesture = { side: "touch", x: event.clientX, y: event.clientY, id: event.pointerId, isTouch: true };
 	}, { passive: true });
+	bookStage.addEventListener("pointermove", (event) => {
+		if (event.pointerType !== "mouse" || isMobileSinglePage()) return;
+		const { x, y } = scenePoint(event);
+		if (gesture?.flip && event.pointerId === gesture.id) sketchFlip.dragTo(x);
+		else if (!event.buttons) sketchFlip.hover(x, y);
+	}, { passive: true });
+	bookStage.addEventListener("pointerleave", (event) => {
+		if (event.pointerType === "mouse") sketchFlip.hover(null);
+	});
 	bookStage.addEventListener("pointerup", finishGesture);
 	bookStage.addEventListener("pointercancel", cancelGesture);
 }

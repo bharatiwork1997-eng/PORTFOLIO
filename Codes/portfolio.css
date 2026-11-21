@@ -2378,3 +2378,38 @@ dialog::backdrop { background: rgba(10, 10, 8, 0.85); backdrop-filter: blur(10px
 	align-items: center;
 	justify-content: space-between;
 }
+
+/* Screen-reader-only text (page-turn announcements). */
+.sr-only {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Snapshot pages used on the turning leaf never take input. */
+.book-scene .flip-ghost { pointer-events: none; }
+
+/* Shown when the browser cannot decode the LOST video. */
+.video-fallback {
+	position: absolute;
+	inset: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 24px;
+	text-align: center;
+	font: 14px/1.6 var(--pixel);
+	color: #e8e0d4;
+	background: rgba(13, 10, 8, .92);
+}
+.video-fallback[hidden] { display: none !important; }
+.video-fallback a { color: var(--accent); }

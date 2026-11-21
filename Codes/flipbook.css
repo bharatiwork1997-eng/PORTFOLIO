@@ -1,0 +1,79 @@
+/* flipbook.css — styles for the layers flipbook.js adds to a scene. */
+/* Idle, the layer is kept painted but practically invisible, so prepared page copies are
+   already drawn when a turn starts (no blank first frame). Opacity 0 would skip painting. */
+.fb-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 40;
+	pointer-events: none;
+	opacity: .001;
+	perspective-origin: 50% 50%;
+}
+.fb-layer.is-on { opacity: 1; }
+
+.fb-face {
+	position: absolute;
+	left: 0;
+	top: 0;
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+	transform-style: flat;
+}
+/* GPU layers only while a leaf is actually turning. */
+.fb-layer.is-on .fb-face { will-change: transform; }
+.fb-face__host,
+.fb-face__verso,
+.fb-face__shade,
+.fb-cast {
+	position: absolute;
+	left: 0;
+	top: 0;
+	pointer-events: none;
+}
+.fb-face__host { width: 100%; height: 100%; }
+.fb-face__host > iframe {
+	position: absolute;
+	left: 0;
+	top: 0;
+	border: 0;
+	background: transparent;
+	pointer-events: none;
+}
+.fb-cast { width: 100%; height: 100%; }
+
+/* Curl shading: dark at the spine, a highlight band that travels with the turn. */
+.fb-face__shade {
+	background-size: 220% 100%;
+	background-repeat: no-repeat;
+	background-image: linear-gradient(90deg,
+		rgba(0, 0, 0, .34) 0%,
+		rgba(0, 0, 0, .1) 20%,
+		rgba(255, 255, 255, .24) 40%,
+		rgba(255, 255, 255, 0) 54%,
+		rgba(0, 0, 0, .2) 100%);
+	opacity: 0;
+}
+.fb-face--back .fb-face__shade {
+	background-image: linear-gradient(270deg,
+		rgba(0, 0, 0, .34) 0%,
+		rgba(0, 0, 0, .1) 20%,
+		rgba(255, 255, 255, .24) 40%,
+		rgba(255, 255, 255, 0) 54%,
+		rgba(0, 0, 0, .2) 100%);
+}
+
+/* Hover hint: folded corner. */
+.fb-curl {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 41;
+	pointer-events: none;
+	visibility: hidden;
+}
+.fb-curl.is-on { visibility: visible; }
+.fb-curl__flap { position: absolute; width: 0; height: 0; }
+
+/* While a leaf is lifted it may rise past the scene's edges. */
+.fb-is-flipping { overflow: visible !important; }

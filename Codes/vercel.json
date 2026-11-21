@@ -28,7 +28,8 @@
     { "source": "/clustr", "destination": "/clustr/index.html" },
     { "source": "/clustr/", "destination": "/clustr/index.html" },
     { "source": "/agency-page", "destination": "/detailed-page-html-css/agency-page.html" },
-    { "source": "/detailed-page", "destination": "/detailed-page-html-css/detailed-page.html" }
+    { "source": "/detailed-page", "destination": "/detailed-page-html-css/detailed-page.html" },
+    { "source": "/flipbook", "destination": "/flipbook.html" }
   ]
 }
 

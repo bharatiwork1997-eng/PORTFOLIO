@@ -33,6 +33,8 @@
     { "source": "/agency-page/", "destination": "/Codes/detailed-page-html-css/agency-page.html" },
     { "source": "/detailed-page", "destination": "/Codes/detailed-page-html-css/detailed-page.html" },
     { "source": "/detailed-page/", "destination": "/Codes/detailed-page-html-css/detailed-page.html" },
+    { "source": "/flipbook", "destination": "/Codes/flipbook.html" },
+    { "source": "/flipbook/", "destination": "/Codes/flipbook.html" },
     { "source": "/(.*)", "destination": "/Codes/$1" }
   ]
 }

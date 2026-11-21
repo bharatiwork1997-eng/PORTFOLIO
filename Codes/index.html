@@ -8,7 +8,8 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="portfolio.css?v=95">
+	<link rel="stylesheet" href="portfolio.css?v=98">
+	<link rel="stylesheet" href="flipbook.css?v=3">
 	<link rel="preload" as="image" href="assets/logo-bharati.png?v=2" media="(min-width: 769px)" fetchpriority="high">
 	<link rel="preload" as="image" href="assets/logo-bharati-stacked.png?v=2" media="(max-width: 768px)" fetchpriority="high">
 	<link rel="preload" as="image" href="welcoming-screen-html-css/assets/img1.png" fetchpriority="high">
@@ -49,7 +50,7 @@
 		</section>
 
 		<section class="portfolio-view" id="portfolio" hidden aria-label="Interactive portfolio sketchbook">
-			<div class="book-stage" id="book-stage" aria-label="Sketchbook pages">
+			<div class="book-stage" id="book-stage" role="region" aria-roledescription="sketchbook" aria-label="Sketchbook pages">
 				<div class="book-scene" id="book-scene">
 					<iframe class="spread-frame is-active" id="frame-0" data-index="0" title="About me" allowtransparency="true" scrolling="no"></iframe>
 					<iframe class="spread-frame" id="frame-1" data-index="1" title="Clustr + assessment" allowtransparency="true" scrolling="no"></iframe>
@@ -61,7 +62,7 @@
 			</div>
 			<div class="book-controls">
 				<button class="turn-button" id="previous-page" type="button" aria-label="Previous spread"><span>Previous</span></button>
-				<div class="page-position" aria-live="polite">
+				<div class="page-position">
 					<div class="page-counter">
 						<span id="page-count">01</span>
 						<i></i>
@@ -71,6 +72,7 @@
 				</div>
 				<button class="turn-button" id="next-page" type="button" aria-label="Next spread"><span>Next</span></button>
 			</div>
+			<p class="sr-only" id="flip-announcer" aria-live="polite" aria-atomic="true"></p>
 		</section>
 	</main>
 
@@ -537,8 +539,10 @@
 			<div class="video-player-wrap">
 				<video id="lost-video" controls playsinline webkit-playsinline x5-playsinline preload="none">
 					<source src="assets/LOST%20Video.mp4" type="video/mp4">
+					<source src="assets/LOST%20Video.webm" type="video/webm">
 					Your browser does not support the video tag.
 				</video>
+				<p class="video-fallback" id="lost-video-fallback" hidden><span>This browser can't play this video format.</span><span>Open the portfolio in Chrome or Safari to watch LOST.</span></p>
 			</div>
 			<div class="video-footer">
 				<button class="story-back" type="button" data-close-dialog>Back to the sketchbook <span aria-hidden="true">↗</span></button>
@@ -546,7 +550,8 @@
 		</div>
 	</dialog>
 
-	<script src="portfolio.js?v=105"></script>
+	<script src="flipbook.js?v=9"></script>
+	<script src="portfolio.js?v=117"></script>
 	<dialog class="assessment-dialog" id="personal-dialog" aria-labelledby="personal-dialog-title">
 		<div class="assessment-sheet personal-sheet">
 			<div class="dialog-top-actions">
